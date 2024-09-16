@@ -16,7 +16,7 @@ FetchContent_MakeAvailable(Tau)
 enable_testing()
 
 add_executable(${PROJECT_NAME}
-    geodesy_test.c
+    atmosphere_test.c
 )
 
 target_link_libraries(
