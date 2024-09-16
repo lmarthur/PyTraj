@@ -1,0 +1,9 @@
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# build output
+build/
+test/build/
