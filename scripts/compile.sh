@@ -3,6 +3,8 @@
 # Compile the program
 echo "Compiling the program..."
 
+rm ./test/build/PyTraj_test
+
 # Compile with CMake
 cmake -S ./test -B test/build -Who-dev
 make -C ./test/build

@@ -13,10 +13,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Tau)
 
+find_package(GSL REQUIRED)
+link_libraries(GSL::gsl GSL::gslcblas)
+
 enable_testing()
 
 add_executable(${PROJECT_NAME}
-    atmosphere_test.c
+    main_test.c
 )
 
 target_link_libraries(

@@ -9,10 +9,12 @@ TODO:
 - [X] Set up CMake 
 - [X] Write tests for atmosphere module
 - [X] Implement exp atmosphere functions in C
-- [ ] Write tests for vehicle module
-- [ ] Implement minuteman model in C
-- [ ] Write tests for gravity module
-- [ ] Implement gravity functions in C
+- [X] Write tests for vehicle module
+- [X] Implement minuteman model in C
+- [X] Write tests for newtonian gravity module
+- [X] Implement newtonian gravity functions in C
+- [ ] Write tests for physics module
+- [ ] Implement physics functions in C
 - [ ] Write tests for stepper
 - [ ] Implement stepper in C
 - [ ] Determine whether to implement integration in C or Python
@@ -34,6 +36,8 @@ TODO:
 - [ ] Implement control functions in C
 - [ ] Write tests for Kalman filter
 - [ ] Implement Kalman filter in C
+- [ ] Write tests for gravity perturbations
+- [ ] Implement gravity perturbations in C
 - [ ] Write C wrapper for EarthGRAM with shared object
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning

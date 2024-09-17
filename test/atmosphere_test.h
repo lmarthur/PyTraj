@@ -1,9 +1,7 @@
 #include <tau/tau.h>
 #include "../src/include/atmosphere.h"
 
-TAU_MAIN()
-
-TEST(geodesy, get_exp_atm_cond){
+TEST(atmosphere, get_exp_atm_cond){
     atm_cond atm_conditions = get_exp_atm_cond(0);
     double expected, tolerance;
     tolerance = 1e-2;
