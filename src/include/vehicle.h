@@ -2,16 +2,6 @@
 #include <string.h>
 #include <stdio.h>
 
-// Define a vehicle struct to store vehicle parameters
-// typedef struct vehicle{
-//     booster booster; // booster struct
-//     rv rv; // reentry vehicle struct
-// 
-//     // Vehicle parameters
-//     double current_mass; // current mass in kg
-//     
-// } vehicle;
-
 // Define a booster struct to store booster parameters
 typedef struct booster{
     // Booster parameters
@@ -52,6 +42,16 @@ typedef struct rv{
     double Iyy; // moment of inertia about the y-axis and x-axis (axisymmetric vehicle) in kg*m^2
 
 } rv;
+
+// Define a vehicle struct to store vehicle parameters
+typedef struct vehicle{
+    booster booster; // booster struct
+    rv rv; // reentry vehicle struct
+
+    // Vehicle parameters
+    double current_mass; // current mass in kg
+    
+} vehicle;
 
 // Define a function to initialize a ballistic rv
 rv init_ballistic_rv(){
