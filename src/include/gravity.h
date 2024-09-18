@@ -1,3 +1,6 @@
+#ifndef GRAVITY_H
+#define GRAVITY_H
+
 #include <gsl/gsl_rng.h>
 
 // Define a grav struct to store gravity parameters
@@ -30,3 +33,5 @@ grav init_grav(){
 
     return grav;
 }
+
+#endif

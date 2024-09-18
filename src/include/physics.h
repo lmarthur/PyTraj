@@ -1,3 +1,6 @@
+#ifndef PHYSICS_H
+#define PHYSICS_H
+
 #include <math.h>
 #include "vehicle.h"
 #include "gravity.h"
@@ -33,30 +36,6 @@ typedef struct state{
 
 // Define a series of functions to calculate acceleration components
 
-void update_mass(vehicle *vehicle, state *state){
-    /*
-    Updates the mass of the vehicle based on the current stage and burn time
-
-    INPUTS:
-    ----------
-        vehicle: vehicle *
-            pointer to the vehicle struct
-        state: state *
-            pointer to the state struct
-    */
-
-    // Determine the current stage
-    int stage = 0;
-    for(int i = 0; i < vehicle->booster.num_stages; i++){
-        if(state->t < vehicle->booster.burn_time[i]){
-            stage = i;
-            break;
-        }
-    }
-
-    // Update the mass of the vehicle
-    vehicle->current_mass = vehicle->booster.wet_mass[stage] - vehicle->booster.fuel_burn_rate[stage]*state->t;
-}
 
 void update_gravity(grav *grav, state *state){
     /*
@@ -127,3 +106,5 @@ void update_thrust(vehicle *vehicle, state *state){
     state->az_thrust = thrust * state->vz / vehicle->current_mass;
 
 }
+
+#endif

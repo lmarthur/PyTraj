@@ -1,3 +1,6 @@
+#ifndef VEHICLE_H
+#define VEHICLE_H
+
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -49,6 +52,7 @@ typedef struct vehicle{
     rv rv; // reentry vehicle struct
 
     // Vehicle parameters
+    double total_mass; // total mass in kg
     double current_mass; // current mass in kg
     
 } vehicle;
@@ -166,3 +170,42 @@ booster init_mmiii_booster(){
 
     return booster;
 }
+
+void update_mass(vehicle *vehicle, double t){
+    /*
+    Updates the mass of the vehicle based on the current stage and burn time
+
+    INPUTS:
+    ----------
+        vehicle: vehicle *
+            pointer to the vehicle struct
+        state: double
+            current time in seconds
+    */
+
+    // If after burnout, set the mass to the reentry vehicle mass
+
+    if (t > vehicle->booster.total_burn_time){
+        vehicle->current_mass = vehicle->rv.rv_mass;
+        // break out of the function
+        return;
+    }
+    else{
+        if (t <= vehicle->booster.burn_time[0]){
+            // First stage is burning
+            vehicle->current_mass = vehicle->total_mass - t * vehicle->booster.fuel_burn_rate[0];
+        }
+        if (t <= (vehicle->booster.burn_time[1] + vehicle->booster.burn_time[0]) && t > vehicle->booster.burn_time[0]){
+            // Second stage is burning
+            vehicle->current_mass = vehicle->total_mass - vehicle->booster.wet_mass[0] - (t - vehicle->booster.burn_time[0]) * vehicle->booster.fuel_burn_rate[1];
+        }
+        if (t <= (vehicle->booster.burn_time[2] + vehicle->booster.burn_time[1] + vehicle->booster.burn_time[0]) && t > (vehicle->booster.burn_time[1] + vehicle->booster.burn_time[0])){
+            // Third stage is burning
+            vehicle->current_mass = vehicle->total_mass - vehicle->booster.wet_mass[0] - vehicle->booster.wet_mass[1] - (t - vehicle->booster.burn_time[0] - vehicle->booster.burn_time[1]) * vehicle->booster.fuel_burn_rate[2];
+        }
+
+    }
+    return;
+}
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef ATMOSPHERE_H
+#define ATMOSPHERE_H
+
 #include <math.h>
 
 // Define an atm_cond struct to store local atmospheric conditions
@@ -45,3 +48,5 @@ atm_cond get_exp_atm_cond(double altitude){
     
     return atm_conditions;
 }
+
+#endif
