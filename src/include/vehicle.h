@@ -34,6 +34,7 @@ typedef struct rv{
     double rv_mass; // mass of the reentry vehicle in kg
     double rv_length; // length of the reentry vehicle in meters
     double rv_radius; // radius of the reentry vehicle in meters
+    double rv_area; // reference area of the reentry vehicle in square meters
     double c_d_0; // zero lift drag coefficient
     double c_d_alpha; // drag coefficient derivative (per radian)
     double c_m_alpha; // pitching moment coefficient derivative (per radian)
@@ -75,6 +76,7 @@ rv init_ballistic_rv(){
     rv.rv_mass = 400;
     rv.rv_length = 1.5;
     rv.rv_radius = 0.23;
+    rv.rv_area = M_PI * rv.rv_radius * rv.rv_radius;
     rv.c_d_0 = 0.1;
     rv.c_d_alpha = 0.4;
     rv.c_m_alpha = -0.1;

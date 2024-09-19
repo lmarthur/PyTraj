@@ -5,6 +5,7 @@
 #include "vehicle.h"
 #include "gravity.h"
 #include "atmosphere.h"
+#include "utils.h"
 
 // Define a struct to store the state of a vehicle in 3D space
 typedef struct state{
@@ -77,9 +78,43 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
     */
 
     // Get the relative airspeed 
+    double cart_wind[3];
+    double spher_wind[3] = {atm_cond->vertical_wind, atm_cond->zonal_wind, atm_cond->meridional_wind};
+    double spher_coords[3];
+    double cart_coords[3] = {state->x, state->y, state->z};
+    cartcoords_to_sphercoords(cart_coords, spher_coords);
 
-    // Calculate the drag acceleration components
+    sphervec_to_cartvec(spher_wind, cart_wind, spher_coords);
 
+    double v_rel[3] = {state->vx - cart_wind[0], state->vy - cart_wind[1], state->vz - cart_wind[2]};
+
+    double v_rel_mag = sqrt(v_rel[0]*v_rel[0] + v_rel[1]*v_rel[1] + v_rel[2]*v_rel[2]);
+    if (v_rel_mag < 1e-2){
+        state->ax_drag = 0;
+        state->ay_drag = 0;
+        state->az_drag = 0;
+        return;
+    }
+
+    // Calculate the drag acceleration components for a booster or reentry vehicle
+    if (state->t > vehicle->booster.total_burn_time){
+        // Calculate the drag acceleration components for a reentry vehicle
+        double a_drag_mag = 0.5 * atm_cond->density * v_rel_mag * v_rel_mag * vehicle->rv.rv_area * vehicle->rv.c_d_0 / vehicle->current_mass;
+        state->ax_drag = -a_drag_mag * v_rel[0] / v_rel_mag;
+        state->ay_drag = -a_drag_mag * v_rel[1] / v_rel_mag;
+        state->az_drag = -a_drag_mag * v_rel[2] / v_rel_mag;
+
+        return;
+    }
+    else{
+        // Calculate the drag acceleration components for a booster
+        double a_drag_mag = 0.5 * atm_cond->density * v_rel_mag * v_rel_mag * vehicle->booster.area * vehicle->booster.c_d_0 / vehicle->current_mass;
+        state->ax_drag = -a_drag_mag * v_rel[0] / v_rel_mag;
+        state->ay_drag = -a_drag_mag * v_rel[1] / v_rel_mag;
+        state->az_drag = -a_drag_mag * v_rel[2] / v_rel_mag;
+
+        return;
+    }
 
 }
 
@@ -94,23 +129,41 @@ void update_thrust(vehicle *vehicle, state *state){
         state: state *
             pointer to the state struct
     */
+    double a_thrust_mag;
 
+    if (state->t > vehicle->booster.total_burn_time){
+        state->ax_thrust = 0;
+        state->ay_thrust = 0;
+        state->az_thrust = 0;
+        return;
+    }
+    
     // Get the current stage
     int stage = 0;
-    for(int i = 0; i < vehicle->booster.num_stages; i++){
-        if(state->t < vehicle->booster.burn_time[i]){
-            stage = i;
-            break;
-        }
+    if (state->t > vehicle->booster.burn_time[0]){
+        stage = 1;
+    }
+    if (state->t > vehicle->booster.burn_time[0] + vehicle->booster.burn_time[1]){
+        stage = 2;
     }
 
-    // Calculate the thrust acceleration components, assuming the thrust is along the velocity vector
-    double thrust = vehicle->booster.fuel_burn_rate[stage] * vehicle->booster.isp0[stage];
+    // Calculate the thrust acceleration components
+    a_thrust_mag = vehicle->booster.isp0[stage] * vehicle->booster.fuel_burn_rate[stage] / vehicle->current_mass;
+    double v_mag = sqrt(state->vx*state->vx + state->vy*state->vy + state->vz*state->vz);
 
-    state->ax_thrust = thrust * state->vx / vehicle->current_mass;
-    state->ay_thrust = thrust * state->vy / vehicle->current_mass;
-    state->az_thrust = thrust * state->vz / vehicle->current_mass;
+    if (v_mag < 1e-2){
+        state->ax_thrust = a_thrust_mag;
+        state->ay_thrust = 0;
+        state->az_thrust = 0;
+        return;
+    }
 
+    state->ax_thrust = a_thrust_mag * state->vx / v_mag;
+    state->ay_thrust = a_thrust_mag * state->vy / v_mag;
+    state->az_thrust = a_thrust_mag * state->vz / v_mag;
+    printf("Thrust: %f\n", a_thrust_mag);
+    printf("Thrust components: %f, %f, %f\n", state->ax_thrust, state->ay_thrust, state->az_thrust);
+    
 }
 
 #endif

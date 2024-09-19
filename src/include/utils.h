@@ -18,10 +18,10 @@ void cartcoords_to_sphercoords(double *cart_coords, double *spher_coords){
 
     // Calculate the radial coordinate
     spher_coords[0] = sqrt(cart_coords[0]*cart_coords[0] + cart_coords[1]*cart_coords[1] + cart_coords[2]*cart_coords[2]);
-    printf("r: %f\n", spher_coords[0]);
+
     // Calculate the longitudinal coordinate
     spher_coords[1] = atan2(cart_coords[1], cart_coords[0]);
-    printf("long: %f\n", spher_coords[1]);
+
     // Calculate the latitudinal coordinate
     spher_coords[2] = atan(cart_coords[2] / sqrt(cart_coords[0]*cart_coords[0] + cart_coords[1]*cart_coords[1]));
 }
