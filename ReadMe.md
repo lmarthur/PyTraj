@@ -13,10 +13,10 @@ TODO:
 - [X] Implement minuteman model in C
 - [X] Write tests for newtonian gravity module
 - [X] Implement newtonian gravity functions in C
-- [ ] Write tests for physics module
-- [ ] Implement physics functions in C
-- [ ] Write tests for stepper
-- [ ] Implement stepper in C
+- [X] Write tests for physics module
+- [X] Implement physics functions in C
+- [X] Write tests for stepper
+- [X] Implement stepper in C
 - [ ] Determine whether to implement integration in C or Python
 - [ ] Write tests for integrator
 - [ ] Implement integrator
