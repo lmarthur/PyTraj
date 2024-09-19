@@ -13,6 +13,7 @@ typedef struct booster{
     double maxdiam; // maximum diameter in meters
     double area; // reference area in square meters
     double total_burn_time; // total burn time in seconds
+    double bus_mass; // mass of the bus in kg
     double total_mass; // total mass in kg
     double c_d_0; // zero lift drag coefficient
     
@@ -138,7 +139,8 @@ booster init_mmiii_booster(){
     booster.num_stages = 3;
     booster.maxdiam = 1.7;
     booster.area = 2.2698;
-    booster.c_d_0 = 0.5;
+    booster.c_d_0 = 0.15;
+    booster.bus_mass = 1000; // mass of the bus/payload carrier in kg
 
     // Define stage parameters for a MMIII booster
     booster.wet_mass[0] = 23230;
@@ -164,6 +166,101 @@ booster init_mmiii_booster(){
 
     // Define total burn time and mass
     booster.total_burn_time = 0;
+    booster.total_mass = booster.bus_mass;
+    for (int i = 0; i < booster.num_stages; i++){
+        booster.total_burn_time += booster.burn_time[i];
+        booster.total_mass += booster.wet_mass[i];
+    }
+
+    return booster;
+}
+
+// Define a function to initialize a mmiii vehicle carrying a ballistic reentry vehicle
+vehicle init_mmiii_ballistic(){
+    /*
+    Initializes a MMIII vehicle carrying a ballistic reentry vehicle
+
+    OUTPUTS:
+    ----------
+        vehicle: vehicle
+            vehicle struct
+    */
+
+    vehicle vehicle;
+    // Define parameters for a MMIII vehicle carrying a ballistic reentry vehicle
+    vehicle.booster = init_mmiii_booster();
+    vehicle.rv = init_ballistic_rv();
+    vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
+    vehicle.current_mass = vehicle.total_mass;
+
+    return vehicle;
+}
+
+// Define a function to initialize a mmiii vehicle carrying a maneuverable reentry vehicle
+vehicle init_mmiii_swerve(){
+    /*
+    Initializes a MMIII vehicle carrying a maneuverable reentry vehicle
+
+    OUTPUTS:
+    ----------
+        vehicle: vehicle
+            vehicle struct
+    */
+
+    vehicle vehicle;
+    // Define parameters for a MMIII vehicle carrying a maneuverable reentry vehicle
+    vehicle.booster = init_mmiii_booster();
+    vehicle.rv = init_swerve_rv();
+    vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
+    vehicle.current_mass = vehicle.total_mass;
+
+    return vehicle;
+}
+
+// Define a function to initialize a mock booster
+booster init_mock_booster(){
+    /*
+    Initializes a mock booster
+
+    OUTPUTS:
+    ----------
+        booster: booster
+            booster struct
+    */
+
+    booster booster;
+    // Define parameters for a MMIII booster
+    strcpy(booster.name, "MMIII");
+    booster.num_stages = 3;
+    booster.maxdiam = 1.7;
+    booster.area = 2.2698;
+    booster.c_d_0 = 0.15;
+    booster.bus_mass = 0; // mass of the bus/payload carrier in kg
+
+    // Define stage parameters for a MMIII booster
+    booster.wet_mass[0] = 0;
+    booster.fuel_mass[0] = 0;
+    booster.dry_mass[0] = booster.wet_mass[0] - booster.fuel_mass[0];
+    booster.isp0[0] = 0;
+    booster.burn_time[0] = 0;
+    booster.fuel_burn_rate[0] = 0;
+
+    booster.wet_mass[1] = 0;
+    booster.fuel_mass[1] = 0;
+    booster.dry_mass[1] = booster.wet_mass[1] - booster.fuel_mass[1];
+    booster.isp0[1] = 0;
+    booster.burn_time[1] = 0;
+    booster.fuel_burn_rate[1] = 0;
+
+    booster.wet_mass[2] = 0;
+    booster.fuel_mass[2] = 0;
+    booster.dry_mass[2] = booster.wet_mass[2] - booster.fuel_mass[2];
+    booster.isp0[2] = 0;
+    booster.burn_time[2] = 0;
+    booster.fuel_burn_rate[2] = 0;
+
+    // Define total burn time and mass
+    booster.total_burn_time = 0;
     booster.total_mass = 0;
     for (int i = 0; i < booster.num_stages; i++){
         booster.total_burn_time += booster.burn_time[i];
@@ -171,6 +268,57 @@ booster init_mmiii_booster(){
     }
 
     return booster;
+}
+
+// Define a function to initialize a mock reentry vehicle
+rv init_mock_rv(){
+    /*
+    Initializes a mock reentry vehicle
+
+    OUTPUTS:
+    ----------
+        rv: rv
+            reentry vehicle struct
+    */
+
+    rv rv;
+    // Define parameters for a ballistic reentry vehicle
+    strcpy(rv.name, "Ball");
+    rv.maneuverability_flag = 0;
+    rv.rv_mass = 100;
+    rv.rv_length = 1;
+    rv.rv_radius = 1;
+    rv.rv_area = 1;
+    rv.c_d_0 = 0.1;
+    rv.c_d_alpha = 0;
+    rv.c_m_alpha = 0;
+    rv.c_m_q = 0;
+    rv.c_l_alpha = 0;
+    rv.flap_area = 0;
+    rv.x_flap = 0;
+    rv.x_com = 0;
+    rv.Iyy = 0;
+
+    return rv;
+}
+
+// Define a function to initialize a mock vehicle
+vehicle init_mock_vehicle(){
+    /*
+    Initializes a mock vehicle
+
+    OUTPUTS:
+    ----------
+        vehicle: vehicle
+            vehicle struct
+    */
+
+    vehicle vehicle;
+    vehicle.booster = init_mock_booster();
+    vehicle.rv = init_mock_rv();
+    vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
+
+    return vehicle;
 }
 
 void update_mass(vehicle *vehicle, double t){
@@ -207,6 +355,7 @@ void update_mass(vehicle *vehicle, double t){
         }
 
     }
+    
     return;
 }
 

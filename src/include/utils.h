@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include "physics.h"
 
 void cartcoords_to_sphercoords(double *cart_coords, double *spher_coords){
     /*

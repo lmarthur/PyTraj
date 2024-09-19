@@ -45,7 +45,7 @@ atm_cond get_exp_atm_cond(double altitude){
     atm_conditions.meridional_wind = 0;
     atm_conditions.zonal_wind = 0;
     atm_conditions.vertical_wind = 0;
-    
+
     return atm_conditions;
 }
 

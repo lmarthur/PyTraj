@@ -11,6 +11,8 @@
 typedef struct state{
     // State parameters
     double t; // time in seconds since launch
+    double theta_long; // thrust angle in the longitudinal direction measured from the x-z plane in radians
+    double theta_lat; // thrust angle in the latitudinal direction measured from the x-y plane in radians
     double x; // x-coordinate in meters
     double y; // y-coordinate in meters
     double z; // z-coordinate in meters
@@ -103,8 +105,7 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
         state->ax_drag = -a_drag_mag * v_rel[0] / v_rel_mag;
         state->ay_drag = -a_drag_mag * v_rel[1] / v_rel_mag;
         state->az_drag = -a_drag_mag * v_rel[2] / v_rel_mag;
-
-        return;
+        
     }
     else{
         // Calculate the drag acceleration components for a booster
@@ -113,9 +114,7 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
         state->ay_drag = -a_drag_mag * v_rel[1] / v_rel_mag;
         state->az_drag = -a_drag_mag * v_rel[2] / v_rel_mag;
 
-        return;
     }
-
 }
 
 void update_thrust(vehicle *vehicle, state *state){
@@ -149,18 +148,18 @@ void update_thrust(vehicle *vehicle, state *state){
 
     // Calculate the thrust acceleration components
     a_thrust_mag = vehicle->booster.isp0[stage] * vehicle->booster.fuel_burn_rate[stage] / vehicle->current_mass;
-    double v_mag = sqrt(state->vx*state->vx + state->vy*state->vy + state->vz*state->vz);
 
-    if (v_mag < 1e-2){
+    // Vertical thrust for the first 1 second of flight
+    if (state->t < 5){
         state->ax_thrust = a_thrust_mag;
         state->ay_thrust = 0;
         state->az_thrust = 0;
         return;
     }
 
-    state->ax_thrust = a_thrust_mag * state->vx / v_mag;
-    state->ay_thrust = a_thrust_mag * state->vy / v_mag;
-    state->az_thrust = a_thrust_mag * state->vz / v_mag;
+    state->ax_thrust = a_thrust_mag * cos(state->theta_long) * cos(state->theta_lat);
+    state->ay_thrust = a_thrust_mag * sin(state->theta_long) * cos(state->theta_lat);
+    state->az_thrust = a_thrust_mag * sin(state->theta_lat);
     
 }
 

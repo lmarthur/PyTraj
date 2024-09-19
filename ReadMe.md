@@ -17,12 +17,10 @@ TODO:
 - [X] Implement physics functions in C
 - [X] Write tests for stepper
 - [X] Implement stepper in C
-- [ ] Determine whether to implement integration in C or Python
-- [ ] Write tests for integrator
-- [ ] Implement integrator
-- [ ] Implement CFFI
+- [X] Determine whether to implement integration in C or Python
 - [ ] Write tests for flight module
-- [ ] Implement flight function in Python
+- [ ] Implement flight function
+- [ ] Implement CFFI
 - [ ] Write tests for monte carlo function
 - [ ] Implement monte carlo function in Python
 - [ ] Implement configuration file and parser

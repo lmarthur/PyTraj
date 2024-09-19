@@ -185,6 +185,8 @@ TEST(physics, update_thrust){
     state state;
 
     state.t = 1;
+    state.theta_long = 0;
+    state.theta_lat = 0;
     state.vx = 0;
     state.vy = 0;
     state.vz = 0;
@@ -202,18 +204,6 @@ TEST(physics, update_thrust){
     update_thrust(&vehicle, &state);
 
     REQUIRE_EQ(state.ax_thrust, 0);
-    REQUIRE_EQ(state.ay_thrust, 0);
-    REQUIRE_EQ(state.az_thrust, 0);
-
-    // Check that the thrust acceleration components are along the velocity vector
-    state.t = 1;
-    state.vx = 1;
-    state.vy = 0;
-    state.vz = 0;
-
-    update_thrust(&vehicle, &state);
-
-    REQUIRE_GT(state.ax_thrust, 0);
     REQUIRE_EQ(state.ay_thrust, 0);
     REQUIRE_EQ(state.az_thrust, 0);
 

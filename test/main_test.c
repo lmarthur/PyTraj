@@ -5,5 +5,6 @@
 #include "gravity_test.h"
 #include "physics_test.h"
 #include "utils_test.h"
+#include "trajectory_test.h"
 
 TAU_MAIN()
