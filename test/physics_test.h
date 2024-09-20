@@ -184,6 +184,20 @@ TEST(physics, update_thrust){
     vehicle.current_mass = vehicle.total_mass;
     state state;
 
+    state.t = 0;
+    state.theta_long = 0;
+    state.theta_lat = 0;
+    state.vx = 0;
+    state.vy = 0;
+    state.vz = 0;
+
+    update_thrust(&vehicle, &state);
+
+    // Check that the thrust acceleration components are along the x-axis
+    REQUIRE_GT(state.ax_thrust, 0);
+    REQUIRE_EQ(state.ay_thrust, 0);
+    REQUIRE_EQ(state.az_thrust, 0);
+
     state.t = 1;
     state.theta_long = 0;
     state.theta_lat = 0;

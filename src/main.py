@@ -1,7 +1,7 @@
 import numpy as np
 from ctypes import *
 
-so_file = "./build/pytrajlib.so"
+so_file = "./build/libPyTraj.so"
 pytraj = CDLL(so_file)
 
 # define the state struct
@@ -46,6 +46,7 @@ class booster(Structure):
         ("c_d_0", c_double),
         ("wet_mass", c_double * 3),
         ("fuel_mass", c_double * 3),
+        ("dry_mass", c_double * 3),
         ("isp0", c_double * 3),
         ("burn_time", c_double * 3),
         ("fuel_burn_rate", c_double * 3),
@@ -80,7 +81,7 @@ class vehicle(Structure):
         ("current_mass", c_double),
     ]
 
-def fly(initial_state, booster_type, rv_type, time_step=1.0, traj_output=False):
+def fly(initial_state, booster_type, rv_type, time_step=1.0, traj_output=0):
     """
     Python wrapper for the fly function in the C library. This function flies the vehicle.
     INPUTS:
@@ -102,9 +103,9 @@ def fly(initial_state, booster_type, rv_type, time_step=1.0, traj_output=False):
     pytraj.fly.restype = state
 
     # set the argument types
-    pytraj.fly.argtypes = [POINTER(state), POINTER(booster), POINTER(rv), c_double]
+    pytraj.fly.argtypes = [POINTER(state), POINTER(booster), POINTER(rv), c_double, c_int]
 
-    final_state = pytraj.fly(initial_state, booster_type, rv_type, c_double(time_step))
+    final_state = pytraj.fly(initial_state, booster_type, rv_type, c_double(time_step), c_int(traj_output))
 
     return final_state
 
@@ -114,19 +115,19 @@ pytraj.init_ballistic_rv.restype = rv
 
 print("Initializing...")
 initial_state = pytraj.init_state()
+# print the initial state
+print("Initial state:")
+print("t: ", initial_state.t, " x: ", initial_state.x, " y: ", initial_state.y, " z: ", initial_state.z, " vx: ", initial_state.vx, " vy: ", initial_state.vy, " vz: ", initial_state.vz, " ax_total: ", initial_state.ax_total, " ay_total: ", initial_state.ay_total, " az_total: ", initial_state.az_total)
+# set the initial launch angle
+# initial_state.theta_long = c_double(np.pi/4)
+
 print("State initialized.")
+
 booster_type = pytraj.init_mmiii_booster()
 print("Booster initialized.")
 rv_type = pytraj.init_ballistic_rv()
 print("Vehicle initialized.")
-
 print("Flying...")
-final_state = fly(initial_state, booster_type, rv_type)
+final_state = fly(initial_state, booster_type, rv_type, traj_output=1)
 
-print("Final state:")
-print("t: ", final_state.t)
-print("theta_long: ", final_state.theta_long)
-print("theta_lat: ", final_state.theta_lat)
-print("x: ", final_state.x)
-print("y: ", final_state.y)
-print("z: ", final_state.z)
+print("Final state:", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_total, final_state.ay_total, final_state.az_total)

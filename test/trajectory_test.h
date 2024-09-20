@@ -71,7 +71,7 @@ TEST(trajectory, fly){
     // MMIII ballistic vehicle launched along the equator
     initial_state = init_state();
     initial_state.theta_long = M_PI/4;
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
+    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 1);
 
     REQUIRE_GT(final_state.t, 0);
     REQUIRE_LT(fabs(sqrt(final_state.x*final_state.x + final_state.y*final_state.y) - 6371e3), 1);

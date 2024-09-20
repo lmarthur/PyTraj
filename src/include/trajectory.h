@@ -135,13 +135,10 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
         atm_cond atm_cond = get_exp_atm_cond(old_altitude);
         // Update the thrust of the vehicle
         update_thrust(&vehicle, &new_state);
-
         // Update the gravity acceleration components
         update_gravity(&grav, &new_state);
-
         // Update the drag acceleration components
         update_drag(&vehicle, &atm_cond, &new_state);
-
         // Calculate the total acceleration components
         new_state.ax_total = new_state.ax_grav + new_state.ax_drag + new_state.ax_lift + new_state.ax_thrust;
         new_state.ay_total = new_state.ay_grav + new_state.ay_drag + new_state.ay_lift + new_state.ay_thrust;
