@@ -149,7 +149,7 @@ void update_thrust(vehicle *vehicle, state *state){
     // Calculate the thrust acceleration components
     a_thrust_mag = vehicle->booster.isp0[stage] * vehicle->booster.fuel_burn_rate[stage] / vehicle->current_mass;
 
-    // Vertical thrust for the first 1 second of flight
+    // Vertical thrust for the beginning of the flight
     if (state->t < 5){
         state->ax_thrust = a_thrust_mag;
         state->ay_thrust = 0;

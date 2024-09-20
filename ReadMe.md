@@ -41,5 +41,4 @@ TODO:
 - [ ] Write function for parameter scanning
 - [ ] Write function to generate sensitivity plots
 
-BUG REPORTS:
-- [ ] Vertically launched missiles fly less high than missiles launched at an angle
+BUG REPORTS: None

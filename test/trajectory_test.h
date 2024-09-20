@@ -40,10 +40,13 @@ TEST(trajectory, fly){
     // Mock vehicle with no thrust dropped from 10m above the surface
     state initial_state = init_state();
     initial_state.x += 10;
-    state final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1);
+    state final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
     
     REQUIRE_LT(fabs(final_state.t - 1), 1);
     REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
+    REQUIRE_EQ(final_state.ax_thrust, 0);
+    REQUIRE_EQ(final_state.ay_thrust, 0);
+    REQUIRE_EQ(final_state.az_thrust, 0);
     
 
     // Mock vehicle with no thrust launched from the surface
@@ -51,14 +54,14 @@ TEST(trajectory, fly){
     initial_state.vx = 10;
     initial_state.vy = 10;
     initial_state.vz = 10;
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1);
+    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
 
     REQUIRE_LT(fabs(final_state.t - 2), 1);
 
     // MMIII ballistic vehicle launched vertically from the surface
     vehicle = init_mmiii_ballistic();
     initial_state = init_state();
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 5);
+    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
 
     REQUIRE_GT(final_state.t, 0);
     REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
@@ -68,8 +71,11 @@ TEST(trajectory, fly){
     // MMIII ballistic vehicle launched along the equator
     initial_state = init_state();
     initial_state.theta_long = M_PI/4;
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1);
+    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
 
     REQUIRE_GT(final_state.t, 0);
-    
+    REQUIRE_LT(fabs(sqrt(final_state.x*final_state.x + final_state.y*final_state.y) - 6371e3), 1);
+    REQUIRE_NE(final_state.ax_total, 0);
+    REQUIRE_NE(final_state.ay_total, 0);
+
 }
