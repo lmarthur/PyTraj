@@ -82,7 +82,7 @@ state impact_linterp(state *state_0, state *state_1){
     return impact_state;
 }
 
-state fly(state *initial_state, vehicle *vehicle, double time_step){
+state fly(state *initial_state, booster *booster, rv *rv, double time_step){
     /*
     Function that simulates the flight of a vehicle, updating the state of the vehicle at each time step
     
@@ -105,17 +105,25 @@ state fly(state *initial_state, vehicle *vehicle, double time_step){
     state old_state = *initial_state;
     state new_state = *initial_state;
 
+    // Initialize the vehicle
+    // TODO: Replace this with an init_vehicle(booster, rv) function
+    vehicle vehicle;
+    vehicle.booster = *booster;
+    vehicle.rv = *rv;
+    vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
+    vehicle.current_mass = vehicle.total_mass;
+
     // Begin the integration loop
     for (int i = 0; i < max_steps; i++){
         // Get the atmospheric conditions
         double old_altitude = sqrt(old_state.x*old_state.x + old_state.y*old_state.y + old_state.z*old_state.z) - 6371e3;
         atm_cond atm_cond = get_exp_atm_cond(old_altitude);
         // Update the thrust of the vehicle
-        update_thrust(vehicle, &old_state);
+        update_thrust(&vehicle, &old_state);
         // Update the gravity acceleration components
         update_gravity(&grav, &old_state);
         // Update the drag acceleration components
-        update_drag(vehicle, &atm_cond, &old_state);
+        update_drag(&vehicle, &atm_cond, &old_state);
         // Calculate the total acceleration components
         new_state.ax_total = old_state.ax_grav + old_state.ax_drag + old_state.ax_lift + old_state.ax_thrust;
         new_state.ay_total = old_state.ay_grav + old_state.ay_drag + old_state.ay_lift + old_state.ay_thrust;
@@ -123,7 +131,7 @@ state fly(state *initial_state, vehicle *vehicle, double time_step){
         // Perform a Runge-Kutta step
         rk4step(&new_state, time_step);
         // Update the mass of the vehicle
-        update_mass(vehicle, old_state.t);
+        update_mass(&vehicle, old_state.t);
         // Check if the vehicle has impacted the Earth
         double new_altitude = sqrt(new_state.x*new_state.x + new_state.y*new_state.y + new_state.z*new_state.z) - 6371e3;
         if (new_altitude < 0){
@@ -137,8 +145,7 @@ state fly(state *initial_state, vehicle *vehicle, double time_step){
     }
     
     printf("Warning: Maximum number of steps reached with no impact\n");
-    // printf("x_min: %f\n", x_min);
-    // printf("x_max: %f\n", x_max);
+
     return new_state;
 }
 

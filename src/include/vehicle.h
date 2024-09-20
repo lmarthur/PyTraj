@@ -185,7 +185,6 @@ vehicle init_mmiii_ballistic(){
         vehicle: vehicle
             vehicle struct
     */
-
     vehicle vehicle;
     // Define parameters for a MMIII vehicle carrying a ballistic reentry vehicle
     vehicle.booster = init_mmiii_booster();

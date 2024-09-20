@@ -18,9 +18,9 @@ TODO:
 - [X] Write tests for stepper
 - [X] Implement stepper in C
 - [X] Determine whether to implement integration in C or Python
-- [ ] Write tests for flight module
-- [ ] Implement flight function
-- [ ] Implement CFFI
+- [X] Write tests for flight module
+- [X] Implement flight function
+- [X] Implement ctypes wrapper for C functions
 - [ ] Write tests for monte carlo function
 - [ ] Implement monte carlo function in Python
 - [ ] Implement configuration file and parser
@@ -40,3 +40,6 @@ TODO:
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning
 - [ ] Write function to generate sensitivity plots
+
+BUG REPORTS:
+- [ ] Vertically launched missiles fly less high than missiles launched at an angle
