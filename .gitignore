@@ -7,3 +7,6 @@
 # build output
 build/
 test/build/
+
+# output files
+output/
