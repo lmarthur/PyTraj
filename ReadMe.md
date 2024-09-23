@@ -21,12 +21,14 @@ TODO:
 - [X] Write tests for flight module
 - [X] Implement flight function
 - [X] Implement ctypes wrapper for C functions
+- [X] Implement output file writer
+- [X] Implement plotting functions
+- [X] Write scripts for compiling, testing, and running
+- [ ] Implement configuration file and parser
+- [ ] Write tests for flight initialization
+- [ ] Implement flight initialization function
 - [ ] Write tests for monte carlo function
 - [ ] Implement monte carlo function in Python
-- [ ] Implement configuration file and parser
-- [ ] Implement output file writer
-- [ ] Implement plotting functions
-- [ ] Write scripts for compiling, testing, and running
 - [ ] Write analysis suite to fit distributions to accuracy data
 - [ ] Write tests for guidance module
 - [ ] Implement guidance functions in C

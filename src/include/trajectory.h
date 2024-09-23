@@ -111,15 +111,6 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
     state old_state = *initial_state;
     state new_state = *initial_state;
 
-    // Create a .txt file to store the trajectory data
-    FILE *traj_file;
-    if (traj_output == 1){
-        traj_file = fopen("./output/trajectory.txt", "w");
-        fprintf(traj_file, "t, x, y, z, vx, vy, vz, ax_grav, ay_grav, az_grav, ax_drag, ay_drag, az_drag, ax_lift, ay_lift, az_lift, ax_thrust, ay_thrust, az_thrust, ax_total, ay_total, az_total\n");
-        // Write the initial state to the trajectory file
-        fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total);
-    }
-
     // Initialize the vehicle
     // TODO: Replace this with an init_vehicle(booster, rv) function
     vehicle vehicle;
@@ -127,6 +118,17 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
     vehicle.rv = *rv;
     vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
     vehicle.current_mass = vehicle.total_mass;
+
+    // Create a .txt file to store the trajectory data
+    FILE *traj_file;
+    if (traj_output == 1){
+        traj_file = fopen("./output/trajectory.txt", "w");
+        fprintf(traj_file, "t, x, y, z, vx, vy, vz, ax_grav, ay_grav, az_grav, ax_drag, ay_drag, az_drag, ax_lift, ay_lift, az_lift, ax_thrust, ay_thrust, az_thrust, ax_total, ay_total, az_total, current_mass\n");
+        // Write the initial state to the trajectory file
+        fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total, vehicle.current_mass);
+    }
+
+    
 
     // Begin the integration loop
     for (int i = 0; i < max_steps; i++){
@@ -155,7 +157,7 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
             state final_state = impact_linterp(&old_state, &new_state);
             if (traj_output == 1){
                 // Write the final state to the trajectory file
-                fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_grav, final_state.ay_grav, final_state.az_grav, final_state.ax_drag, final_state.ay_drag, final_state.az_drag, final_state.ax_lift, final_state.ay_lift, final_state.az_lift, final_state.ax_thrust, final_state.ay_thrust, final_state.az_thrust, final_state.ax_total, final_state.ay_total, final_state.az_total);
+                fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_grav, final_state.ay_grav, final_state.az_grav, final_state.ax_drag, final_state.ay_drag, final_state.az_drag, final_state.ax_lift, final_state.ay_lift, final_state.az_lift, final_state.ax_thrust, final_state.ay_thrust, final_state.az_thrust, final_state.ax_total, final_state.ay_total, final_state.az_total, vehicle.current_mass);
                 fclose(traj_file);
             }
 
@@ -163,7 +165,7 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
         }
         // output the trajectory data
         if (traj_output == 1){
-            fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_state.t, new_state.x, new_state.y, new_state.z, new_state.vx, new_state.vy, new_state.vz, new_state.ax_grav, new_state.ay_grav, new_state.az_grav, new_state.ax_drag, new_state.ay_drag, new_state.az_drag, new_state.ax_lift, new_state.ay_lift, new_state.az_lift, new_state.ax_thrust, new_state.ay_thrust, new_state.az_thrust, new_state.ax_total, new_state.ay_total, new_state.az_total);
+            fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_state.t, new_state.x, new_state.y, new_state.z, new_state.vx, new_state.vy, new_state.vz, new_state.ax_grav, new_state.ay_grav, new_state.az_grav, new_state.ax_drag, new_state.ay_drag, new_state.az_drag, new_state.ax_lift, new_state.ay_lift, new_state.az_lift, new_state.ax_thrust, new_state.ay_thrust, new_state.az_thrust, new_state.ax_total, new_state.ay_total, new_state.az_total, vehicle.current_mass);
         }
         // Update the old state
         old_state = new_state;

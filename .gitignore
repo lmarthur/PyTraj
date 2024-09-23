@@ -10,3 +10,6 @@ test/build/
 
 # output files
 output/
+
+# pycache
+*/__pycache__/

@@ -119,7 +119,7 @@ initial_state = pytraj.init_state()
 print("Initial state:")
 print("t: ", initial_state.t, " x: ", initial_state.x, " y: ", initial_state.y, " z: ", initial_state.z, " vx: ", initial_state.vx, " vy: ", initial_state.vy, " vz: ", initial_state.vz, " ax_total: ", initial_state.ax_total, " ay_total: ", initial_state.ay_total, " az_total: ", initial_state.az_total)
 # set the initial launch angle
-# initial_state.theta_long = c_double(np.pi/4)
+initial_state.theta_long = c_double(np.pi/4)
 
 print("State initialized.")
 

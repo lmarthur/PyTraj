@@ -11,11 +11,15 @@ cmake -S ./test -B test/build -Wno-dev
 make -C ./test/build
 
 # Run the tests
-echo "Running the tests..."
+echo "Running the library tests..."
 ./test/build/PyTraj_test
 
 # Compile the shared library
 echo "Compiling the shared library..."
 cc -shared -fPIC -o ./build/libPyTraj.so ./src/main.c
+
+# Test the package
+echo "Testing the package..."
+pytest ./test/
 
 echo "Done."
