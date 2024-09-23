@@ -4,6 +4,18 @@
 #include <math.h>
 #include <stdio.h>
 
+typedef struct runparams{
+    int num_runs; // number of Monte Carlo runs
+    int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
+
+    int grav_error; // flag to include gravitational perturbations
+    int atm_error; // flag to include atmospheric perturbations
+    int gnss_nav; // flag to include GNSS navigation
+    int ins_nav; // flag to include INS navigation
+    int filter_type; // filter type (0: None, 1: KF, 2: EKF)
+
+} runparams;
+
 void cartcoords_to_sphercoords(double *cart_coords, double *spher_coords){
     /*
     Converts Cartesian coordinates to spherical coordinates

@@ -1,8 +1,21 @@
 import numpy as np
 from ctypes import *
+import configparser
 
 so_file = "./build/libPyTraj.so"
 pytraj = CDLL(so_file)
+
+# define the runparam struct
+class runparams(Structure):
+    _fields_ = [
+        ("num_runs", c_int),
+        ("rv_type", c_int), # 0 for ballistic, 1 for maneuverable
+        ("grav_error", c_int),
+        ("atm_error", c_int),
+        ("gnss_nav", c_int),
+        ("ins_nav", c_int),
+        ("filter_type", c_int), # filter type (0: None, 1: KF, 2: EKF)
+    ]
 
 # define the state struct
 class state(Structure):
@@ -84,6 +97,7 @@ class vehicle(Structure):
 def fly(initial_state, booster_type, rv_type, time_step=1.0, traj_output=0):
     """
     Python wrapper for the fly function in the C library. This function flies the vehicle.
+
     INPUTS:
     ----------
         initial_state: state * (pointer to a state struct)
@@ -108,6 +122,37 @@ def fly(initial_state, booster_type, rv_type, time_step=1.0, traj_output=0):
     final_state = pytraj.fly(initial_state, booster_type, rv_type, c_double(time_step), c_int(traj_output))
 
     return final_state
+
+def read_config(config_file):
+    """
+    Function to read the .toml configuration file and return the run parameters.
+
+    INPUTS:
+    ----------
+        config_file: str
+            The path to the configuration file.
+    OUTPUTS:
+    ----------
+        run_params: runparams
+            The run parameters.
+    """
+    # read the configuration file
+    config = configparser.ConfigParser()
+    config.read(config_file)
+
+    # create the run parameters struct
+    run_params = runparams()
+
+    # set the run parameters
+    run_params.num_runs = int(config['RUN']['num_runs'])
+    run_params.grav_error = int(config['FLIGHT']['grav_error'])
+    run_params.atm_error = int(config['FLIGHT']['atm_error'])
+    run_params.gnss_nav = int(config['FLIGHT']['gnss_nav'])
+    run_params.ins_nav = int(config['FLIGHT']['ins_nav'])
+    run_params.rv_type = int(config['VEHICLE']['rv_type'])
+
+
+    return run_params
 
 def mc_run():
     """

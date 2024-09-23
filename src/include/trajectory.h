@@ -9,8 +9,6 @@
 #include "atmosphere.h"
 #include "physics.h"
 
-
-
 state init_state(){
     /*
     Initializes a state struct at the launch site with zero velocity and acceleration

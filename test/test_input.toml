@@ -1,0 +1,12 @@
+[RUN]
+num_runs = 100
+
+[FLIGHT]
+grav_error = 0
+atm_error = 0
+gnss_nav = 0
+ins_nav = 0
+filter_type = 0
+
+[VEHICLE]
+rv_type = 0
