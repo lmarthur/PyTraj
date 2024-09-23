@@ -24,11 +24,11 @@ TODO:
 - [X] Implement output file writer
 - [X] Implement plotting functions
 - [X] Write scripts for compiling, testing, and running
-- [ ] Implement configuration file and parser
-- [ ] Write tests for flight initialization
-- [ ] Implement flight initialization function
+- [X] Implement configuration file and parser
 - [ ] Write tests for monte carlo function
 - [ ] Implement monte carlo function in Python
+- [ ] Write tests for flight initialization
+- [ ] Implement flight initialization function
 - [ ] Write analysis suite to fit distributions to accuracy data
 - [ ] Write tests for guidance module
 - [ ] Implement guidance functions in C

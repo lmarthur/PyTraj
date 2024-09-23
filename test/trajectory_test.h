@@ -39,6 +39,7 @@ TEST(trajectory, fly){
 
     // Mock vehicle with no thrust dropped from 10m above the surface
     state initial_state = init_state();
+    initial_state.theta_long = 0;
     initial_state.x += 10;
     state final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
     
@@ -51,6 +52,7 @@ TEST(trajectory, fly){
 
     // Mock vehicle with no thrust launched from the surface
     initial_state = init_state();
+    initial_state.theta_long = 0;
     initial_state.vx = 10;
     initial_state.vy = 10;
     initial_state.vz = 10;
@@ -61,6 +63,7 @@ TEST(trajectory, fly){
     // MMIII ballistic vehicle launched vertically from the surface
     vehicle = init_mmiii_ballistic();
     initial_state = init_state();
+    initial_state.theta_long = 0;
     final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
 
     REQUIRE_GT(final_state.t, 0);

@@ -8,6 +8,7 @@
 #include "gravity.h"
 #include "atmosphere.h"
 #include "physics.h"
+#include "input.h"
 
 state init_state(){
     /*
@@ -24,7 +25,7 @@ state init_state(){
     state.x = 6371e3;
     state.y = 0;
     state.z = 0;
-    state.theta_long = 0;
+    state.theta_long = launch_angle;
     state.theta_lat = 0;
     state.vx = 0;
     state.vy = 0;
@@ -127,8 +128,6 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
         // Write the initial state to the trajectory file
         fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total, vehicle.current_mass);
     }
-
-    
 
     // Begin the integration loop
     for (int i = 0; i < max_steps; i++){
