@@ -26,3 +26,12 @@ def test_fly():
     assert final_state.vx < 0
     assert final_state.vy == 0
     assert final_state.vz == 0
+
+def test_mc_run():
+    """
+    Test suite for the mc_run function
+    """
+    
+    # Turn off all random errors and verify that the first two runs are identical
+
+    # Turn on all random errors and verify that the first two runs are different

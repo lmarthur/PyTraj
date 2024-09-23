@@ -109,6 +109,22 @@ def fly(initial_state, booster_type, rv_type, time_step=1.0, traj_output=0):
 
     return final_state
 
+def mc_run():
+    """
+    Function to run a Monte Carlo simulation of the vehicle flight by calling the fly function with random error injections.
+    """
+
+    # set the return types
+    pytraj.init_state.restype = state
+    pytraj.init_mmiii_booster.restype = booster
+    pytraj.init_ballistic_rv.restype = rv
+
+    # initialize the run parameters and utilities
+
+    # iterate over the number of Monte Carlo runs
+
+    # output the results
+
 pytraj.init_state.restype = state
 pytraj.init_mmiii_booster.restype = booster
 pytraj.init_ballistic_rv.restype = rv

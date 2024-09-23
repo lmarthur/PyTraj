@@ -8,7 +8,8 @@
 #include "gravity.h"
 #include "atmosphere.h"
 #include "physics.h"
-#include "input.h"
+
+
 
 state init_state(){
     /*
@@ -25,7 +26,7 @@ state init_state(){
     state.x = 6371e3;
     state.y = 0;
     state.z = 0;
-    state.theta_long = launch_angle;
+    state.theta_long = 0;
     state.theta_lat = 0;
     state.vx = 0;
     state.vy = 0;
