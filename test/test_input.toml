@@ -1,5 +1,7 @@
 [RUN]
 num_runs = 100
+time_step = 1.0
+traj_output = 0
 
 [FLIGHT]
 grav_error = 0

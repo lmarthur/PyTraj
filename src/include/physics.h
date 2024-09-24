@@ -91,6 +91,7 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
     double v_rel[3] = {state->vx - cart_wind[0], state->vy - cart_wind[1], state->vz - cart_wind[2]};
 
     double v_rel_mag = sqrt(v_rel[0]*v_rel[0] + v_rel[1]*v_rel[1] + v_rel[2]*v_rel[2]);
+    
     if (v_rel_mag < 1e-2){
         state->ax_drag = 0;
         state->ay_drag = 0;

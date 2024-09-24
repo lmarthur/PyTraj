@@ -36,12 +36,16 @@ TEST(trajectory, impact_linterp){
 TEST(trajectory, fly){
     // TODO: clean up this test to amend deprecated vehicle initialization
     vehicle vehicle = init_mock_vehicle();
-
+    runparams run_params;
+    // Set the run parameters
+    run_params.rv_type = 0;
+    run_params.traj_output = 0;
+    run_params.time_step = 1;
     // Mock vehicle with no thrust dropped from 10m above the surface
     state initial_state = init_state();
     initial_state.theta_long = 0;
     initial_state.x += 10;
-    state final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
+    state final_state = fly(&run_params, &initial_state, &vehicle.booster, &vehicle.rv);
     
     REQUIRE_LT(fabs(final_state.t - 1), 1);
     REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
@@ -56,7 +60,7 @@ TEST(trajectory, fly){
     initial_state.vx = 10;
     initial_state.vy = 10;
     initial_state.vz = 10;
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
+    final_state = fly(&run_params, &initial_state, &vehicle.booster, &vehicle.rv);
 
     REQUIRE_LT(fabs(final_state.t - 2), 1);
 
@@ -64,7 +68,7 @@ TEST(trajectory, fly){
     vehicle = init_mmiii_ballistic();
     initial_state = init_state();
     initial_state.theta_long = 0;
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 0);
+    final_state = fly(&run_params, &initial_state, &vehicle.booster, &vehicle.rv);
 
     REQUIRE_GT(final_state.t, 0);
     REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
@@ -74,7 +78,9 @@ TEST(trajectory, fly){
     // MMIII ballistic vehicle launched along the equator
     initial_state = init_state();
     initial_state.theta_long = M_PI/4;
-    final_state = fly(&initial_state, &vehicle.booster, &vehicle.rv, 1, 1);
+    run_params.traj_output = 1;
+
+    final_state = fly(&run_params, &initial_state, &vehicle.booster, &vehicle.rv);
 
     REQUIRE_GT(final_state.t, 0);
     REQUIRE_LT(fabs(sqrt(final_state.x*final_state.x + final_state.y*final_state.y) - 6371e3), 1);

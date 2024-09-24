@@ -6,6 +6,8 @@
 
 typedef struct runparams{
     int num_runs; // number of Monte Carlo runs
+    double time_step; // time step in seconds
+    int traj_output; // flag to output trajectory data
     int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
 
     int grav_error; // flag to include gravitational perturbations

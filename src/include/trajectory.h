@@ -82,22 +82,20 @@ state impact_linterp(state *state_0, state *state_1){
     return impact_state;
 }
 
-state fly(state *initial_state, booster *booster, rv *rv, double time_step, int traj_output){
+state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv){
     /*
     Function that simulates the flight of a vehicle, updating the state of the vehicle at each time step
     
     INPUTS:
     ----------
+        run_params: runparams *
+            pointer to the run parameters struct
         initial_state: state *
             pointer to the initial state of the vehicle
         booster: booster *
             pointer to the booster struct
         rv: rv *
             pointer to the reentry vehicle struct
-        time_step: double
-            time step in seconds
-        traj_output: int
-            flag to output trajectory data
 
     OUTPUTS:
     ----------
@@ -118,6 +116,9 @@ state fly(state *initial_state, booster *booster, rv *rv, double time_step, int 
     vehicle.rv = *rv;
     vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
     vehicle.current_mass = vehicle.total_mass;
+
+    int traj_output = run_params->traj_output;
+    double time_step = run_params->time_step;
 
     // Create a .txt file to store the trajectory data
     FILE *traj_file;
