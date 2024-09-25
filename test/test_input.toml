@@ -1,5 +1,5 @@
 [RUN]
-num_runs = 100
+num_runs = 2
 time_step = 1.0
 traj_output = 0
 
@@ -12,3 +12,9 @@ filter_type = 0
 
 [VEHICLE]
 rv_type = 0
+
+[ERRORPARAMS]
+initial_x_error = 0.0
+initial_pos_error = 0.0
+initial_vel_error = 0.0
+initial_angle_error = 0.0

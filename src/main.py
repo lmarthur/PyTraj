@@ -11,12 +11,19 @@ class runparams(Structure):
         ("num_runs", c_int),
         ("time_step", c_double),
         ("traj_output", c_int),
-        ("rv_type", c_int), # 0 for ballistic, 1 for maneuverable
+        
         ("grav_error", c_int),
         ("atm_error", c_int),
         ("gnss_nav", c_int),
         ("ins_nav", c_int),
         ("filter_type", c_int), # filter type (0: None, 1: KF, 2: EKF)
+
+        ("rv_type", c_int), # 0 for ballistic, 1 for maneuverable
+
+        ("initial_x_error", c_double),
+        ("initial_pos_error", c_double),
+        ("initial_vel_error", c_double),
+        ("initial_angle_error", c_double),
     ]
 
 # define the state struct
@@ -147,16 +154,58 @@ def read_config(config_file):
     run_params.num_runs = c_int(int(config['RUN']['num_runs']))
     run_params.time_step = c_double(float(config['RUN']['time_step']))
     run_params.traj_output = c_int(int(config['RUN']['traj_output']))
+    # set the flight parameters
     run_params.grav_error = c_int(int(config['FLIGHT']['grav_error']))
     run_params.atm_error = c_int(int(config['FLIGHT']['atm_error']))
     run_params.gnss_nav = c_int(int(config['FLIGHT']['gnss_nav']))
     run_params.ins_nav = c_int(int(config['FLIGHT']['ins_nav']))
-    run_params.rv_type = c_int(int(config['VEHICLE']['rv_type']))
+    run_params.filter_type = c_int(int(config['FLIGHT']['filter_type']))
 
+    # set the vehicle parameters
+    run_params.rv_type = c_int(int(config['VEHICLE']['rv_type']))
+    
+    # set the error parameters
+    run_params.initial_x_error = c_double(float(config['ERRORPARAMS']['initial_x_error']))
+    run_params.initial_pos_error = c_double(float(config['ERRORPARAMS']['initial_pos_error']))
+    run_params.initial_vel_error = c_double(float(config['ERRORPARAMS']['initial_vel_error']))
+    run_params.initial_angle_error = c_double(float(config['ERRORPARAMS']['initial_angle_error']))
 
     return run_params
 
-def mc_run(config_file):
+def init_state(run_params):
+    """
+    Function to initialize the state of the vehicle.
+
+    INPUTS:
+    ----------
+        run_params: runparams
+            The run parameters.
+    OUTPUTS:
+    ----------
+        initial_state: state
+            The initial state of the vehicle.
+    """
+    # Generic initialization of the state
+    initial_state = pytraj.init_state()
+
+    print("initial pos error in init_state:", run_params.initial_pos_error)
+    # tune the initial state based on the run parameters
+    initial_state.x += np.random.normal(0, run_params.initial_x_error)
+    initial_state.y += np.random.normal(0, run_params.initial_pos_error)
+    initial_state.z += np.random.normal(0, run_params.initial_pos_error)
+
+    initial_state.vy += np.random.normal(0, run_params.initial_vel_error)
+    initial_state.vz += np.random.normal(0, run_params.initial_vel_error)
+
+    # set the initial launch angle
+    # TODO: add random error to the launch angle
+    initial_state.theta_long = c_double(np.pi/4)
+
+    print("Initial state: ", initial_state.t, initial_state.x, initial_state.y, initial_state.z, initial_state.vx, initial_state.vy, initial_state.vz, initial_state.ax_total, initial_state.ay_total, initial_state.az_total)
+    
+    return initial_state
+
+def mc_run(run_params):
     """
     Function to run a Monte Carlo simulation of the vehicle flight by calling the fly function with random error injections.
     
@@ -173,22 +222,36 @@ def mc_run(config_file):
     pytraj.init_ballistic_rv.restype = rv
 
     # initialize the run parameters and utilities
-    run_params = read_config(config_file)
+    
     num_runs = run_params.num_runs
-    print("num_runs: ", num_runs)
+
+    # initialize the booster and rv types
+    booster_type = pytraj.init_mmiii_booster()
+    rv_type = pytraj.init_ballistic_rv()
+
+    # instantiate the runresults numpy array
+    run_results = np.zeros((num_runs, 7))
 
     # iterate over the number of Monte Carlo runs
     for i in range(num_runs):
 
+        # initialize the state
+        initial_state = init_state(run_params)
+        print("Initial state: ", initial_state.t, initial_state.x, initial_state.y, initial_state.z, initial_state.vx, initial_state.vy, initial_state.vz, initial_state.ax_total, initial_state.ay_total, initial_state.az_total)
         # fly the vehicle
         final_state = fly(run_params, initial_state, booster_type, rv_type)
 
-        # print the final state
-        print("Final state:")
-        print("t: ", final_state.t, " x: ", final_state.x, " y: ", final_state.y, " z: ", final_state.z, " vx: ", final_state.vx, " vy: ", final_state.vy, " vz: ", final_state.vz, " ax_total: ", final_state.ax_total, " ay_total: ", final_state.ay_total, " az_total: ", final_state.az_total)
-    
-    # output the results
+        # store the final state in the run results array
+        run_results[i] = [final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz]
 
+    # output the results to a text file
+    np.savetxt("./output/run_results.txt", run_results)
+
+    return run_results
+
+
+# Code block to run the fly function
+"""
 pytraj.init_state.restype = state
 pytraj.init_mmiii_booster.restype = booster
 pytraj.init_ballistic_rv.restype = rv
@@ -212,3 +275,9 @@ print("Flying...")
 final_state = fly(run_params, initial_state, booster_type, rv_type)
 
 print("Final state:", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_total, final_state.ay_total, final_state.az_total)
+"""
+
+# Code block to run the Monte Carlo simulation
+config_file = "./test/test_input.toml"
+run_params = read_config(config_file)
+mc_run(run_params)

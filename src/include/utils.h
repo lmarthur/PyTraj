@@ -8,13 +8,19 @@ typedef struct runparams{
     int num_runs; // number of Monte Carlo runs
     double time_step; // time step in seconds
     int traj_output; // flag to output trajectory data
-    int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
 
     int grav_error; // flag to include gravitational perturbations
     int atm_error; // flag to include atmospheric perturbations
     int gnss_nav; // flag to include GNSS navigation
     int ins_nav; // flag to include INS navigation
     int filter_type; // filter type (0: None, 1: KF, 2: EKF)
+
+    int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
+
+    double initial_x_error; // initial x-error in meters
+    double initial_pos_error; // initial position error in meters
+    double initial_vel_error; // initial velocity error in meters per second
+    double initial_angle_error; // initial angle error in radians
 
 } runparams;
 
