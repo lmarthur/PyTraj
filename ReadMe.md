@@ -25,8 +25,8 @@ TODO:
 - [X] Implement plotting functions
 - [X] Write scripts for compiling, testing, and running
 - [X] Implement configuration file and parser
-- [ ] Write tests for monte carlo function
-- [ ] Implement monte carlo function in Python
+- [X] Write tests for monte carlo function
+- [X] Implement monte carlo function in Python
 - [ ] Write tests for flight initialization
 - [ ] Implement flight initialization function
 - [ ] Write analysis suite to fit distributions to accuracy data

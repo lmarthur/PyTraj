@@ -11,6 +11,9 @@ class runparams(Structure):
         ("num_runs", c_int),
         ("time_step", c_double),
         ("traj_output", c_int),
+        ("x_aim", c_double),
+        ("y_aim", c_double),
+        ("z_aim", c_double),
         
         ("grav_error", c_int),
         ("atm_error", c_int),
@@ -154,6 +157,10 @@ def read_config(config_file):
     run_params.num_runs = c_int(int(config['RUN']['num_runs']))
     run_params.time_step = c_double(float(config['RUN']['time_step']))
     run_params.traj_output = c_int(int(config['RUN']['traj_output']))
+    run_params.x_aim = c_double(float(config['RUN']['x_aim']))
+    run_params.y_aim = c_double(float(config['RUN']['y_aim']))
+    run_params.z_aim = c_double(float(config['RUN']['z_aim']))
+
     # set the flight parameters
     run_params.grav_error = c_int(int(config['FLIGHT']['grav_error']))
     run_params.atm_error = c_int(int(config['FLIGHT']['atm_error']))
@@ -188,7 +195,6 @@ def init_state(run_params):
     # Generic initialization of the state
     initial_state = pytraj.init_state()
 
-    print("initial pos error in init_state:", run_params.initial_pos_error)
     # tune the initial state based on the run parameters
     initial_state.x += np.random.normal(0, run_params.initial_x_error)
     initial_state.y += np.random.normal(0, run_params.initial_pos_error)
@@ -199,10 +205,8 @@ def init_state(run_params):
 
     # set the initial launch angle
     # TODO: add random error to the launch angle
-    initial_state.theta_long = c_double(np.pi/4)
+    # initial_state.theta_long = c_double(np.pi/4)
 
-    print("Initial state: ", initial_state.t, initial_state.x, initial_state.y, initial_state.z, initial_state.vx, initial_state.vy, initial_state.vz, initial_state.ax_total, initial_state.ay_total, initial_state.az_total)
-    
     return initial_state
 
 def mc_run(run_params):
@@ -215,6 +219,8 @@ def mc_run(run_params):
             The path to the configuration file.
 
     """
+
+    print("Running Monte Carlo simulation...")
 
     # set the return types
     pytraj.init_state.restype = state
@@ -237,7 +243,7 @@ def mc_run(run_params):
 
         # initialize the state
         initial_state = init_state(run_params)
-        print("Initial state: ", initial_state.t, initial_state.x, initial_state.y, initial_state.z, initial_state.vx, initial_state.vy, initial_state.vz, initial_state.ax_total, initial_state.ay_total, initial_state.az_total)
+        # print("Initial state: ", initial_state.t, initial_state.x, initial_state.y, initial_state.z, initial_state.vx, initial_state.vy, initial_state.vz, initial_state.ax_total, initial_state.ay_total, initial_state.az_total)
         # fly the vehicle
         final_state = fly(run_params, initial_state, booster_type, rv_type)
 
@@ -245,7 +251,7 @@ def mc_run(run_params):
         run_results[i] = [final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz]
 
     # output the results to a text file
-    np.savetxt("./output/run_results.txt", run_results)
+    np.savetxt("./output/impact_data.txt", run_results)
 
     return run_results
 
@@ -277,7 +283,10 @@ final_state = fly(run_params, initial_state, booster_type, rv_type)
 print("Final state:", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_total, final_state.ay_total, final_state.az_total)
 """
 
-# Code block to run the Monte Carlo simulation
-config_file = "./test/test_input.toml"
-run_params = read_config(config_file)
-mc_run(run_params)
+# # Code block to run the Monte Carlo simulation
+# config_file = "./test/test_input.toml"
+# run_params = read_config(config_file)
+# run_params.traj_output = c_int(1)
+# run_params.num_runs = c_int(10)
+# run_params.initial_pos_error = c_double(1.0)
+# mc_run(run_params)

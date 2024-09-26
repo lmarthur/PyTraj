@@ -2,6 +2,9 @@
 num_runs = 2
 time_step = 1.0
 traj_output = 0
+x_aim = 0.0
+y_aim = 0.0
+z_aim = 0.0
 
 [FLIGHT]
 grav_error = 0

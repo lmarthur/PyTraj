@@ -8,6 +8,9 @@ typedef struct runparams{
     int num_runs; // number of Monte Carlo runs
     double time_step; // time step in seconds
     int traj_output; // flag to output trajectory data
+    double x_aim; // target x-coordinate in meters
+    double y_aim; // target y-coordinate in meters
+    double z_aim; // target z-coordinate in meters
 
     int grav_error; // flag to include gravitational perturbations
     int atm_error; // flag to include atmospheric perturbations
