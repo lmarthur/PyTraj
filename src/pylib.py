@@ -254,39 +254,3 @@ def mc_run(run_params):
     np.savetxt("./output/impact_data.txt", run_results)
 
     return run_results
-
-
-# Code block to run the fly function
-"""
-pytraj.init_state.restype = state
-pytraj.init_mmiii_booster.restype = booster
-pytraj.init_ballistic_rv.restype = rv
-run_params = read_config("./test/test_input.toml")
-
-print("Initializing...")
-initial_state = pytraj.init_state()
-# print the initial state
-print("Initial state:")
-print("t: ", initial_state.t, " x: ", initial_state.x, " y: ", initial_state.y, " z: ", initial_state.z, " vx: ", initial_state.vx, " vy: ", initial_state.vy, " vz: ", initial_state.vz, " ax_total: ", initial_state.ax_total, " ay_total: ", initial_state.ay_total, " az_total: ", initial_state.az_total)
-# set the initial launch angle
-initial_state.theta_long = c_double(np.pi/4)
-
-print("State initialized.")
-
-booster_type = pytraj.init_mmiii_booster()
-print("Booster initialized.")
-rv_type = pytraj.init_ballistic_rv()
-print("Vehicle initialized.")
-print("Flying...")
-final_state = fly(run_params, initial_state, booster_type, rv_type)
-
-print("Final state:", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_total, final_state.ay_total, final_state.az_total)
-"""
-
-# # Code block to run the Monte Carlo simulation
-# config_file = "./test/test_input.toml"
-# run_params = read_config(config_file)
-# run_params.traj_output = c_int(1)
-# run_params.num_runs = c_int(10)
-# run_params.initial_pos_error = c_double(1.0)
-# mc_run(run_params)
