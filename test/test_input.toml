@@ -2,7 +2,7 @@
 num_runs = 2
 time_step = 1.0
 traj_output = 0
-x_aim = 0.0
+x_aim = 6371e3
 y_aim = 0.0
 z_aim = 0.0
 

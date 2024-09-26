@@ -19,7 +19,7 @@ echo "Compiling the shared library..."
 cc -shared -fPIC -o ./build/libPyTraj.so ./src/main.c
 
 # Test the package
-echo "Testing the package..."
+echo "Testing the wrapper..."
 pytest ./test/
 
 echo "Done."

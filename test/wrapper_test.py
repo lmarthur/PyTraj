@@ -4,7 +4,7 @@ from ctypes import *
 
 
 sys.path.append('.')
-from src.main import *
+from src.pylib import *
 so_file = "./build/libPyTraj.so"
 pytraj = CDLL(so_file)
 
@@ -17,7 +17,7 @@ def test_read_config():
     assert run_params.num_runs == 2
     assert run_params.time_step == 1.0
     assert run_params.traj_output == 0
-    assert run_params.x_aim == 0
+    assert run_params.x_aim == 6371e3
     assert run_params.y_aim == 0
     assert run_params.z_aim == 0
     
