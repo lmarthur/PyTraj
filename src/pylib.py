@@ -193,6 +193,7 @@ def init_state(run_params):
             The initial state of the vehicle.
     """
     # Generic initialization of the state
+    pytraj.init_state.restype = state
     initial_state = pytraj.init_state()
 
     # tune the initial state based on the run parameters
@@ -204,8 +205,8 @@ def init_state(run_params):
     initial_state.vz += np.random.normal(0, run_params.initial_vel_error)
 
     # set the initial launch angle
-    # TODO: add random error to the launch angle
-    # initial_state.theta_long = c_double(np.pi/4)
+    initial_state.theta_long += np.random.normal(0, run_params.initial_angle_error)
+    initial_state.theta_lat += np.random.normal(0, run_params.initial_angle_error)
 
     return initial_state
 

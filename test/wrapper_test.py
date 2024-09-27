@@ -34,6 +34,28 @@ def test_read_config():
     assert run_params.initial_vel_error == 0.0
     assert run_params.initial_angle_error == 0.0
 
+def test_init_state():
+    """
+    Test suite for the init_state function
+    """
+    run_params = read_config("./test/test_input.toml")
+
+    print("Initializing state ")
+    initial_state = init_state(run_params)
+    print(initial_state)
+
+    assert initial_state.theta_long == 0
+    assert initial_state.theta_lat == 0
+    assert initial_state.x == 6371e3
+    assert initial_state.y == 0
+    assert initial_state.z == 0
+    assert initial_state.vx == 0
+    assert initial_state.vy == 0
+    assert initial_state.vz == 0
+    assert initial_state.ax_total == 0
+    assert initial_state.ay_total == 0
+    assert initial_state.az_total == 0
+
 
 def test_fly():
     """

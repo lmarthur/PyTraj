@@ -20,6 +20,6 @@ cc -shared -fPIC -o ./build/libPyTraj.so ./src/main.c
 
 # Test the package
 echo "Testing the wrapper..."
-pytest ./test/
+pytest -v ./test/
 
 echo "Done."
