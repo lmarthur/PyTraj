@@ -16,3 +16,6 @@ output/
 
 # pytest
 .pytest_cache
+
+# vim swap files
+*.swp

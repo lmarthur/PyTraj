@@ -100,21 +100,23 @@ def impact_plot():
     cep = round(np.percentile(miss_distance, 50), 2)
     shape, loc, scale = stats.gamma.fit(miss_distance, floc=0)
     x = np.linspace(0, 5*cep, 100)
-    pdf = stats.gamma.pdf(x, shape, loc, scale)
+    gammapdf = stats.gamma.pdf(x, shape, loc, scale)
     
-    # get the median of the distribution
-    median = stats.gamma.median(shape, loc, scale)
-    print('Median: ', median)
+    # Fit a Nakagami distribution to the data
+    shape, loc, scale = stats.nakagami.fit(miss_distance, floc=0)
+    nakagamipdf = stats.nakagami.pdf(x, shape, loc, scale)
 
     bins = 20
     # plot histogram up to 5 times the CEP, with no y axis
     a1.hist(miss_distance, bins=bins, range=(0, 5*cep), color='b', edgecolor='black', alpha=0.7)
-    # renormalize the pdf to the histogram
-    pdf = pdf * len(miss_distance) * 5*cep / bins
-    a1.plot(x, pdf, 'r', linewidth=2, label = 'Gamma Distribution')
+    # renormalize the pdfs to the histogram
+    nakagamipdf = nakagamipdf * len(miss_distance) * 5*cep / bins
+    a1.plot(x, nakagamipdf, 'r', linewidth=2, label = 'Nakagami Distribution')
+    gammapdf = gammapdf * len(miss_distance) * 5*cep / bins
+    a1.plot(x, gammapdf, 'g', linewidth=2, label = 'Gamma Distribution')
     a1.grid()
     a1.yaxis.set_visible(False)
-
+    a1.legend()
     a1.tick_params(axis='x', which='major', pad=1)  # Adjust pad for x-axis ticks
     a1.tick_params(axis='y', which='major', pad=1)  # Adjust pad for y-axis ticks (if y-axis is used)
     a1.set_xlabel('Miss Distance Histogram (m)', labelpad=1)  # Adjust labelpad for x-axis label

@@ -4,7 +4,6 @@ This code is a work in progress, and is not yet ready for use. It is being devel
 
 # Overview
 This code is a Python package for simulating the flight of a ballistic missile. It is designed to be modular, with separate modules for geodesy, atmosphere, vehicle, gravity, stepper, integrator, flight, monte carlo, guidance, control, and Kalman filtering. The code is designed to be fast and efficient, and is written in a combination of Python and C.
-
 TODO: 
 - [X] Set up CMake 
 - [X] Write tests for atmosphere module
@@ -20,16 +19,15 @@ TODO:
 - [X] Determine whether to implement integration in C or Python
 - [X] Write tests for flight module
 - [X] Implement flight function
-- [X] Implement ctypes wrapper for C functions
-- [X] Implement output file writer
+- [X] Implement ctypes wrapper for C functions - [X] Implement output file writer
 - [X] Implement plotting functions
 - [X] Write scripts for compiling, testing, and running
 - [X] Implement configuration file and parser
 - [X] Write tests for monte carlo function
 - [X] Implement monte carlo function in Python
-- [ ] Write tests for flight initialization
-- [ ] Implement flight initialization function
-- [ ] Write analysis suite to fit distributions to accuracy data
+- [X] Write tests for flight initialization
+- [X] Implement flight initialization function
+- [X] Write analysis suite to fit distributions to accuracy data
 - [ ] Write tests for guidance module
 - [ ] Implement guidance functions in C
 - [ ] Write tests for control module
