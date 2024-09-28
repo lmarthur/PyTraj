@@ -95,7 +95,6 @@ void sphervec_to_cartvec(double *sphervec, double *cartvec, double *spher_coords
     // Get the z-component of the spherical vector
     cartvec[2] = sphervec[0] * sin(spher_coords[2]);
     
-
 }
 
 #endif

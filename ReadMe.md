@@ -22,12 +22,12 @@ TODO:
 - [X] Implement ctypes wrapper for C functions - [X] Implement output file writer
 - [X] Implement plotting functions
 - [X] Write scripts for compiling, testing, and running
-- [X] Implement configuration file and parser
-- [X] Write tests for monte carlo function
-- [X] Implement monte carlo function in Python
 - [X] Write tests for flight initialization
 - [X] Implement flight initialization function
 - [X] Write analysis suite to fit distributions to accuracy data
+- [ ] Implement configuration file and parser
+- [ ] Write tests for monte carlo function
+- [ ] Implement monte carlo function in Python
 - [ ] Write tests for guidance module
 - [ ] Implement guidance functions in C
 - [ ] Write tests for control module

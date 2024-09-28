@@ -8,8 +8,20 @@
 #include "gravity.h"
 #include "atmosphere.h"
 #include "physics.h"
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
-state init_state(){
+// Define a constant upper limit for the number of Monte Carlo runs
+#define MAX_RUNS 1000
+
+// Define a struct to store impact data
+typedef struct impact_data{
+    // Impact data
+    state impact_states[MAX_RUNS];
+
+} impact_data;
+
+state init_state(runparams *run_params, gsl_rng *rng){
     /*
     Initializes a state struct at the launch site with zero velocity and acceleration
 
@@ -19,16 +31,17 @@ state init_state(){
             initial state of the vehicle
     */
 
+    // 
     state state;
     state.t = 0;
-    state.x = 6371e3;
-    state.y = 0;
-    state.z = 0;
-    state.theta_long = 0;
-    state.theta_lat = 0;
-    state.vx = 0;
-    state.vy = 0;
-    state.vz = 0;
+    state.x = 6371e3 + run_params->initial_x_error * gsl_ran_gaussian(rng, 1);
+    state.y = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
+    state.z = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
+    state.theta_long = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.theta_lat = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.vx = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
+    state.vy = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
+    state.vz = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.ax_grav = 0;
     state.ay_grav = 0;
     state.az_grav = 0;
@@ -82,7 +95,7 @@ state impact_linterp(state *state_0, state *state_1){
     return impact_state;
 }
 
-state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv){
+state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     /*
     Function that simulates the flight of a vehicle, updating the state of the vehicle at each time step
     
@@ -92,10 +105,8 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
             pointer to the run parameters struct
         initial_state: state *
             pointer to the initial state of the vehicle
-        booster: booster *
-            pointer to the booster struct
-        rv: rv *
-            pointer to the reentry vehicle struct
+        vehicle: vehicle *
+            pointer to the vehicle struct
 
     OUTPUTS:
     ----------
@@ -109,14 +120,6 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
     state old_state = *initial_state;
     state new_state = *initial_state;
 
-    // Initialize the vehicle
-    // TODO: Replace this with an init_vehicle(booster, rv) function
-    vehicle vehicle;
-    vehicle.booster = *booster;
-    vehicle.rv = *rv;
-    vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
-    vehicle.current_mass = vehicle.total_mass;
-
     int traj_output = run_params->traj_output;
     double time_step = run_params->time_step;
 
@@ -126,7 +129,7 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
         traj_file = fopen("./output/trajectory.txt", "w");
         fprintf(traj_file, "t, x, y, z, vx, vy, vz, ax_grav, ay_grav, az_grav, ax_drag, ay_drag, az_drag, ax_lift, ay_lift, az_lift, ax_thrust, ay_thrust, az_thrust, ax_total, ay_total, az_total, current_mass\n");
         // Write the initial state to the trajectory file
-        fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total, vehicle.current_mass);
+        fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total, vehicle->current_mass);
     }
 
     // Begin the integration loop
@@ -135,11 +138,11 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
         double old_altitude = sqrt(old_state.x*old_state.x + old_state.y*old_state.y + old_state.z*old_state.z) - 6371e3;
         atm_cond atm_cond = get_exp_atm_cond(old_altitude);
         // Update the thrust of the vehicle
-        update_thrust(&vehicle, &new_state);
+        update_thrust(vehicle, &new_state);
         // Update the gravity acceleration components
         update_gravity(&grav, &new_state);
         // Update the drag acceleration components
-        update_drag(&vehicle, &atm_cond, &new_state);
+        update_drag(vehicle, &atm_cond, &new_state);
         // Calculate the total acceleration components
         new_state.ax_total = new_state.ax_grav + new_state.ax_drag + new_state.ax_lift + new_state.ax_thrust;
         new_state.ay_total = new_state.ay_grav + new_state.ay_drag + new_state.ay_lift + new_state.ay_thrust;
@@ -148,7 +151,7 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
         // Perform a Runge-Kutta step
         rk4step(&new_state, time_step);
         // Update the mass of the vehicle
-        update_mass(&vehicle, old_state.t);
+        update_mass(vehicle, old_state.t);
 
         // Check if the vehicle has impacted the Earth
         double new_altitude = sqrt(new_state.x*new_state.x + new_state.y*new_state.y + new_state.z*new_state.z) - 6371e3;
@@ -156,7 +159,7 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
             state final_state = impact_linterp(&old_state, &new_state);
             if (traj_output == 1){
                 // Write the final state to the trajectory file
-                fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_grav, final_state.ay_grav, final_state.az_grav, final_state.ax_drag, final_state.ay_drag, final_state.az_drag, final_state.ax_lift, final_state.ay_lift, final_state.az_lift, final_state.ax_thrust, final_state.ay_thrust, final_state.az_thrust, final_state.ax_total, final_state.ay_total, final_state.az_total, vehicle.current_mass);
+                fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", final_state.t, final_state.x, final_state.y, final_state.z, final_state.vx, final_state.vy, final_state.vz, final_state.ax_grav, final_state.ay_grav, final_state.az_grav, final_state.ax_drag, final_state.ay_drag, final_state.az_drag, final_state.ax_lift, final_state.ay_lift, final_state.az_lift, final_state.ax_thrust, final_state.ay_thrust, final_state.az_thrust, final_state.ax_total, final_state.ay_total, final_state.az_total, vehicle->current_mass);
                 fclose(traj_file);
             }
 
@@ -164,7 +167,7 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
         }
         // output the trajectory data
         if (traj_output == 1){
-            fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_state.t, new_state.x, new_state.y, new_state.z, new_state.vx, new_state.vy, new_state.vz, new_state.ax_grav, new_state.ay_grav, new_state.az_grav, new_state.ax_drag, new_state.ay_drag, new_state.az_drag, new_state.ax_lift, new_state.ay_lift, new_state.az_lift, new_state.ax_thrust, new_state.ay_thrust, new_state.az_thrust, new_state.ax_total, new_state.ay_total, new_state.az_total, vehicle.current_mass);
+            fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_state.t, new_state.x, new_state.y, new_state.z, new_state.vx, new_state.vy, new_state.vz, new_state.ax_grav, new_state.ay_grav, new_state.az_grav, new_state.ax_drag, new_state.ay_drag, new_state.az_drag, new_state.ax_lift, new_state.ay_lift, new_state.az_lift, new_state.ax_thrust, new_state.ay_thrust, new_state.az_thrust, new_state.ax_total, new_state.ay_total, new_state.az_total, vehicle->current_mass);
         }
         // Update the old state
         old_state = new_state;
@@ -178,6 +181,57 @@ state fly(runparams *run_params, state *initial_state, booster *booster, rv *rv)
     }
 
     return new_state;
+}
+
+impact_data mc_run(runparams *run_params){
+    /*
+    Function that runs a Monte Carlo simulation of the vehicle flight
+    
+    INPUTS:
+    ----------
+        run_params: runparams *
+            pointer to the run parameters struct
+    */
+
+    // Initialize the variables
+    int num_runs = run_params->num_runs;
+    if (num_runs > MAX_RUNS){
+        printf("Error: Number of runs exceeds the maximum limit. Increase MAX_RUNS in src/include/trajectory.h \n");
+        exit(1);
+    }
+    // state initial_state = init_state();
+    // vehicle vehicle = init_mmiii_ballistic();
+    impact_data impact_data;
+
+    // Create a .txt file to store the impact data
+    FILE *impact_file;
+    impact_file = fopen("./output/impact_data.txt", "w");
+    fprintf(impact_file, "t, x, y, z, vx, vy, vz\n");
+    
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    // Run the Monte Carlo simulation
+    for (int i = 0; i < num_runs; i++){
+
+        vehicle vehicle = init_mmiii_ballistic();
+        state initial_state = init_state(run_params, rng);
+        
+        impact_data.impact_states[i] = fly(run_params, &initial_state, &vehicle);
+        
+        fprintf(impact_file, "%f, %f, %f, %f, %f, %f, %f\n", impact_data.impact_states[i].t, impact_data.impact_states[i].x, impact_data.impact_states[i].y, impact_data.impact_states[i].z, impact_data.impact_states[i].vx, impact_data.impact_states[i].vy, impact_data.impact_states[i].vz);
+
+    }
+
+    // Close the impact file
+    fclose(impact_file);
+
+    // return the impact data
+    return impact_data;
 }
 
 #endif
