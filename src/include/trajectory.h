@@ -31,7 +31,6 @@ state init_state(runparams *run_params, gsl_rng *rng){
             initial state of the vehicle
     */
 
-    // 
     state state;
     state.t = 0;
     state.x = 6371e3 + run_params->initial_x_error * gsl_ran_gaussian(rng, 1);

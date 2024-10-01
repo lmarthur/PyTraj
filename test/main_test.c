@@ -6,5 +6,6 @@
 #include "physics_test.h"
 #include "utils_test.h"
 #include "trajectory_test.h"
+#include "sensors_test.h"
 
 TAU_MAIN()

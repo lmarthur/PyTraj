@@ -27,6 +27,9 @@ class runparams(Structure):
         ("initial_pos_error", c_double),
         ("initial_vel_error", c_double),
         ("initial_angle_error", c_double),
+        ("acc_scale_stability", c_double),
+        ("gyro_bias_stability", c_double),
+        ("gyro_noise", c_double),
     ]
 
 def read_config(config_file):

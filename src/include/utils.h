@@ -24,6 +24,9 @@ typedef struct runparams{
     double initial_pos_error; // initial position error in meters
     double initial_vel_error; // initial velocity error in meters per second
     double initial_angle_error; // initial angle error in radians
+    double acc_scale_stability; // accelerometer scale stability in ppm
+    double gyro_bias_stability; // gyro bias stability in rad/s
+    double gyro_noise; // gyro noise in rad/s/sqrt(s)
 
 } runparams;
 
