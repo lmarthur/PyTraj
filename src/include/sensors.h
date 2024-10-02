@@ -119,4 +119,64 @@ void update_imu(imu *imu, runparams *run_params, gsl_rng *rng){
     imu->gyro_error_lat = imu->gyro_error_lat + imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_lat * run_params->time_step;
 
 }
+
+// define a gnss measurement unit struct
+typedef struct gnss{
+    double noise; // GNSS noise in meters
+
+} gnss;
+
+gnss gnss_init(runparams *run_params){
+    /*
+    Initializes a gnss struct
+
+    INPUTS:
+    ----------
+        run_params: runparams *
+            pointer to the run parameters struct
+        
+    OUTPUTS:
+    ----------
+        gnss: gnss
+            pointer to the gnss struct
+    */
+
+    gnss gnss;
+    gnss.noise = run_params->gnss_noise;
+
+    return gnss;
+}
+
+state gnss_measurement(gnss *gnss, state *true_state, gsl_rng *rng){
+    /*
+    Simulates a gnss measurement
+
+    INPUTS:
+    ----------
+        gnss: gnss *
+            pointer to the gnss struct
+        true_state: state *
+            pointer to the true state of the vehicle
+        rng: gsl_rng *
+            pointer to the random number generator
+
+    OUTPUTS:
+    ----------
+        meas_state: state
+            pointer to the measured state of the vehicle
+    */
+
+    state meas_state;
+    // Set timestamp
+    meas_state.t = true_state->t;
+
+    // Position measurements
+    meas_state.x = true_state->x + gnss->noise * gsl_ran_gaussian(rng, 1);
+    meas_state.y = true_state->y + gnss->noise * gsl_ran_gaussian(rng, 1);
+    meas_state.z = true_state->z + gnss->noise * gsl_ran_gaussian(rng, 1);
+
+    return meas_state;
+}
+
+
 #endif

@@ -27,6 +27,7 @@ typedef struct runparams{
     double acc_scale_stability; // accelerometer scale stability in ppm
     double gyro_bias_stability; // gyro bias stability in rad/s
     double gyro_noise; // gyro noise in rad/s/sqrt(s)
+    double gnss_noise; // GNSS error in meters
 
 } runparams;
 

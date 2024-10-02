@@ -30,6 +30,7 @@ class runparams(Structure):
         ("acc_scale_stability", c_double),
         ("gyro_bias_stability", c_double),
         ("gyro_noise", c_double),
+        ("gnss_noise", c_double),
     ]
 
 def read_config(config_file):

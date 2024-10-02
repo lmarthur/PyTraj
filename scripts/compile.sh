@@ -3,6 +3,8 @@
 # Compile the program
 echo "Compiling the program..."
 
+mamba activate pytraj_env
+
 rm ./test/build/PyTraj_test
 rm ./build/libPyTraj.so
 
