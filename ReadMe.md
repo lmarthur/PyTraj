@@ -30,8 +30,8 @@ TODO:
 - [X] Implement monte carlo function in C
 - [X] Write tests for imu module
 - [X] Implement imu functions in C
-- [ ] Write tests for gnss module
-- [ ] Implement gnss functions in C
+- [X] Write tests for gnss module
+- [X] Implement gnss functions in C
 - [ ] Write tests for control module
 - [ ] Implement control functions in C
 - [ ] Write tests for Kalman filter

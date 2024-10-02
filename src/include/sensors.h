@@ -178,5 +178,25 @@ state gnss_measurement(gnss *gnss, state *true_state, gsl_rng *rng){
     return meas_state;
 }
 
+state perfect_measurement(state *true_state){
+    /*
+    Simulates a perfect measurement
+
+    INPUTS:
+    ----------
+        true_state: state *
+            pointer to the true state of the vehicle
+
+    OUTPUTS:
+    ----------
+        meas_state: state
+            pointer to the measured state of the vehicle
+    */
+
+    state meas_state = *true_state;
+
+    return meas_state;
+}
+
 
 #endif
