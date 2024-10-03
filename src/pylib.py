@@ -76,5 +76,9 @@ def read_config(config_file):
     run_params.initial_pos_error = c_double(float(config['ERRORPARAMS']['initial_pos_error']))
     run_params.initial_vel_error = c_double(float(config['ERRORPARAMS']['initial_vel_error']))
     run_params.initial_angle_error = c_double(float(config['ERRORPARAMS']['initial_angle_error']))
+    run_params.acc_scale_stability = c_double(float(config['ERRORPARAMS']['acc_scale_stability']))
+    run_params.gyro_bias_stability = c_double(float(config['ERRORPARAMS']['gyro_bias_stability']))
+    run_params.gyro_noise = c_double(float(config['ERRORPARAMS']['gyro_noise']))
+    run_params.gnss_noise = c_double(float(config['ERRORPARAMS']['gnss_noise']))
 
     return run_params

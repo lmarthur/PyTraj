@@ -33,6 +33,10 @@ def test_read_config():
     assert run_params.initial_pos_error == 0.0
     assert run_params.initial_vel_error == 0.0
     assert run_params.initial_angle_error == 0.0
+    assert run_params.acc_scale_stability == 0.0
+    assert run_params.gyro_bias_stability == 0.0
+    assert run_params.gyro_noise == 0.0
+    assert run_params.gnss_noise == 0.0
 
 
 # def test_mc_run():

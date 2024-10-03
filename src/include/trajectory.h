@@ -125,7 +125,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     // Create a .txt file to store the trajectory data
     FILE *traj_file;
     if (traj_output == 1){
-        traj_file = fopen("./output/trajectory.txt", "w");
+        traj_file = fopen("./output/run_0/trajectory.txt", "w");
         fprintf(traj_file, "t, x, y, z, vx, vy, vz, ax_grav, ay_grav, az_grav, ax_drag, ay_drag, az_drag, ax_lift, ay_lift, az_lift, ax_thrust, ay_thrust, az_thrust, ax_total, ay_total, az_total, current_mass\n");
         // Write the initial state to the trajectory file
         fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total, vehicle->current_mass);
@@ -182,20 +182,25 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     return new_state;
 }
 
-impact_data mc_run(runparams *run_params){
+void mc_run(runparams run_params){
     /*
     Function that runs a Monte Carlo simulation of the vehicle flight
     
     INPUTS:
     ----------
-        run_params: runparams *
-            pointer to the run parameters struct
+        run_params: runparams
+            run parameters struct
     */
 
+    // Print the run parameters to the console
+    // print_config(&run_params);
+
     // Initialize the variables
-    int num_runs = run_params->num_runs;
+    int num_runs = run_params.num_runs;
+    printf("Simulating %d Monte Carlo runs...\n", num_runs);
     if (num_runs > MAX_RUNS){
         printf("Error: Number of runs exceeds the maximum limit. Increase MAX_RUNS in src/include/trajectory.h \n");
+        printf("num_runs: %d, MAX_RUNS: %d\n", num_runs, MAX_RUNS);
         exit(1);
     }
     // state initial_state = init_state();
@@ -204,7 +209,7 @@ impact_data mc_run(runparams *run_params){
 
     // Create a .txt file to store the impact data
     FILE *impact_file;
-    impact_file = fopen("./output/impact_data.txt", "w");
+    impact_file = fopen("./output/run_0/impact_data.txt", "w");
     fprintf(impact_file, "t, x, y, z, vx, vy, vz\n");
     
     // Initialize the random number generator
@@ -218,9 +223,9 @@ impact_data mc_run(runparams *run_params){
     for (int i = 0; i < num_runs; i++){
 
         vehicle vehicle = init_mmiii_ballistic();
-        state initial_state = init_state(run_params, rng);
+        state initial_state = init_state(&run_params, rng);
         
-        impact_data.impact_states[i] = fly(run_params, &initial_state, &vehicle);
+        impact_data.impact_states[i] = fly(&run_params, &initial_state, &vehicle);
         
         fprintf(impact_file, "%f, %f, %f, %f, %f, %f, %f\n", impact_data.impact_states[i].t, impact_data.impact_states[i].x, impact_data.impact_states[i].y, impact_data.impact_states[i].z, impact_data.impact_states[i].vx, impact_data.impact_states[i].vy, impact_data.impact_states[i].vz);
 
@@ -229,8 +234,6 @@ impact_data mc_run(runparams *run_params){
     // Close the impact file
     fclose(impact_file);
 
-    // return the impact data
-    return impact_data;
 }
 
 #endif

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # define the run path -- this provides the path to the data files and the output directory for the plots
-run_path = "./output/"
+run_path = "./output/run_0/"
 
 # load the trajectory data from the .txt file, skipping the first row
 traj_data = np.loadtxt(run_path + "trajectory.txt", delimiter = ",", skiprows=1)

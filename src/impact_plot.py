@@ -8,10 +8,10 @@ import numpy as np
 from src.pylib import *
 
 # define the run path -- this provides the path to the data files and the output directory for the plots
-run_path = "./output/"
+run_path = "./output/run_0/"
 
 print("Reading impact data...")
-impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = " ")
+impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 print("Reading config file...")
 run_params = read_config("./test/test_input.toml")
 
@@ -54,7 +54,6 @@ def impact_plot():
         'legend.fontsize': 10,
         'xtick.labelsize': 10,
         'ytick.labelsize': 10,
-        'text.usetex': True,
     }
     plt.rcParams.update(params)
 
@@ -106,7 +105,7 @@ def impact_plot():
     shape, loc, scale = stats.nakagami.fit(miss_distance, floc=0)
     nakagamipdf = stats.nakagami.pdf(x, shape, loc, scale)
 
-    bins = 20
+    bins = 50
     # plot histogram up to 5 times the CEP, with no y axis
     a1.hist(miss_distance, bins=bins, range=(0, 5*cep), color='b', edgecolor='black', alpha=0.7)
     # renormalize the pdfs to the histogram

@@ -165,3 +165,4 @@ TEST(utils, sphervec_to_cartvec){
     REQUIRE_EQ(cartvec[1], 0);
     REQUIRE_EQ(cartvec[2], 1);
 }
+

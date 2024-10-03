@@ -101,4 +101,39 @@ void sphervec_to_cartvec(double *sphervec, double *cartvec, double *spher_coords
     
 }
 
+void print_config(runparams *run_params){
+    /*
+    Prints the run parameters to the console at runtime
+
+    INPUTS:
+    ----------
+        run_params: runparams *
+            pointer to the run parameters struct
+    */
+
+    printf("Number of Monte Carlo runs: %d\n", run_params->num_runs);
+    printf("Time step: %f\n", run_params->time_step);
+    printf("Trajectory output: %d\n", run_params->traj_output);
+    printf("Target x-coordinate: %f\n", run_params->x_aim);
+    printf("Target y-coordinate: %f\n", run_params->y_aim);
+    printf("Target z-coordinate: %f\n", run_params->z_aim);
+
+    printf("Gravitational perturbations: %d\n", run_params->grav_error);
+    printf("Atmospheric perturbations: %d\n", run_params->atm_error);
+    printf("GNSS navigation: %d\n", run_params->gnss_nav);
+    printf("INS navigation: %d\n", run_params->ins_nav);
+    printf("Filter type: %d\n", run_params->filter_type);
+
+    printf("Reentry vehicle type: %d\n", run_params->rv_type);
+
+    printf("Initial x-error: %f\n", run_params->initial_x_error);
+    printf("Initial position error: %f\n", run_params->initial_pos_error);
+    printf("Initial velocity error: %f\n", run_params->initial_vel_error);
+    printf("Initial angle error: %f\n", run_params->initial_angle_error);
+    printf("Accelerometer scale stability: %f\n", run_params->acc_scale_stability);
+    printf("Gyro bias stability: %f\n", run_params->gyro_bias_stability);
+    printf("Gyro noise: %f\n", run_params->gyro_noise);
+    printf("GNSS noise: %f\n", run_params->gnss_noise);
+
+}
 #endif
