@@ -31,6 +31,12 @@ typedef struct runparams{
 
 } runparams;
 
+typedef struct cart_vector{
+    double x;
+    double y;
+    double z;
+} cart_vector;
+
 void cartcoords_to_sphercoords(double *cart_coords, double *spher_coords){
     /*
     Converts Cartesian coordinates to spherical coordinates
