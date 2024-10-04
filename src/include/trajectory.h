@@ -236,4 +236,59 @@ void mc_run(runparams run_params){
 
 }
 
+cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
+    /*
+    Updates the aimpoint based on the thrust angle and other run parameters
+
+    INPUTS:
+    ----------
+        run_params: runparams *
+            pointer to the run parameters struct
+        thrust_angle_long: double
+            thrust angle in the longitudinal direction
+    OUTPUTS:
+    ----------
+        cart_vector: aimpoint
+            Cartesian vector to the updated aimpoint
+    */
+
+    cart_vector aimpoint;
+    
+    // Set output to zero
+    run_params->traj_output = 0;
+    // Set all error parameters to zero
+    run_params->grav_error = 0;
+    run_params->atm_error = 0;
+    run_params->initial_x_error = 0;
+    run_params->initial_pos_error = 0;
+    run_params->initial_vel_error = 0;
+    run_params->initial_angle_error = 0;
+    run_params->acc_scale_stability = 0;
+    run_params->gyro_bias_stability = 0;
+    run_params->gyro_noise = 0;
+    run_params->gnss_noise = 0;
+
+    // Initialize the random number generator (unused in this case, but still required)
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    // Initialize the vehicle 
+    vehicle vehicle = init_mmiii_ballistic();
+    state initial_state = init_state(run_params, rng);
+    initial_state.theta_long = thrust_angle_long;
+
+    // Call the fly function to get the final state
+    state final_state = fly(run_params, &initial_state, &vehicle);
+
+    // Update the aimpoint based on the final state
+    aimpoint.x = final_state.x;
+    aimpoint.y = final_state.y;
+    aimpoint.z = final_state.z;
+
+    return aimpoint;
+}
+
 #endif

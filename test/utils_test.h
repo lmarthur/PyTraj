@@ -166,3 +166,15 @@ TEST(utils, sphervec_to_cartvec){
     REQUIRE_EQ(cartvec[2], 1);
 }
 
+TEST(utils, get_altitude){
+    REQUIRE_EQ(get_altitude(6371e3, 0, 0), 0);
+    REQUIRE_EQ(get_altitude(0, 6371e3, 0), 0);
+    REQUIRE_EQ(get_altitude(0, 0, 6371e3), 0);
+    REQUIRE_EQ(get_altitude(1, 0, 0), 1 - 6371e3);
+    REQUIRE_EQ(get_altitude(0, 1, 0), 1 - 6371e3);
+    REQUIRE_EQ(get_altitude(0, 0, 1), 1 - 6371e3);
+    REQUIRE_EQ(get_altitude(1, 1, 0), sqrt(2) - 6371e3);
+    REQUIRE_EQ(get_altitude(1, 0, 1), sqrt(2) - 6371e3);
+    REQUIRE_EQ(get_altitude(0, 1, 1), sqrt(2) - 6371e3);
+    REQUIRE_EQ(get_altitude(1, 1, 1), sqrt(3) - 6371e3);
+}

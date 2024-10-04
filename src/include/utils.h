@@ -37,6 +37,26 @@ typedef struct cart_vector{
     double z;
 } cart_vector;
 
+double get_altitude(double x, double y, double z){
+    /*
+    Calculates the altitude of a point above the Earth's surface
+
+    INPUTS:
+    ----------
+        x: double
+            x-coordinate of the point
+        y: double
+            y-coordinate of the point
+        z: double
+            z-coordinate of the point
+    OUTPUTS:
+    ----------
+        altitude: double
+            altitude of the point above the Earth's surface
+    */
+
+    return sqrt(x*x + y*y + z*z) - 6371e3;
+}
 void cartcoords_to_sphercoords(double *cart_coords, double *spher_coords){
     /*
     Converts Cartesian coordinates to spherical coordinates
@@ -142,4 +162,5 @@ void print_config(runparams *run_params){
     printf("GNSS noise: %f\n", run_params->gnss_noise);
 
 }
+
 #endif

@@ -103,6 +103,38 @@ TEST(trajectory, fly){
     REQUIRE_NE(final_state.ay_total, 0);
 
 }
+
+TEST(trajectory, update_aimpoint){
+    // Set the run parameters
+    runparams run_params;
+    run_params.traj_output = 0;
+    run_params.time_step = 1;
+    run_params.x_aim = 6371e3;
+    run_params.y_aim = 0;
+    run_params.z_aim = 0;
+
+    run_params.grav_error = 0;
+    run_params.atm_error = 0;
+    run_params.gnss_nav = 0;
+    run_params.ins_nav = 0;
+
+    run_params.rv_type = 0;
+
+    run_params.initial_x_error = 0;
+    run_params.initial_pos_error = 0;
+    run_params.initial_vel_error = 0;
+    run_params.initial_angle_error = 0;
+    run_params.acc_scale_stability = 0;
+    run_params.gyro_bias_stability = 0;
+    run_params.gyro_noise = 0;
+    run_params.gnss_noise = 0;
+
+    cart_vector aimpoint = update_aimpoint(&run_params, M_PI/4);
+    printf("Aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
+    REQUIRE_LT(fabs(get_altitude(aimpoint.x, aimpoint.y, aimpoint.z)), 1);
+    
+}
+
 // TODO: Rewrite these tests to use the impact_data.txt output, and not the impact_states struct
 /*
 TEST(trajectory, mc_run){
