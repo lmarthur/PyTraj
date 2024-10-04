@@ -36,8 +36,8 @@ state init_state(runparams *run_params, gsl_rng *rng){
     state.x = 6371e3 + run_params->initial_x_error * gsl_ran_gaussian(rng, 1);
     state.y = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
     state.z = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
-    state.theta_long = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
-    state.theta_lat = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.theta_long = run_params->theta_long + run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.theta_lat = run_params->theta_lat + run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
     state.vx = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.vy = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.vz = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
@@ -182,60 +182,6 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     return new_state;
 }
 
-void mc_run(runparams run_params){
-    /*
-    Function that runs a Monte Carlo simulation of the vehicle flight
-    
-    INPUTS:
-    ----------
-        run_params: runparams
-            run parameters struct
-    */
-
-    // Print the run parameters to the console
-    // print_config(&run_params);
-
-    // Initialize the variables
-    int num_runs = run_params.num_runs;
-    printf("Simulating %d Monte Carlo runs...\n", num_runs);
-    if (num_runs > MAX_RUNS){
-        printf("Error: Number of runs exceeds the maximum limit. Increase MAX_RUNS in src/include/trajectory.h \n");
-        printf("num_runs: %d, MAX_RUNS: %d\n", num_runs, MAX_RUNS);
-        exit(1);
-    }
-    // state initial_state = init_state();
-    // vehicle vehicle = init_mmiii_ballistic();
-    impact_data impact_data;
-
-    // Create a .txt file to store the impact data
-    FILE *impact_file;
-    impact_file = fopen("./output/run_0/impact_data.txt", "w");
-    fprintf(impact_file, "t, x, y, z, vx, vy, vz\n");
-    
-    // Initialize the random number generator
-    const gsl_rng_type *T;
-    gsl_rng *rng;
-    gsl_rng_env_setup();
-    T = gsl_rng_default;
-    rng = gsl_rng_alloc(T);
-
-    // Run the Monte Carlo simulation
-    for (int i = 0; i < num_runs; i++){
-
-        vehicle vehicle = init_mmiii_ballistic();
-        state initial_state = init_state(&run_params, rng);
-        
-        impact_data.impact_states[i] = fly(&run_params, &initial_state, &vehicle);
-        
-        fprintf(impact_file, "%f, %f, %f, %f, %f, %f, %f\n", impact_data.impact_states[i].t, impact_data.impact_states[i].x, impact_data.impact_states[i].y, impact_data.impact_states[i].z, impact_data.impact_states[i].vx, impact_data.impact_states[i].vy, impact_data.impact_states[i].vz);
-
-    }
-
-    // Close the impact file
-    fclose(impact_file);
-
-}
-
 cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
     /*
     Updates the aimpoint based on the thrust angle and other run parameters
@@ -289,6 +235,60 @@ cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
     aimpoint.z = final_state.z;
 
     return aimpoint;
+}
+
+void mc_run(runparams run_params){
+    /*
+    Function that runs a Monte Carlo simulation of the vehicle flight
+    
+    INPUTS:
+    ----------
+        run_params: runparams
+            run parameters struct
+    */
+
+    // Print the run parameters to the console
+    // print_config(&run_params);
+
+    // Initialize the variables
+    int num_runs = run_params.num_runs;
+    printf("Simulating %d Monte Carlo runs...\n", num_runs);
+    if (num_runs > MAX_RUNS){
+        printf("Error: Number of runs exceeds the maximum limit. Increase MAX_RUNS in src/include/trajectory.h \n");
+        printf("num_runs: %d, MAX_RUNS: %d\n", num_runs, MAX_RUNS);
+        exit(1);
+    }
+    // state initial_state = init_state();
+    // vehicle vehicle = init_mmiii_ballistic();
+    impact_data impact_data;
+
+    // Create a .txt file to store the impact data
+    FILE *impact_file;
+    impact_file = fopen("./output/run_0/impact_data.txt", "w");
+    fprintf(impact_file, "t, x, y, z, vx, vy, vz\n");
+    
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    // Run the Monte Carlo simulation
+    for (int i = 0; i < num_runs; i++){
+
+        vehicle vehicle = init_mmiii_ballistic();
+        state initial_state = init_state(&run_params, rng);
+        
+        impact_data.impact_states[i] = fly(&run_params, &initial_state, &vehicle);
+        
+        fprintf(impact_file, "%f, %f, %f, %f, %f, %f, %f\n", impact_data.impact_states[i].t, impact_data.impact_states[i].x, impact_data.impact_states[i].y, impact_data.impact_states[i].z, impact_data.impact_states[i].vx, impact_data.impact_states[i].vy, impact_data.impact_states[i].vz);
+
+    }
+
+    // Close the impact file
+    fclose(impact_file);
+
 }
 
 #endif

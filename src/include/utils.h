@@ -11,6 +11,8 @@ typedef struct runparams{
     double x_aim; // target x-coordinate in meters
     double y_aim; // target y-coordinate in meters
     double z_aim; // target z-coordinate in meters
+    double theta_long; // thrust angle in the longitudinal direction in radians
+    double theta_lat; // thrust angle in the latitudinal direction in radians
 
     int grav_error; // flag to include gravitational perturbations
     int atm_error; // flag to include atmospheric perturbations
@@ -143,6 +145,8 @@ void print_config(runparams *run_params){
     printf("Target x-coordinate: %f\n", run_params->x_aim);
     printf("Target y-coordinate: %f\n", run_params->y_aim);
     printf("Target z-coordinate: %f\n", run_params->z_aim);
+    printf("Longitudinal thrust angle: %f\n", run_params->theta_long);
+    printf("Latitudinal thrust angle: %f\n", run_params->theta_lat);
 
     printf("Gravitational perturbations: %d\n", run_params->grav_error);
     printf("Atmospheric perturbations: %d\n", run_params->atm_error);

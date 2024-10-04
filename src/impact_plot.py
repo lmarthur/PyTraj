@@ -1,6 +1,6 @@
 # This script contains code to generate scatter plots and histograms of the impact data.
 import scipy.stats as stats
-
+import os
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('.')
@@ -10,15 +10,25 @@ from src.pylib import *
 # define the run path -- this provides the path to the data files and the output directory for the plots
 run_path = "./output/run_0/"
 
+# print error if the paths are not found
+if not os.path.exists(run_path + "impact_data.txt"):
+    print("Error: impact data not found.")
+    sys.exit()
+if not os.path.exists(run_path + "run_0.toml"):
+    print("Error: run parameters not found.")
+    sys.exit()
+
 print("Reading impact data...")
 impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 print("Reading config file...")
-run_params = read_config("./test/test_input.toml")
+run_params = read_config(run_path + "run_0.toml")
 
 impact_t = impact_data[:,0]
 impact_x = impact_data[:,1]
 impact_y = impact_data[:,2]
 impact_z = impact_data[:,3]
+
+# TODO: Add a calculation of the range to the aimpoint
 
 def impact_plot():
     # get longitude and latitude of aimpoint
@@ -95,13 +105,10 @@ def impact_plot():
     # a0.set_title(' Impacts at ' + str(int(round(range/1000, -3))) + ' km. ' + 'CEP: ' + str(cep) + ' m.')
     # plot the histogram of the miss distances
 
-    # Fit a gamma distribution to the data
     cep = round(np.percentile(miss_distance, 50), 2)
-    shape, loc, scale = stats.gamma.fit(miss_distance, floc=0)
-    x = np.linspace(0, 5*cep, 100)
-    gammapdf = stats.gamma.pdf(x, shape, loc, scale)
-    
+
     # Fit a Nakagami distribution to the data
+    x = np.linspace(0, 5*cep, 100)
     shape, loc, scale = stats.nakagami.fit(miss_distance, floc=0)
     nakagamipdf = stats.nakagami.pdf(x, shape, loc, scale)
 
@@ -111,8 +118,9 @@ def impact_plot():
     # renormalize the pdfs to the histogram
     nakagamipdf = nakagamipdf * len(miss_distance) * 5*cep / bins
     a1.plot(x, nakagamipdf, 'r', linewidth=2, label = 'Nakagami Distribution')
-    gammapdf = gammapdf * len(miss_distance) * 5*cep / bins
-    a1.plot(x, gammapdf, 'g', linewidth=2, label = 'Gamma Distribution')
+    # Add a vertical line at the CEP
+    a1.axvline(x=cep, color='g', linestyle='--', linewidth=2, label='CEP')
+
     a1.grid()
     a1.yaxis.set_visible(False)
     a1.legend()

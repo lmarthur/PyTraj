@@ -7,4 +7,6 @@ mamba activate pytraj_env
 # Run the program
 python ./src/main.py
 
+# Generate the impact plot
+python ./src/impact_plot.py
 

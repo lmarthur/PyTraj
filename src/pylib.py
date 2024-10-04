@@ -14,6 +14,8 @@ class runparams(Structure):
         ("x_aim", c_double),
         ("y_aim", c_double),
         ("z_aim", c_double),
+        ("theta_long", c_double),
+        ("theta_lat", c_double),
         
         ("grav_error", c_int),
         ("atm_error", c_int),
@@ -60,6 +62,8 @@ def read_config(config_file):
     run_params.x_aim = c_double(float(config['RUN']['x_aim']))
     run_params.y_aim = c_double(float(config['RUN']['y_aim']))
     run_params.z_aim = c_double(float(config['RUN']['z_aim']))
+    run_params.theta_long = c_double(float(config['RUN']['theta_long']))
+    run_params.theta_lat = c_double(float(config['RUN']['theta_lat']))
 
     # set the flight parameters
     run_params.grav_error = c_int(int(config['FLIGHT']['grav_error']))

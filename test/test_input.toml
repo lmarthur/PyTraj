@@ -5,6 +5,8 @@ traj_output = 0
 x_aim = 6371e3
 y_aim = 0.0
 z_aim = 0.0
+theta_long = 0.0
+theta_lat = 0.0
 
 [FLIGHT]
 grav_error = 0

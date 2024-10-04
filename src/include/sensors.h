@@ -198,5 +198,4 @@ state perfect_measurement(state *true_state){
     return meas_state;
 }
 
-
 #endif

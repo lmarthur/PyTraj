@@ -112,6 +112,8 @@ TEST(trajectory, update_aimpoint){
     run_params.x_aim = 6371e3;
     run_params.y_aim = 0;
     run_params.z_aim = 0;
+    run_params.theta_long = 0;
+    run_params.theta_lat = 0;
 
     run_params.grav_error = 0;
     run_params.atm_error = 0;
