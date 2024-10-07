@@ -34,8 +34,8 @@ TODO:
 - [X] Implement imu functions in C
 - [X] Write tests for gnss module
 - [X] Implement gnss functions in C
-- [ ] Write tests for control module
-- [ ] Implement control functions in C
+- [X] Write tests for control module
+- [X] Implement control functions in C
 - [ ] Write tests for Kalman filter
 - [ ] Implement Kalman filter in C
 - [ ] Write tests for gravity perturbations
