@@ -5,11 +5,11 @@
 .DS_Store
 
 # build output
-build/
-test/build/
+build/*
+test/build/*
 
 # output files
-output/
+output/*
 
 # pycache
 */__pycache__/
