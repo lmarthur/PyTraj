@@ -2,7 +2,7 @@
 #!/bin/bash
 
 # Activate the environment
-mamba activate pytraj_env
+# mamba activate pytraj_env
 
 # Run the program
 python ./src/main.py
