@@ -165,6 +165,33 @@ TEST(linalg, mm_add){
     gsl_matrix_free(C);
 }
 
+TEST(linalg, vv_add){
+    gsl_vector *v = gsl_vector_alloc(3);
+    gsl_vector_set(v, 0, 1);
+    gsl_vector_set(v, 1, 2);
+    gsl_vector_set(v, 2, 3);
+
+    gsl_vector *w = gsl_vector_alloc(3);
+    gsl_vector_set(w, 0, 4);
+    gsl_vector_set(w, 1, 5);
+    gsl_vector_set(w, 2, 6);
+
+    gsl_vector *u = gsl_vector_alloc(3);
+    gsl_vector_set(u, 0, 5);
+    gsl_vector_set(u, 1, 7);
+    gsl_vector_set(u, 2, 9);
+
+    gsl_vector *u_test = vv_add(v, w);
+
+    for(int i = 0; i < u->size; i++){
+        REQUIRE_EQ(gsl_vector_get(u, i), gsl_vector_get(u_test, i));
+    }
+
+    gsl_vector_free(v);
+    gsl_vector_free(w);
+    gsl_vector_free(u);
+}
+
 TEST(linalg, vv_subtract){
     gsl_vector *v = gsl_vector_alloc(3);
     gsl_vector_set(v, 0, 1);

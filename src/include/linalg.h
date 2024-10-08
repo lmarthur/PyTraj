@@ -161,6 +161,27 @@ gsl_vector *vv_subtract(gsl_vector *v, gsl_vector *w){
     return u;
 }
 
+gsl_vector *vv_add(gsl_vector *v, gsl_vector *w){
+    /*
+    This function returns the sum of two vectors.
+
+    INPUTS:
+    ----------------
+        v (gsl_vector *): The first vector.
+        w (gsl_vector *): The second vector.
+
+    OUTPUTS:
+    ----------------
+        u (gsl_vector): The sum of v and w.
+
+    */
+
+    gsl_vector *u = gsl_vector_alloc(v->size);
+    gsl_vector_memcpy(u, v);
+    gsl_vector_add(u, w);
+    return u;
+}
+
 gsl_matrix *m_pseudoinverse(gsl_matrix *A){
     /*
     This function returns the pseudoinverse (also known as the Moore-Penrose inverse) of a matrix.

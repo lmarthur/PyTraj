@@ -122,16 +122,16 @@ void kalman_filter_update(KalmanFilter *kf){
     kf->kalman_gain = mm_multiply(tmp4, tmp3);
 
     // Update the state
-    // gsl_matrix *tmp5 = mm_multiply(kf->measurement_matrix, kf->predicted_state);
-    // tmp5 = vv_subtract(kf->measured_state, tmp5);
-    // gsl_vector *tmp6 = mv_multiply(kf->kalman_gain, tmp5);
-    // kf->predicted_state = vv_add(kf->predicted_state, tmp6);
+    gsl_vector *tmp5 = mv_multiply(kf->measurement_matrix, kf->predicted_state);
+    tmp5 = vv_subtract(kf->measured_state, tmp5);
+    gsl_vector *tmp6 = mv_multiply(kf->kalman_gain, tmp5);
+    kf->predicted_state = vv_add(kf->predicted_state, tmp6);
 
     // Update the covariance
-    // gsl_matrix *tmp7 = mm_multiply(kf->kalman_gain, kf->innovation_covariance);
-    // tmp7 = mm_multiply(tmp7, m_transpose(kf->kalman_gain));
-    // tmp7 = sm_multiply(-1, tmp7);
-    // kf->predicted_covariance = mm_add(kf->predicted_covariance, tmp7);
+    gsl_matrix *tmp7 = mm_multiply(kf->kalman_gain, kf->innovation_covariance);
+    tmp7 = mm_multiply(tmp7, m_transpose(kf->kalman_gain));
+    tmp7 = sm_multiply(-1, tmp7);
+    kf->predicted_covariance = mm_add(kf->predicted_covariance, tmp7);
 
 }
 
