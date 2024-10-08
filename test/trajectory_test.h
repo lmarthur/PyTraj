@@ -132,7 +132,7 @@ TEST(trajectory, update_aimpoint){
     run_params.gnss_noise = 0;
 
     cart_vector aimpoint = update_aimpoint(&run_params, M_PI/4);
-    printf("Aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
+    // printf("Aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
     REQUIRE_LT(fabs(get_altitude(aimpoint.x, aimpoint.y, aimpoint.z)), 1);
     
 }
