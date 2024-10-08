@@ -36,11 +36,12 @@ TODO:
 - [X] Implement gnss functions in C
 - [X] Write tests for control module
 - [X] Implement control functions in C
-- [ ] Write tests for Kalman filter
-- [ ] Implement Kalman filter in C
+- [X] Write tests for Kalman filter
+- [X] Implement Kalman filter in C
+- [ ] Write C wrapper for EarthGRAM with shared object
 - [ ] Write tests for gravity perturbations
 - [ ] Implement gravity perturbations in C
-- [ ] Write C wrapper for EarthGRAM with shared object
+- [ ] Set up .yaml for conda environment
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning
 - [ ] Write function to generate sensitivity plots

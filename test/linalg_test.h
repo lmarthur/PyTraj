@@ -1,5 +1,5 @@
 #include <tau/tau.h>
-#include "../src//include/linalg.h"
+#include "../src/include/linalg.h"
 
 TEST(linalg, m_transpose){
     gsl_matrix *A = gsl_matrix_alloc(2, 3);
