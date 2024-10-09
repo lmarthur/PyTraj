@@ -94,6 +94,31 @@ state impact_linterp(state *state_0, state *state_1){
     return impact_state;
 }
 
+void output_impact(FILE *impact_file, impact_data *impact_data, int num_runs){
+    /*
+    Function that outputs the impact data struct to the impact file
+    
+    INPUTS:
+    ----------
+        impact_file: * FILE
+            Pointer to the impact file stream
+        impact_data: * impact_data
+            Pointer to the impact data struct
+        num_runs: int
+            Number of Monte Carlo runs
+    */
+    printf("Outputting the impact data...");
+
+    // Iterate through the number of runs and output the impact data
+    for (int i = 0; i < num_runs; i++){
+        fprintf(impact_file, "%f, %f, %f, %f, %f, %f, %f\n", impact_data->impact_states[i].t, impact_data->impact_states[i].x, impact_data->impact_states[i].y, impact_data->impact_states[i].z, impact_data->impact_states[i].vx, impact_data->impact_states[i].vy, impact_data->impact_states[i].vz);
+    }
+
+    // Close the impact file
+    fclose(impact_file);
+    
+}
+
 state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     /*
     Function that simulates the flight of a vehicle, updating the state of the vehicle at each time step
@@ -289,13 +314,12 @@ void mc_run(runparams run_params){
         state initial_state = init_state(&run_params, rng);
         
         impact_data.impact_states[i] = fly(&run_params, &initial_state, &vehicle);
-        
-        fprintf(impact_file, "%f, %f, %f, %f, %f, %f, %f\n", impact_data.impact_states[i].t, impact_data.impact_states[i].x, impact_data.impact_states[i].y, impact_data.impact_states[i].z, impact_data.impact_states[i].vx, impact_data.impact_states[i].vy, impact_data.impact_states[i].vz);
 
     }
 
-    // Close the impact file
-    fclose(impact_file);
+    // Output the impact data
+    output_impact(impact_file, &impact_data, num_runs);
+
 
 }
 
