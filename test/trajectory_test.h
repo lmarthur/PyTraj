@@ -146,7 +146,7 @@ TEST(trajectory, update_aimpoint){
     
 }
 
-// TODO: Rewrite these tests to use the impact_data.txt output, and not the impact_states struct
+// TODO: Rewrite these tests on the Python side
 /*
 TEST(trajectory, mc_run){
     // initialize the vehicle

@@ -133,7 +133,9 @@ TEST(physics, update_drag){
     rng = gsl_rng_alloc(T);
 
     grav grav = init_grav(&run_params, rng);
-    atm_cond = get_exp_atm_cond(0);
+    atm_model atm_model = init_atm(&run_params, rng);
+    
+    atm_cond = get_exp_atm_cond(0, &atm_model);
 
     state.t = 1;
     state.x = grav.earth_radius;

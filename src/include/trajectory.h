@@ -149,6 +149,8 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     rng = gsl_rng_alloc(T);
 
     grav grav = init_grav(run_params, rng);
+    atm_model atm_model = init_atm(run_params, rng);
+
     state old_state = *initial_state;
     state new_state = *initial_state;
 
@@ -168,7 +170,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     for (int i = 0; i < max_steps; i++){
         // Get the atmospheric conditions
         double old_altitude = sqrt(old_state.x*old_state.x + old_state.y*old_state.y + old_state.z*old_state.z) - 6371e3;
-        atm_cond atm_cond = get_exp_atm_cond(old_altitude);
+        atm_cond atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
         // Update the thrust of the vehicle
         update_thrust(vehicle, &new_state);
         // Update the gravity acceleration components

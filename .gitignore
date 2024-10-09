@@ -19,3 +19,6 @@ output/*
 
 # vim swap files
 *.swp
+
+# EarthGRAM 2016
+src/include/egsrc
