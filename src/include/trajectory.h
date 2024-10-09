@@ -115,7 +115,15 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
 
     // Initialize the variables and structures
     int max_steps = 10000;
-    grav grav = init_grav();
+
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    grav grav = init_grav(run_params, rng);
     state old_state = *initial_state;
     state new_state = *initial_state;
 

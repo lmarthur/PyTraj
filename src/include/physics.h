@@ -51,19 +51,21 @@ void update_gravity(grav *grav, state *state){
         state: state *
             pointer to the state struct
     */
-
+   double r;
     // Non-perturbed gravity model
     if (grav->perturb_flag == 0){
         // Calculate the gravitational acceleration components
-        double r = sqrt(state->x*state->x + state->y*state->y + state->z*state->z);
-        double ar_grav = -grav->grav_const * grav->earth_mass / (r*r);
-        state->ax_grav = ar_grav * state->x / r;
-        state->ay_grav = ar_grav * state->y / r;
-        state->az_grav = ar_grav * state->z / r;
+        r = sqrt(state->x*state->x + state->y*state->y + state->z*state->z);
     }
     else{
-        printf("Perturbations not yet implemented\n");
+        // 
+        r = sqrt(state->x*state->x + state->y*state->y + state->z*state->z) + grav->geoid_height_error;
     }
+
+    double ar_grav = -grav->grav_const * grav->earth_mass / (r*r);
+    state->ax_grav = ar_grav * state->x / r;
+    state->ay_grav = ar_grav * state->y / r;
+    state->az_grav = ar_grav * state->z / r;
 
 }
 

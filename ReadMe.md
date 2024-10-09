@@ -59,10 +59,10 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Implement control functions in C
 - [X] Write tests for Kalman filter
 - [X] Implement Kalman filter in C
-- [ ] Write C wrapper for EarthGRAM with shared object
-- [ ] Write tests for gravity perturbations
-- [ ] Implement gravity perturbations in C
-- [ ] Set up .yaml for conda environment
+- [X] Set up .yaml for conda environment
+- [X] Write tests for gravity perturbations
+- [X] Implement gravity perturbations in C
+- [ ] Implement EarthGRAM atmospheric model
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning
 - [ ] Write function to generate sensitivity plots

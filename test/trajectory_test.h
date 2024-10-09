@@ -2,7 +2,16 @@
 #include "../src/include/trajectory.h"
 
 TEST(trajectory, impact_linterp){
-    grav grav = init_grav();
+    runparams run_params;
+    run_params.grav_error = 0;
+
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    grav grav = init_grav(&run_params, rng);
     state state_0;
     state state_1;
     state_0.t = 0;
@@ -52,7 +61,7 @@ TEST(trajectory, fly){
     run_params.z_aim = 0;
 
     run_params.rv_type = 0;
-
+    run_params.grav_error = 0;
     run_params.initial_x_error = 0;
     run_params.initial_pos_error = 0;
     run_params.initial_vel_error = 0;

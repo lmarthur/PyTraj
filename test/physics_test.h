@@ -53,9 +53,18 @@ TEST(physics, update_gravity){
     grav grav;
     // Define a state struct
     state state;
+    runparams run_params;
+    run_params.grav_error = 0;
+
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
 
     // Initialize the grav struct
-    grav = init_grav();
+    grav = init_grav(&run_params, rng);
 
     // Initialize the state struct with the vehicle at one earth radius
     state.x = grav.earth_radius;
@@ -113,7 +122,17 @@ TEST(physics, update_drag){
     vehicle.current_mass = vehicle.total_mass;
     atm_cond atm_cond;
     state state;
-    grav grav = init_grav();
+    runparams run_params;
+    run_params.grav_error = 0;
+
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    grav grav = init_grav(&run_params, rng);
     atm_cond = get_exp_atm_cond(0);
 
     state.t = 1;
