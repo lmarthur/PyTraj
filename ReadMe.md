@@ -62,7 +62,9 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Set up .yaml for conda environment
 - [X] Write tests for gravity perturbations
 - [X] Implement gravity perturbations in C
-- [ ] Implement EarthGRAM atmospheric model
+- [X] Implement atmospheric model with perturbations
+- [ ] Integrate functionality
+- [ ] Generate plots
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning
 - [ ] Write function to generate sensitivity plots
