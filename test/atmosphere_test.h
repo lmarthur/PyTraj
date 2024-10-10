@@ -176,6 +176,21 @@ TEST(atmosphere, get_exp_atm_cond){
 
     // Check the density
     REQUIRE_LT(atm_conditions.density, atm_model.sea_level_density);
+
+    // Check the atmospheric conditions at negative altitude
+    atm_conditions = get_exp_atm_cond(-1000, &atm_model);
+
+    // Check the altitude
+    REQUIRE_EQ(atm_conditions.altitude, 0);
+
+    // Check the density
+    REQUIRE_EQ(atm_conditions.density, atm_model.sea_level_density);
+
+    // Check the wind components
+    REQUIRE_EQ(atm_conditions.meridional_wind, 0);
+    REQUIRE_EQ(atm_conditions.zonal_wind, 0);
+    REQUIRE_EQ(atm_conditions.vertical_wind, 0);
+
 }
 
 TEST(atmosphere, get_pert_atm_cond){
@@ -306,6 +321,12 @@ TEST(atmosphere, get_pert_atm_cond){
     REQUIRE_NE(atm_model.std_winds[2], atm_conditions.meridional_wind);
     REQUIRE_NE(atm_model.std_winds[2], atm_conditions.zonal_wind);
     REQUIRE_NE(atm_model.std_vert_winds[2], atm_conditions.vertical_wind);
+
+}
+
+TEST(atmosphere, integration){
+    runparams run_params;
+    run_params.atm_error = 0;
 
     
 }

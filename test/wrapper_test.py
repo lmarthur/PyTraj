@@ -1,6 +1,7 @@
 import pytest
 import sys
 from ctypes import *
+import numpy as np
 
 
 sys.path.append('.')
@@ -39,22 +40,36 @@ def test_read_config():
     assert run_params.gnss_noise == 0.0
 
 
-# def test_mc_run():
-#     """
-#     Test suite for the mc_run function
-#     """
-#     
-#     # Turn off all random errors and verify that the first two runs are identical
-#     run_params = read_config("./test/test_input.toml")
-#     run_results = mc_run(run_params)
-# 
-#     assert run_results[0].all() == run_results[1].all()
-#     assert len(run_results) == run_params.num_runs
-# 
-#     # Turn on initial position error and verify that the first two runs are different
-#     run_params.initial_pos_error = c_double(1.0)
-#     run_params.traj_output = c_int(1)
-#     run_results = mc_run(run_params)
-# 
-#     assert run_results[0, 2] != run_results[1, 2]
-#     assert run_results[0, 3] != run_results[1, 3]
+def test_mc_run():
+    """
+    Test suite for the mc_run function
+    """
+    
+    # Turn off all random errors and verify that the first two runs are identical
+    run_params = read_config("./test/test_input.toml")
+    impact_data_pointer = pytraj.mc_run(run_params)
+
+    # Get the impact data from the pointer
+    assert impact_data_pointer != None
+    
+    # Read the impact data
+    run_path = "./output/run_0/"
+    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
+
+    assert np.allclose(impact_data[0,:], impact_data[1,:], atol=1e-6)
+
+    # Turn on random errors and verify that the first two runs are different
+    run_params.initial_x_error = c_double(1.0)
+    run_params.initial_pos_error = c_double(1.0)
+
+    impact_data_pointer = pytraj.mc_run(run_params)
+
+    # Get the impact data from the pointer
+    assert impact_data_pointer != None
+
+    # Read the impact data
+    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
+
+    assert not np.allclose(impact_data[0,:], impact_data[1,:], atol=1e-6)
+    
+

@@ -135,31 +135,4 @@ void kalman_filter_update(KalmanFilter *kf){
 
 }
 
-KalmanFilter init_ins_kalman(runparams *run_params){
-    /*
-    Function that initializes a Kalman filter for the inertial navigation system
-    
-    INPUTS:
-    ----------------
-        run_params: runparams
-            pointer to the run_params struct
-
-    OUTPUTS:
-    ----------------
-        ins_kf: KalmanFilter
-            pointer to the INS Kalman Filter struct
-    */
-    KalmanFilter ins_kf;
-    // set predicted state
-
-    // set dynamic matrix
-
-    // set process noise
-
-    // set measurement matrix
-
-    // set measurement noise
-
-    return ins_kf;
-}
 #endif

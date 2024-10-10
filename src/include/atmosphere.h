@@ -122,7 +122,9 @@ atm_cond get_exp_atm_cond(double altitude, atm_model *atm_model){
     */
 
     atm_cond atm_conditions;
-
+    if (altitude < 0){
+        altitude = 0;
+    }
     atm_conditions.altitude = altitude;
     atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
     atm_conditions.meridional_wind = 0;
@@ -150,11 +152,13 @@ atm_cond get_pert_atm_cond(double altitude, atm_model *atm_model){
     */
 
     atm_cond atm_conditions;
-
+    if (altitude < 0){
+        altitude = 0;
+    }
     atm_conditions.altitude = altitude;
 
     // Use if statements to determine the standard deviations to use
-
+    
     // Density
     if (altitude < 50000 && altitude >= 0){
         atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
@@ -168,13 +172,9 @@ atm_cond get_pert_atm_cond(double altitude, atm_model *atm_model){
         atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
         atm_conditions.density += atm_model->pert_densities[2] * atm_conditions.density;
     }
-    else if (altitude >= 250000){
+    else{
         atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
         atm_conditions.density += atm_model->pert_densities[3] * atm_conditions.density;
-    }
-    else {
-        printf("Error: Atmosphere logic!\n");
-        exit(1);
     }
 
     // Wind
@@ -193,14 +193,10 @@ atm_cond get_pert_atm_cond(double altitude, atm_model *atm_model){
         atm_conditions.zonal_wind = atm_model->pert_zonal_winds[2];
         atm_conditions.vertical_wind = atm_model->pert_vert_winds[2];
     }
-    else if (altitude >= 200000){
+    else{
         atm_conditions.meridional_wind = atm_model->pert_meridional_winds[3];
         atm_conditions.zonal_wind = atm_model->pert_zonal_winds[3];
         atm_conditions.vertical_wind = atm_model->pert_vert_winds[3];
-    }
-    else {
-        printf("Error: Atmosphere logic!\n");
-        exit(1);
     }
 
     return atm_conditions;

@@ -107,7 +107,7 @@ void output_impact(FILE *impact_file, impact_data *impact_data, int num_runs){
         num_runs: int
             Number of Monte Carlo runs
     */
-    printf("Outputting the impact data...");
+    printf("Outputting the impact data...\n");
 
     // Iterate through the number of runs and output the impact data
     for (int i = 0; i < num_runs; i++){
@@ -150,11 +150,10 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
 
     grav grav = init_grav(run_params, rng);
     atm_model atm_model = init_atm(run_params, rng);
-
     state old_state = *initial_state;
     state new_state = *initial_state;
 
-    int traj_output = run_params->traj_output;
+    int traj_output = 1; // run_params->traj_output;
     double time_step = run_params->time_step;
 
     // Create a .txt file to store the trajectory data
