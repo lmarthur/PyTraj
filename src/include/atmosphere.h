@@ -201,4 +201,33 @@ atm_cond get_pert_atm_cond(double altitude, atm_model *atm_model){
 
     return atm_conditions;
 }
+
+atm_cond get_atm_cond(double altitude, atm_model *atm_model, runparams *run_params){
+    /*
+    Calculates the atmospheric conditions at a given altitude
+
+    INPUTS:
+    ----------
+        altitude: double
+            altitude in meters
+        atm_model: atm_model *
+            pointer to the atmospheric model
+        run_params: runparams *
+            pointer to the run parameters struct
+    OUTPUT:
+    ----------
+        atm_conditions: atm_cond
+            local atmospheric conditions
+    */
+
+    atm_cond atm_conditions;
+    if (run_params->atm_error == 0){
+        atm_conditions = get_exp_atm_cond(altitude, atm_model);
+    }
+    else{
+        atm_conditions = get_pert_atm_cond(altitude, atm_model);
+    }
+    
+    return atm_conditions;
+}
 #endif

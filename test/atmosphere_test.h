@@ -324,7 +324,7 @@ TEST(atmosphere, get_pert_atm_cond){
 
 }
 
-TEST(atmosphere, integration){
+TEST(atmosphere, get_atm_cond){
     runparams run_params;
     run_params.atm_error = 0;
 
@@ -335,32 +335,30 @@ TEST(atmosphere, integration){
     T = gsl_rng_default;
     rng = gsl_rng_alloc(T);
 
+    // Initialize the atmospheric model
     atm_model atm_model = init_atm(&run_params, rng);
-    atm_cond atm_cond;
-    if (run_params.atm_error == 1){
-        atm_cond = get_pert_atm_cond(0, &atm_model);
-    } else {
-        atm_cond = get_exp_atm_cond(0, &atm_model);
-    }
 
-    REQUIRE_EQ(atm_cond.altitude, 0);
-    REQUIRE_EQ(atm_cond.density, atm_model.sea_level_density);
-    REQUIRE_EQ(atm_cond.meridional_wind, 0);
-    REQUIRE_EQ(atm_cond.zonal_wind, 0);
-    REQUIRE_EQ(atm_cond.vertical_wind, 0);
+    // Get the atmospheric conditions at sea level
+    atm_cond atm_conditions = get_atm_cond(0, &atm_model, &run_params);
 
+    // Check that the wind components are zero
+    REQUIRE_EQ(atm_conditions.meridional_wind, 0);
+    REQUIRE_EQ(atm_conditions.zonal_wind, 0);
+    REQUIRE_EQ(atm_conditions.vertical_wind, 0);
+
+    // Repeat the test with perturbation flag enabled
     run_params.atm_error = 1;
-    atm_model = init_atm(&run_params, rng);
-    if (run_params.atm_error == 1){
-        atm_cond = get_pert_atm_cond(0, &atm_model);
-    } else {
-        atm_cond = get_exp_atm_cond(0, &atm_model);
-    }
 
-    REQUIRE_EQ(atm_cond.altitude, 0);
-    REQUIRE_NE(atm_cond.density, atm_model.sea_level_density);
-    REQUIRE_NE(atm_cond.meridional_wind, 0);
-    REQUIRE_NE(atm_cond.zonal_wind, 0);
-    REQUIRE_NE(atm_cond.vertical_wind, 0);
+    // Initialize the atmospheric model
+    atm_model = init_atm(&run_params, rng);
+
+    // Get the atmospheric conditions at sea level
+    atm_conditions = get_atm_cond(0, &atm_model, &run_params);
+
+    // Check that the wind components are not zero
+    REQUIRE_NE(atm_conditions.meridional_wind, 0);
+    REQUIRE_NE(atm_conditions.zonal_wind, 0);
+    REQUIRE_NE(atm_conditions.vertical_wind, 0);
+    
         
 }

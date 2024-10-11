@@ -107,7 +107,7 @@ void output_impact(FILE *impact_file, impact_data *impact_data, int num_runs){
         num_runs: int
             Number of Monte Carlo runs
     */
-    printf("Outputting the impact data...\n");
+    // printf("Outputting the impact data...\n");
 
     // Iterate through the number of runs and output the impact data
     for (int i = 0; i < num_runs; i++){
@@ -150,6 +150,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
 
     grav grav = init_grav(run_params, rng);
     atm_model atm_model = init_atm(run_params, rng);
+    
     state old_state = *initial_state;
     state new_state = *initial_state;
 
@@ -169,7 +170,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     for (int i = 0; i < max_steps; i++){
         // Get the atmospheric conditions
         double old_altitude = sqrt(old_state.x*old_state.x + old_state.y*old_state.y + old_state.z*old_state.z) - 6371e3;
-        atm_cond atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
+        atm_cond atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
         // Update the thrust of the vehicle
         update_thrust(vehicle, &new_state);
         // Update the gravity acceleration components
@@ -286,7 +287,7 @@ void mc_run(runparams run_params){
 
     // Initialize the variables
     int num_runs = run_params.num_runs;
-    printf("Simulating %d Monte Carlo runs...\n", num_runs);
+    // printf("Simulating %d Monte Carlo runs...\n", num_runs);
     if (num_runs > MAX_RUNS){
         printf("Error: Number of runs exceeds the maximum limit. Increase MAX_RUNS in src/include/trajectory.h \n");
         printf("num_runs: %d, MAX_RUNS: %d\n", num_runs, MAX_RUNS);
