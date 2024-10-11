@@ -163,7 +163,16 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
     for (int i = 0; i < max_steps; i++){
         // Get the atmospheric conditions
         double old_altitude = sqrt(old_state.x*old_state.x + old_state.y*old_state.y + old_state.z*old_state.z) - 6371e3;
-        atm_cond atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
+        
+        // If before burnout, assume perfect maneuverability by setting the atmospheric conditions to standard
+        atm_cond atm_cond;
+        if (old_state.t < vehicle->booster.total_burn_time){
+            atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
+        }
+        else{
+            atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
+        }
+
         // Update the thrust of the vehicle
         update_thrust(vehicle, &new_state);
         // Update the gravity acceleration components

@@ -46,47 +46,5 @@ cart_vector prop_nav(runparams *run_params, state *estimated_state){
     return a_command;
 }
 
-cart_vector lambert_guidance(runparams *run_params, state *estimated_state){
-    /*
-    Lambert guidance law
-
-    INPUTS:
-    ----------
-        run_params: runparams *
-            pointer to the run parameters struct
-        estimated_state: state *
-            pointer to the estimated state of the vehicle
-
-    */
-    cart_vector a_command;
-    // TODO: Implement the Lambert guidance law
-    a_command.x = 0;
-    a_command.y = 0;
-    a_command.z = 0;
-
-    return a_command;
-}
-
-cart_vector guidance(runparams *run_params, state *estimated_state, vehicle *vehicle){
-    /*
-    Guidance function that adjusts the thrust angle and lift vector to guide the vehicle to the target
-
-    INPUTS:
-    ----------
-        run_params: runparams *
-            pointer to the run parameters struct
-        estimated_state: state *
-            pointer to the estimated state of the vehicle
-
-    */
-    cart_vector a_command;
-    if (estimated_state->t > vehicle->booster.total_burn_time){
-        a_command = prop_nav(run_params, estimated_state);
-    } else {
-        a_command = lambert_guidance(run_params, estimated_state);
-    }
-
-    return a_command;
-}
 
 #endif

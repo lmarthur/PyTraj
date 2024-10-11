@@ -80,7 +80,7 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
         state: state *
             pointer to the state struct
     */
-
+    
     // Get the relative airspeed 
     double cart_wind[3];
     double spher_wind[3] = {atm_cond->vertical_wind, atm_cond->zonal_wind, atm_cond->meridional_wind};
