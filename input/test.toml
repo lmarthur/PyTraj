@@ -1,4 +1,6 @@
 [RUN]
+run_name = test
+output_path = ./output
 num_runs = 2
 time_step = 1.0
 traj_output = 0

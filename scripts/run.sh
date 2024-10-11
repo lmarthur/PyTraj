@@ -7,6 +7,4 @@
 # Run the program
 python ./src/main.py
 
-# Generate the impact plot
-python ./src/impact_plot.py
 

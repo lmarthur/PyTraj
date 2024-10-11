@@ -1,6 +1,7 @@
 import numpy as np
 from ctypes import *
 import configparser
+import os
 
 so_file = "./build/libPyTraj.so"
 pytraj = CDLL(so_file)
@@ -8,6 +9,10 @@ pytraj = CDLL(so_file)
 # define the runparam struct
 class runparams(Structure):
     _fields_ = [
+        ("run_name", c_char_p),
+        ("output_path", c_char_p),
+        ("impact_data_path", c_char_p),
+        ("trajectory_path", c_char_p),
         ("num_runs", c_int),
         ("time_step", c_double),
         ("traj_output", c_int),
@@ -35,27 +40,37 @@ class runparams(Structure):
         ("gnss_noise", c_double),
     ]
 
-def read_config(config_file):
+def read_config(run_name):
     """
     Function to read the .toml configuration file and return the run parameters.
 
     INPUTS:
     ----------
-        config_file: str
-            The path to the configuration file.
+        run_name: str
+            The name of the configuration file.
     OUTPUTS:
     ----------
         run_params: runparams
             The run parameters.
     """
     # read the configuration file
+    config_file = "./input/" + run_name + ".toml"
     config = configparser.ConfigParser()
     config.read(config_file)
+
+    # Make the output directory if it does not exist
+    if not os.path.isdir(f"./output/{run_name}"):
+        os.makedirs(f"./output/{run_name}")
 
     # create the run parameters struct
     run_params = runparams()
 
     # set the run parameters
+    run_params.run_name = c_char_p(config['RUN']['run_name'].encode('utf-8'))
+    run_params.output_path = c_char_p(config['RUN']['output_path'].encode('utf-8'))
+    run_params.impact_data_path = run_params.output_path + b"/" + run_params.run_name + b"/impact_data.txt"
+    run_params.trajectory_path = run_params.output_path + b"/" + run_params.run_name + b"/trajectory.txt"
+
     run_params.num_runs = c_int(int(config['RUN']['num_runs']))
     run_params.time_step = c_double(float(config['RUN']['time_step']))
     run_params.traj_output = c_int(int(config['RUN']['traj_output']))

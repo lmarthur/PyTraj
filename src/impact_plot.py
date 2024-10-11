@@ -7,30 +7,23 @@ sys.path.append('.')
 import numpy as np
 from src.pylib import *
 
-# define the run path -- this provides the path to the data files and the output directory for the plots
-run_path = "./output/run_0/"
-
-# print error if the paths are not found
-if not os.path.exists(run_path + "impact_data.txt"):
-    print("Error: impact data not found.")
-    sys.exit()
-if not os.path.exists(run_path + "run_0.toml"):
-    print("Error: run parameters not found.")
-    sys.exit()
-
-print("Reading impact data...")
-impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-print("Reading config file...")
-run_params = read_config(run_path + "run_0.toml")
-
-impact_t = impact_data[:,0]
-impact_x = impact_data[:,1]
-impact_y = impact_data[:,2]
-impact_z = impact_data[:,3]
-
 # TODO: Add a calculation of the range to the aimpoint
 
-def impact_plot():
+def impact_plot(run_path, run_params):
+
+    # print error if the paths are not found
+    if not os.path.exists(run_path + "impact_data.txt"):
+        print("Error: impact data not found.")
+        sys.exit()
+
+    print("Reading impact data...")
+    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
+
+    impact_t = impact_data[:,0]
+    impact_x = impact_data[:,1]
+    impact_y = impact_data[:,2]
+    impact_z = impact_data[:,3]
+
     # get longitude and latitude of aimpoint
     aimpoint_lon = np.arctan2(run_params.y_aim, run_params.x_aim)
     aimpoint_lat = np.arctan2(run_params.z_aim, np.sqrt(run_params.x_aim**2 + run_params.y_aim**2))
@@ -129,5 +122,3 @@ def impact_plot():
     a1.set_xlabel('Miss Distance Histogram (m)', labelpad=1)  # Adjust labelpad for x-axis label
     plt.savefig(run_path + "impact_plot.pdf")
     plt.close()
-
-impact_plot()

@@ -119,7 +119,7 @@ void output_impact(FILE *impact_file, impact_data *impact_data, int num_runs){
     
 }
 
-state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
+state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng *rng){
     /*
     Function that simulates the flight of a vehicle, updating the state of the vehicle at each time step
     
@@ -141,13 +141,6 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     // Initialize the variables and structures
     int max_steps = 10000;
 
-    // Initialize the random number generator
-    const gsl_rng_type *T;
-    gsl_rng *rng;
-    gsl_rng_env_setup();
-    T = gsl_rng_default;
-    rng = gsl_rng_alloc(T);
-
     grav grav = init_grav(run_params, rng);
     atm_model atm_model = init_atm(run_params, rng);
     
@@ -160,7 +153,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     // Create a .txt file to store the trajectory data
     FILE *traj_file;
     if (traj_output == 1){
-        traj_file = fopen("./output/run_0/trajectory.txt", "w");
+        traj_file = fopen(run_params->trajectory_path, "w");
         fprintf(traj_file, "t, x, y, z, vx, vy, vz, ax_grav, ay_grav, az_grav, ax_drag, ay_drag, az_drag, ax_lift, ay_lift, az_lift, ax_thrust, ay_thrust, az_thrust, ax_total, ay_total, az_total, current_mass\n");
         // Write the initial state to the trajectory file
         fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_state.t, old_state.x, old_state.y, old_state.z, old_state.vx, old_state.vy, old_state.vz, old_state.ax_grav, old_state.ay_grav, old_state.az_grav, old_state.ax_drag, old_state.ay_drag, old_state.az_drag, old_state.ax_lift, old_state.ay_lift, old_state.az_lift, old_state.ax_thrust, old_state.ay_thrust, old_state.az_thrust, old_state.ax_total, old_state.ay_total, old_state.az_total, vehicle->current_mass);
@@ -262,7 +255,7 @@ cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
     initial_state.theta_long = thrust_angle_long;
 
     // Call the fly function to get the final state
-    state final_state = fly(run_params, &initial_state, &vehicle);
+    state final_state = fly(run_params, &initial_state, &vehicle, rng);
 
     // Update the aimpoint based on the final state
     aimpoint.x = final_state.x;
@@ -296,10 +289,10 @@ void mc_run(runparams run_params){
     // state initial_state = init_state();
     // vehicle vehicle = init_mmiii_ballistic();
     impact_data impact_data;
-
+    
     // Create a .txt file to store the impact data
     FILE *impact_file;
-    impact_file = fopen("./output/run_0/impact_data.txt", "w");
+    impact_file = fopen(run_params.impact_data_path, "w");
     fprintf(impact_file, "t, x, y, z, vx, vy, vz\n");
     
     // Initialize the random number generator
@@ -315,7 +308,7 @@ void mc_run(runparams run_params){
         vehicle vehicle = init_mmiii_ballistic();
         state initial_state = init_state(&run_params, rng);
         
-        impact_data.impact_states[i] = fly(&run_params, &initial_state, &vehicle);
+        impact_data.impact_states[i] = fly(&run_params, &initial_state, &vehicle, rng);
 
     }
 

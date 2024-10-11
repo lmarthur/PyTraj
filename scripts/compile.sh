@@ -22,6 +22,6 @@ gcc -shared -fPIC -o ./build/libPyTraj.so ./src/main.c -lgsl
 
 # Test the package
 echo "Testing the wrapper..."
-pytest -v ./test/
+pytest -v -s ./test/
 
 echo "Done."

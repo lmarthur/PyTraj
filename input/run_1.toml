@@ -1,5 +1,5 @@
 [RUN]
-run_name = run_0
+run_name = run_1
 output_path = ./output
 num_runs = 1000
 time_step = 1.0
@@ -12,7 +12,7 @@ theta_lat = 0.0
 
 [FLIGHT]
 grav_error = 0
-atm_error = 0
+atm_error = 1
 gnss_nav = 0
 ins_nav = 0
 filter_type = 0

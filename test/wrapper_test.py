@@ -13,8 +13,9 @@ def test_read_config():
     """
     Test suite for the read_config function
     """
-    run_params = read_config("./test/test_input.toml")
+    run_params = read_config("test")
 
+    #assert run_params.run_name == b"test"
     assert run_params.num_runs == 2
     assert run_params.time_step == 1.0
     assert run_params.traj_output == 0
@@ -46,14 +47,14 @@ def test_mc_run():
     """
     
     # Turn off all random errors and verify that the first two runs are identical
-    run_params = read_config("./test/test_input.toml")
+    run_params = read_config("test")
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Get the impact data from the pointer
     assert impact_data_pointer != None
     
     # Read the impact data
-    run_path = "./output/run_0/"
+    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     assert np.allclose(impact_data[0,:], impact_data[1,:], atol=1e-6)
@@ -71,5 +72,5 @@ def test_mc_run():
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     assert not np.allclose(impact_data[0,:], impact_data[1,:], atol=1e-6)
-    
+
 

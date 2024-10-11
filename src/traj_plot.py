@@ -3,43 +3,39 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# define the run path -- this provides the path to the data files and the output directory for the plots
-run_path = "./output/run_0/"
-
-# load the trajectory data from the .txt file, skipping the first row
-traj_data = np.loadtxt(run_path + "trajectory.txt", delimiter = ",", skiprows=1)
-
-true_t = traj_data[:,0]
-true_x = traj_data[:,1]
-true_y = traj_data[:,2]
-true_z = traj_data[:,3]
-true_vx = traj_data[:,4]
-true_vy = traj_data[:,5]
-true_vz = traj_data[:,6]
-true_ax_grav = traj_data[:,7]
-true_ay_grav = traj_data[:,8]
-true_az_grav = traj_data[:,9]
-true_ax_drag = traj_data[:,10]
-true_ay_drag = traj_data[:,11]
-true_az_drag = traj_data[:,12]
-true_ax_lift = traj_data[:,13]
-true_ay_lift = traj_data[:,14]
-true_az_lift = traj_data[:,15]
-true_ax_thrust = traj_data[:,16]
-true_ay_thrust = traj_data[:,17]
-true_az_thrust = traj_data[:,18]
-true_ax_total = traj_data[:,19]
-true_ay_total = traj_data[:,20]
-true_az_total = traj_data[:,21]
-true_mass = traj_data[:,22]
-
-true_altitude = np.sqrt(np.square(true_x) + np.square(true_y) + np.square(true_z)) - 6371e3
-true_thrust_mag = true_ax_thrust + true_ay_thrust + true_az_thrust
-
-def traj_plot():
+def traj_plot(run_path):
     """
     Function to plot the trajectory of the vehicle.
     """
+    # load the trajectory data from the .txt file, skipping the first row
+    traj_data = np.loadtxt(run_path + "trajectory.txt", delimiter = ",", skiprows=1)
+
+    true_t = traj_data[:,0]
+    true_x = traj_data[:,1]
+    true_y = traj_data[:,2]
+    true_z = traj_data[:,3]
+    true_vx = traj_data[:,4]
+    true_vy = traj_data[:,5]
+    true_vz = traj_data[:,6]
+    # true_ax_grav = traj_data[:,7]
+    # true_ay_grav = traj_data[:,8]
+    # true_az_grav = traj_data[:,9]
+    # true_ax_drag = traj_data[:,10]
+    # true_ay_drag = traj_data[:,11]
+    # true_az_drag = traj_data[:,12]
+    # true_ax_lift = traj_data[:,13]
+    # true_ay_lift = traj_data[:,14]
+    # true_az_lift = traj_data[:,15]
+    true_ax_thrust = traj_data[:,16]
+    true_ay_thrust = traj_data[:,17]
+    true_az_thrust = traj_data[:,18]
+    # true_ax_total = traj_data[:,19]
+    # true_ay_total = traj_data[:,20]
+    # true_az_total = traj_data[:,21]
+    true_mass = traj_data[:,22]
+
+    true_altitude = np.sqrt(np.square(true_x) + np.square(true_y) + np.square(true_z)) - 6371e3
+    true_thrust_mag = true_ax_thrust + true_ay_thrust + true_az_thrust
 
     # position vs. time
     plt.figure(figsize=(10,10))
@@ -115,5 +111,3 @@ def traj_plot():
     plt.grid()
     plt.savefig(run_path + "mass.pdf")
     plt.close()
-
-traj_plot()

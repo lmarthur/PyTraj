@@ -1,9 +1,10 @@
 import sys
 import os
 from ctypes import *
-
+from traj_plot import *
+from impact_plot import *
 # Specify the input file name (without the extension)
-config_file = "run_0"
+config_file = "run_1"
 
 # Check for the existence of the input file
 config_path = f"./input/{config_file}.toml"
@@ -30,8 +31,19 @@ pytraj = CDLL(so_file)
 if __name__ == "__main__":
     # Read the configuration file
     print("Reading configuration file...")
-    run_params = read_config(config_path)
+    run_params = read_config(config_file)
     print("Configuration file read.")
 
     impact_data_pointer = pytraj.mc_run(run_params)
     print("Monte Carlo simulation complete.")
+
+    # Plot the trajectory
+    if run_params.traj_output:
+        print("Plotting trajectory...")
+        traj_plot("./output/" + config_file + "/")
+        print("Trajectory plotted.")
+
+    # Plot the impact data
+    print("Plotting impact data...")
+    impact_plot("./output/" + config_file + "/", run_params)
+    print("Impact data plotted.")

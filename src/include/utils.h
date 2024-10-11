@@ -5,6 +5,10 @@
 #include <stdio.h>
 
 typedef struct runparams{
+    char *run_name; // name of the run
+    char *output_path; // path to the output directory
+    char *impact_data_path; // path to the impact data file
+    char *trajectory_path; // path to the trajectory data file
     int num_runs; // number of Monte Carlo runs
     double time_step; // time step in seconds
     int traj_output; // flag to output trajectory data
@@ -138,7 +142,10 @@ void print_config(runparams *run_params){
         run_params: runparams *
             pointer to the run parameters struct
     */
-
+    printf("Run name: %s\n", run_params->run_name);
+    printf("Output path: %s\n", run_params->output_path);
+    printf("Impact data path: %s\n", run_params->impact_data_path);
+    printf("Trajectory path: %s\n", run_params->trajectory_path);
     printf("Number of Monte Carlo runs: %d\n", run_params->num_runs);
     printf("Time step: %f\n", run_params->time_step);
     printf("Trajectory output: %d\n", run_params->traj_output);
