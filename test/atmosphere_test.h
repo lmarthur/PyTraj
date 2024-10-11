@@ -328,5 +328,39 @@ TEST(atmosphere, integration){
     runparams run_params;
     run_params.atm_error = 0;
 
-    
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
+
+    atm_model atm_model = init_atm(&run_params, rng);
+    atm_cond atm_cond;
+    if (run_params.atm_error == 1){
+        atm_cond = get_pert_atm_cond(0, &atm_model);
+    } else {
+        atm_cond = get_exp_atm_cond(0, &atm_model);
+    }
+
+    REQUIRE_EQ(atm_cond.altitude, 0);
+    REQUIRE_EQ(atm_cond.density, atm_model.sea_level_density);
+    REQUIRE_EQ(atm_cond.meridional_wind, 0);
+    REQUIRE_EQ(atm_cond.zonal_wind, 0);
+    REQUIRE_EQ(atm_cond.vertical_wind, 0);
+
+    run_params.atm_error = 1;
+    atm_model = init_atm(&run_params, rng);
+    if (run_params.atm_error == 1){
+        atm_cond = get_pert_atm_cond(0, &atm_model);
+    } else {
+        atm_cond = get_exp_atm_cond(0, &atm_model);
+    }
+
+    REQUIRE_EQ(atm_cond.altitude, 0);
+    REQUIRE_NE(atm_cond.density, atm_model.sea_level_density);
+    REQUIRE_NE(atm_cond.meridional_wind, 0);
+    REQUIRE_NE(atm_cond.zonal_wind, 0);
+    REQUIRE_NE(atm_cond.vertical_wind, 0);
+        
 }

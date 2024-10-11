@@ -108,6 +108,7 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
         state->ax_drag = -a_drag_mag * v_rel[0] / v_rel_mag;
         state->ay_drag = -a_drag_mag * v_rel[1] / v_rel_mag;
         state->az_drag = -a_drag_mag * v_rel[2] / v_rel_mag;
+
         
     }
     else{
@@ -118,6 +119,8 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
         state->az_drag = -a_drag_mag * v_rel[2] / v_rel_mag;
 
     }
+
+    return;
 }
 
 void update_thrust(vehicle *vehicle, state *state){

@@ -316,7 +316,7 @@ vehicle init_mock_vehicle(){
     vehicle.booster = init_mock_booster();
     vehicle.rv = init_mock_rv();
     vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
-
+    vehicle.current_mass = vehicle.total_mass;
     return vehicle;
 }
 

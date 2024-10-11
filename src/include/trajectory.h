@@ -153,7 +153,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle){
     state old_state = *initial_state;
     state new_state = *initial_state;
 
-    int traj_output = 1; // run_params->traj_output;
+    int traj_output = run_params->traj_output;
     double time_step = run_params->time_step;
 
     // Create a .txt file to store the trajectory data
