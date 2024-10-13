@@ -11,10 +11,15 @@ theta_long = 0.785398163397
 theta_lat = 0.0
 
 [FLIGHT]
+# Gravitational error model
 grav_error = 0
+# Atmospheric perturbations
 atm_error = 0
+# Positioning updates during exoatmospheric flight
 gnss_nav = 0
+# If set to 0, indicates perfect acceleration measurements
 ins_nav = 0
+# Currently not enabled
 filter_type = 0
 
 [VEHICLE]

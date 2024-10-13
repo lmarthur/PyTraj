@@ -63,7 +63,7 @@ imu imu_init(runparams *run_params, gsl_rng *rng){
 
 }
 
-state imu_measurement(imu *imu, state *true_state, gsl_rng *rng){
+void imu_measurement(imu *imu, state *true_state, state *est_state, gsl_rng *rng){
     /*
     Simulates an accelerometer measurement
 
@@ -82,22 +82,18 @@ state imu_measurement(imu *imu, state *true_state, gsl_rng *rng){
             pointer to the measured state of the vehicle
     */
 
-    state meas_state;
-    // Set timestamp
-    meas_state.t = true_state->t;
-
     // TODO: Account for the orientation error in the accelerometer measurement
     // Accelerometer measurements
     // TODO: Double check this
-    meas_state.ax_total = true_state->ax_total * (1 + imu->acc_scale_x);
-    meas_state.ay_total = true_state->ay_total * (1 + imu->acc_scale_y);
-    meas_state.az_total = true_state->az_total * (1 + imu->acc_scale_z);
+    // TODO: Separate out the gravitational acceleration
+    est_state->ax_total = true_state->ax_total * (1 + imu->acc_scale_x);
+    est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y);
+    est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z);
 
     // Gyroscope measurements
-    meas_state.theta_long = true_state->theta_long + imu->gyro_error_long;
-    meas_state.theta_lat = true_state->theta_lat + imu->gyro_error_lat;
+    est_state->theta_long = true_state->theta_long + imu->gyro_error_long;
+    est_state->theta_lat = true_state->theta_lat + imu->gyro_error_lat;
 
-    return meas_state;
 }
 
 void update_imu(imu *imu, runparams *run_params, gsl_rng *rng){
@@ -147,7 +143,7 @@ gnss gnss_init(runparams *run_params){
     return gnss;
 }
 
-state gnss_measurement(gnss *gnss, state *true_state, gsl_rng *rng){
+void gnss_measurement(gnss *gnss, state *true_state, state *est_state, gsl_rng *rng){
     /*
     Simulates a gnss measurement
 
@@ -166,16 +162,11 @@ state gnss_measurement(gnss *gnss, state *true_state, gsl_rng *rng){
             pointer to the measured state of the vehicle
     */
 
-    state meas_state;
-    // Set timestamp
-    meas_state.t = true_state->t;
-
     // Position measurements
-    meas_state.x = true_state->x + gnss->noise * gsl_ran_gaussian(rng, 1);
-    meas_state.y = true_state->y + gnss->noise * gsl_ran_gaussian(rng, 1);
-    meas_state.z = true_state->z + gnss->noise * gsl_ran_gaussian(rng, 1);
+    est_state->x = true_state->x + gnss->noise * gsl_ran_gaussian(rng, 1);
+    est_state->y = true_state->y + gnss->noise * gsl_ran_gaussian(rng, 1);
+    est_state->z = true_state->z + gnss->noise * gsl_ran_gaussian(rng, 1);
 
-    return meas_state;
 }
 
 state perfect_measurement(state *true_state){

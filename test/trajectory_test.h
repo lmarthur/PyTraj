@@ -67,7 +67,7 @@ TEST(trajectory, fly){
     run_params.initial_vel_error = 0;
     run_params.initial_angle_error = 0;
     // Mock vehicle with no thrust dropped from 10m above the surface
-    state initial_state = init_state(&run_params, rng);
+    state initial_state = init_true_state(&run_params, rng);
     initial_state.theta_long = 0;
     initial_state.x += 10;
     
@@ -80,7 +80,7 @@ TEST(trajectory, fly){
     REQUIRE_EQ(final_state.az_thrust, 0);
     
     // Mock vehicle with no thrust launched from the surface
-    initial_state = init_state(&run_params, rng);
+    initial_state = init_true_state(&run_params, rng);
     initial_state.theta_long = 0;
     initial_state.vx = 10;
     initial_state.vy = 10;
@@ -91,7 +91,7 @@ TEST(trajectory, fly){
 
     // MMIII ballistic vehicle launched vertically from the surface
     vehicle = init_mmiii_ballistic();
-    initial_state = init_state(&run_params, rng);
+    initial_state = init_true_state(&run_params, rng);
     initial_state.theta_long = 0;
     final_state = fly(&run_params, &initial_state, &vehicle, rng);
 
@@ -101,7 +101,7 @@ TEST(trajectory, fly){
     REQUIRE_LT(fabs(final_state.z), 1);
 
     // MMIII ballistic vehicle launched along the equator
-    initial_state = init_state(&run_params, rng);
+    initial_state = init_true_state(&run_params, rng);
     initial_state.theta_long = M_PI/4;
     run_params.traj_output = 0;
 

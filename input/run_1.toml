@@ -1,7 +1,7 @@
 [RUN]
 run_name = run_1
 output_path = ./output
-num_runs = 1000
+num_runs = 500
 time_step = 1.0
 traj_output = 0
 x_aim = 2068512.138207
@@ -11,21 +11,26 @@ theta_long = 0.785398163397
 theta_lat = 0.0
 
 [FLIGHT]
+# Gravitational error model
 grav_error = 0
+# Atmospheric perturbations
 atm_error = 1
-gnss_nav = 0
-ins_nav = 0
+# Positioning updates during exoatmospheric flight (1 is on, 0 is off)
+gnss_nav = 1
+# If set to 0, indicates perfect state measurements
+ins_nav = 1
+# Currently not enabled
 filter_type = 0
 
 [VEHICLE]
-rv_type = 0
+rv_type = 1
 
 [ERRORPARAMS]
 initial_x_error = 0.0
 initial_pos_error = 1.0
 initial_vel_error = 0
 initial_angle_error = 0
-acc_scale_stability = 0.0
-gyro_bias_stability = 0.0
-gyro_noise = 0.0
-gnss_noise = 0.0
+acc_scale_stability = 0
+gyro_bias_stability = 0
+gyro_noise = 0
+gnss_noise = 0
