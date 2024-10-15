@@ -109,6 +109,7 @@ rv init_swerve_rv(){
     rv.rv_mass = 450;
     rv.rv_length = 2.75;
     rv.rv_radius = 0.23;
+    rv.rv_area = M_PI * rv.rv_radius * rv.rv_radius;
     rv.c_d_0 = 0.1;
     rv.c_d_alpha = 0.487;
     rv.c_m_alpha = -0.15;

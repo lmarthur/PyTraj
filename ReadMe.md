@@ -64,7 +64,12 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Implement gravity perturbations in C
 - [X] Implement atmospheric model with perturbations
 - [X] Integrate boost guidance
+- [ ] Write tests for lift function
+- [ ] Implement lift function in C
 - [ ] Integrate proportional navigation for MaRV
+- [ ] Write tests for reentry filter
+- [ ] Implement reentry filter in C
+- [ ] Write integration tests
 - [ ] Generate plots
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning

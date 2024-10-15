@@ -107,3 +107,57 @@ TEST(maneuverability, perfect_maneuv){
     REQUIRE_EQ(new_true_state.y, true_state.y - 1);
 
 }
+
+TEST(maneuverability, rv_time_constant){
+    // Initialize the state
+    state true_state;
+    true_state.x = 6371e3 + 10;
+    true_state.y = 0;
+    true_state.z = 0;
+    true_state.theta_lat = 0;
+    true_state.vx = -1;
+    true_state.vy = 0;
+    true_state.vz = 0;
+    true_state.ax_grav = 0;
+    true_state.ay_grav = 0;
+    true_state.az_grav = 0;
+    true_state.ax_drag = 0;
+    true_state.ay_drag = 0;
+    true_state.az_drag = 0;
+    true_state.ax_lift = 0;
+    true_state.ay_lift = 0;
+    true_state.az_lift = 0;
+    true_state.ax_thrust = 0;
+    true_state.ay_thrust = 0;
+    true_state.az_thrust = 0;
+
+    // Initialize the vehicle
+    vehicle vehicle;
+    vehicle.rv = init_swerve_rv();
+    vehicle.booster = init_mmiii_booster();
+    vehicle.total_mass = vehicle.booster.total_mass + vehicle.rv.rv_mass;
+    vehicle.current_mass = vehicle.total_mass;
+
+    // Initialize the atmospheric conditions
+    atm_cond atm_cond;
+    atm_cond.altitude = 0;
+    atm_cond.density = 1.225;
+    atm_cond.meridional_wind = 0;
+    atm_cond.zonal_wind = 0;
+    atm_cond.vertical_wind = 0;
+
+    // Get the time constant
+    double time_constant_0 = rv_time_constant(&vehicle, &true_state, &atm_cond);
+
+    // Verify that the time constant is correct
+    REQUIRE_GT(time_constant_0, 0);
+
+    // For a different state, the time constant should be different
+    true_state.vx = -10;
+    double time_constant_1 = rv_time_constant(&vehicle, &true_state, &atm_cond);
+
+    REQUIRE_GT(time_constant_1, 0);
+    REQUIRE_NE(time_constant_0, time_constant_1);
+
+
+}

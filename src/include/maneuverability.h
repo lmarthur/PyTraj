@@ -74,4 +74,56 @@ state perfect_maneuv(state *true_state, state *estimated_state, state *desired_s
 
     return updated_state;
 }
+
+double rv_time_constant(vehicle *vehicle, state *true_state, atm_cond *atm_cond){
+    /*
+    Calculates the time constant of the reentry vehicle based on the current state
+
+    INPUTS:
+    ----------
+        vehicle: vehicle *
+            pointer to the vehicle struct
+        true_state: state *
+            pointer to the true state of the vehicle
+        atm_cond: atm_cond *
+            pointer to the atmospheric conditions
+
+    OUTPUTS:
+    ----------
+        double: time_constant
+            time constant of the vehicle
+    */
+
+    // Get the current velocity
+    double velocity = sqrt(true_state->vx*true_state->vx + true_state->vy*true_state->vy + true_state->vz*true_state->vz);
+    
+    // Calculate the time constant
+    double time_constant = sqrt(-2 * vehicle->rv.Iyy / (vehicle->rv.c_m_alpha * vehicle->rv.rv_area * atm_cond->density * pow(velocity, 2) * vehicle->rv.rv_length));
+
+    return time_constant;
+}
+
+state rv_maneuv(state true_state, cart_vector a_command, atm_cond atm_cond){
+    /*
+    Simulates maneuverability of a reentry vehicle by applying a commanded acceleration vector with a time delay and realistic atmospheric model
+
+    INPUTS:
+    ----------
+        true_state: state
+            true state of the vehicle
+        a_command: cart_vector
+            commanded acceleration vector
+        atm_cond: atm_cond
+            atmospheric conditions
+
+    OUTPUTS:
+    ----------
+        state: updated_state
+            state of the vehicle after the maneuver
+    */
+
+    
+   return true_state;
+}
+
 #endif
