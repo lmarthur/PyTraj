@@ -103,27 +103,31 @@ double rv_time_constant(vehicle *vehicle, state *true_state, atm_cond *atm_cond)
     return time_constant;
 }
 
-state rv_maneuv(state true_state, cart_vector a_command, atm_cond atm_cond){
+void update_lift(state *state, cart_vector *a_command, atm_cond *atm_cond, vehicle *vehicle, double time_step){
     /*
     Simulates maneuverability of a reentry vehicle by applying a commanded acceleration vector with a time delay and realistic atmospheric model
 
     INPUTS:
     ----------
-        true_state: state
-            true state of the vehicle
-        a_command: cart_vector
-            commanded acceleration vector
-        atm_cond: atm_cond
-            atmospheric conditions
-
-    OUTPUTS:
-    ----------
-        state: updated_state
-            state of the vehicle after the maneuver
+        true_state: state *
+            pointer to the state of the vehicle
+        a_command: cart_vector *
+            pointer to the commanded acceleration vector
+        atm_cond: atm_cond *
+            pointer to the atmospheric conditions
+        vehicle: vehicle *
+            pointer to the vehicle struct
+        time_step: double
+            time step for the simulation
     */
 
-    
-   return true_state;
+    // Calculate the time constant of the vehicle
+    double time_constant = rv_time_constant(vehicle, state, atm_cond);
+
+    state->ax_lift = state->ax_lift + (a_command->x - state->ax_lift) * time_step / time_constant;
+    state->ay_lift = state->ay_lift + (a_command->y - state->ay_lift) * time_step / time_constant;
+    state->az_lift = state->az_lift + (a_command->z - state->az_lift) * time_step / time_constant;
+
 }
 
 #endif
