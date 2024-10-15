@@ -22,8 +22,9 @@ typedef struct runparams{
     int atm_error; // flag to include atmospheric perturbations
     int gnss_nav; // flag to include GNSS navigation
     int ins_nav; // flag to include INS navigation
+    int boost_guidance; // flag to include guidance during the boost phase
     int filter_type; // filter type (0: None, 1: KF, 2: EKF)
-
+    
     int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
 
     double initial_x_error; // initial x-error in meters

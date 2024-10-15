@@ -219,14 +219,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
         // Get the atmospheric conditions
         double old_altitude = get_altitude(old_true_state.x, old_true_state.y, old_true_state.z);
 
-        // If before burnout, assume perfect maneuverability by setting the atmospheric conditions to standard
-        atm_cond true_atm_cond;
-        if (old_true_state.t < vehicle->booster.total_burn_time){
-            true_atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
-        }
-        else{
-            true_atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
-        }
+        atm_cond true_atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
         atm_cond est_atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
 
         // Update the thrust of the vehicle
@@ -241,6 +234,14 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
         update_drag(vehicle, &true_atm_cond, &new_true_state);
         update_drag(vehicle, &est_atm_cond, &new_est_state);
         update_drag(vehicle, &true_atm_cond, &new_des_state);
+        // if (run_params->rv_type == 1 && old_true_state.t > vehicle->booster.total_burn_time){
+        //     // Get the acceleration command
+        //     cart_vector a_command = prop_nav(run_params, &new_est_state);
+        //     
+        //     // Update the lift acceleration components
+        //     update_lift(&new_true_state, &a_command, &true_atm_cond, vehicle, run_params->time_step);
+        //     update_lift(&new_est_state, &a_command, &est_atm_cond, vehicle, run_params->time_step);
+        // }
         // Calculate the total acceleration components
         new_true_state.ax_total = new_true_state.ax_grav + new_true_state.ax_drag + new_true_state.ax_lift + new_true_state.ax_thrust;
         new_true_state.ay_total = new_true_state.ay_grav + new_true_state.ay_drag + new_true_state.ay_lift + new_true_state.ay_thrust;
@@ -253,32 +254,34 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
         new_des_state.az_total = new_des_state.az_grav + new_des_state.az_drag + new_des_state.az_lift + new_des_state.az_thrust;
 
         if (run_params->ins_nav == 1){
-            // Update the inertial navigation system
+            // INS Measurement
             imu_measurement(&imu, &new_true_state, &new_est_state, rng);
+
             update_imu(&imu, run_params, rng);
         }
 
         if (run_params->gnss_nav == 1){
-            // Update the GNSS navigation system
+            // GNSS Measurement
             gnss_measurement(&gnss, &new_true_state, &new_est_state, rng);
         }
 
         
         // Perform the maneuvers
-        if  (old_true_state.t < vehicle->booster.total_burn_time && (run_params->ins_nav ==1)){
+
+        if  (new_true_state.t < vehicle->booster.total_burn_time && (run_params->boost_guidance == 1)){
             // Perform a perfect maneuver if before burnout
             new_true_state = perfect_maneuv(&new_true_state, &new_est_state, &new_des_state);
         }
         
         // If maneuverable RV, use proportional navigation during reentry
-        
+
 
         // Perform a Runge-Kutta step
         rk4step(&new_true_state, time_step);
         rk4step(&new_est_state, time_step);
         rk4step(&new_des_state, time_step);
         // Update the mass of the vehicle
-        update_mass(vehicle, old_true_state.t);
+        update_mass(vehicle, new_true_state.t);
 
         // Check if the vehicle has impacted the Earth
         double new_altitude = get_altitude(new_true_state.x, new_true_state.y, new_true_state.z);
@@ -293,10 +296,12 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
 
             return true_final_state;
         }
+
         // output the trajectory data
         if (traj_output == 1){
             fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_true_state.t, vehicle->current_mass, new_true_state.x, new_true_state.y, new_true_state.z, new_true_state.vx, new_true_state.vy, new_true_state.vz, new_true_state.ax_grav, new_true_state.ay_grav, new_true_state.az_grav, new_true_state.ax_drag, new_true_state.ay_drag, new_true_state.az_drag, new_true_state.ax_lift, new_true_state.ay_lift, new_true_state.az_lift, new_true_state.ax_thrust, new_true_state.ay_thrust, new_true_state.az_thrust, new_true_state.ax_total, new_true_state.ay_total, new_true_state.az_total, new_est_state.x, new_est_state.y, new_est_state.z, new_est_state.vx, new_est_state.vy, new_est_state.vz, new_est_state.ax_grav, new_est_state.ay_grav, new_est_state.az_grav, new_est_state.ax_drag, new_est_state.ay_drag, new_est_state.az_drag, new_est_state.ax_lift, new_est_state.ay_lift, new_est_state.az_lift, new_est_state.ax_thrust, new_est_state.ay_thrust, new_est_state.az_thrust, new_est_state.ax_total, new_est_state.ay_total, new_est_state.az_total);
         }
+
         // Update the old state
         old_true_state = new_true_state;
         old_est_state = new_est_state;
@@ -331,19 +336,20 @@ cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
 
     cart_vector aimpoint;
     
+    runparams run_params_temp = *run_params;
     // Set output to zero
-    run_params->traj_output = 0;
+    run_params_temp.traj_output = 0;
     // Set all error parameters to zero
-    run_params->grav_error = 0;
-    run_params->atm_error = 0;
-    run_params->initial_x_error = 0;
-    run_params->initial_pos_error = 0;
-    run_params->initial_vel_error = 0;
-    run_params->initial_angle_error = 0;
-    run_params->acc_scale_stability = 0;
-    run_params->gyro_bias_stability = 0;
-    run_params->gyro_noise = 0;
-    run_params->gnss_noise = 0;
+    run_params_temp.grav_error = 0;
+    run_params_temp.atm_error = 0;
+    run_params_temp.initial_x_error = 0;
+    run_params_temp.initial_pos_error = 0;
+    run_params_temp.initial_vel_error = 0;
+    run_params_temp.initial_angle_error = 0;
+    run_params_temp.acc_scale_stability = 0;
+    run_params_temp.gyro_bias_stability = 0;
+    run_params_temp.gyro_noise = 0;
+    run_params_temp.gnss_noise = 0;
 
     // Initialize the random number generator (unused in this case, but still required)
     const gsl_rng_type *T;
@@ -354,11 +360,11 @@ cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
 
     // Initialize the vehicle 
     vehicle vehicle = init_mmiii_ballistic();
-    state initial_state = init_true_state(run_params, rng);
+    state initial_state = init_true_state(&run_params_temp, rng);
     initial_state.theta_long = thrust_angle_long;
 
     // Call the fly function to get the final state
-    state final_state = fly(run_params, &initial_state, &vehicle, rng);
+    state final_state = fly(&run_params_temp, &initial_state, &vehicle, rng);
 
     // Update the aimpoint based on the final state
     aimpoint.x = final_state.x;
@@ -393,6 +399,10 @@ void mc_run(runparams run_params){
     // vehicle vehicle = init_mmiii_ballistic();
     impact_data impact_data;
     
+    // Print an updated aimpoint
+    // cart_vector aimpoint = update_aimpoint(&run_params, 0.785398163397);
+    // printf("Updated aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
+
     // Create a .txt file to store the impact data
     FILE *impact_file;
     impact_file = fopen(run_params.impact_data_path, "w");

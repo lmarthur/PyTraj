@@ -27,6 +27,7 @@ def test_read_config():
     assert run_params.atm_error == 0
     assert run_params.gnss_nav == 0
     assert run_params.ins_nav == 0
+    assert run_params.boost_guidance == 1
     assert run_params.filter_type == 0
 
     assert run_params.rv_type == 0

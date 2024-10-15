@@ -19,7 +19,9 @@ atm_error = 0
 gnss_nav = 0
 # If set to 0, indicates perfect acceleration measurements
 ins_nav = 0
-# Currently not enabled
+# If set to 1, enables idealized boost phase guidance
+boost_guidance = 1
+# Filters are currently not enabled
 filter_type = 0
 
 [VEHICLE]

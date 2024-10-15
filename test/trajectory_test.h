@@ -133,7 +133,7 @@ TEST(trajectory, update_aimpoint){
     run_params.rv_type = 0;
 
     run_params.initial_x_error = 0;
-    run_params.initial_pos_error = 0;
+    run_params.initial_pos_error = 1;
     run_params.initial_vel_error = 0;
     run_params.initial_angle_error = 0;
     run_params.acc_scale_stability = 0;
@@ -144,5 +144,5 @@ TEST(trajectory, update_aimpoint){
     cart_vector aimpoint = update_aimpoint(&run_params, M_PI/4);
     // printf("Aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
     REQUIRE_LT(fabs(get_altitude(aimpoint.x, aimpoint.y, aimpoint.z)), 1);
-    
+    REQUIRE_EQ(run_params.initial_pos_error, 1);
 }

@@ -111,8 +111,8 @@ void update_imu(imu *imu, runparams *run_params, gsl_rng *rng){
     */
 
     // Update the gyro error by recursively adding noise and bias drift
-    imu->gyro_error_long = imu->gyro_error_long + imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_long * run_params->time_step;
-    imu->gyro_error_lat = imu->gyro_error_lat + imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_lat * run_params->time_step;
+    imu->gyro_error_long = imu->gyro_error_long + (imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_long) * run_params->time_step;
+    imu->gyro_error_lat = imu->gyro_error_lat + (imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_lat) * run_params->time_step;
 
 }
 
@@ -169,7 +169,7 @@ void gnss_measurement(gnss *gnss, state *true_state, state *est_state, gsl_rng *
 
 }
 
-state perfect_measurement(state *true_state){
+void perfect_measurement(state *true_state, state *est_state){
     /*
     Simulates a perfect measurement
 
@@ -177,6 +177,8 @@ state perfect_measurement(state *true_state){
     ----------
         true_state: state *
             pointer to the true state of the vehicle
+        est_state: state *
+            pointer to the estimated state of the vehicle
 
     OUTPUTS:
     ----------
@@ -184,9 +186,8 @@ state perfect_measurement(state *true_state){
             pointer to the measured state of the vehicle
     */
 
-    state meas_state = *true_state;
+    est_state = true_state;
 
-    return meas_state;
 }
 
 #endif
