@@ -274,7 +274,14 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
         }
         
         // If maneuverable RV, use proportional navigation during reentry
-
+        if (run_params->rv_type == 1 && old_true_state.t > vehicle->booster.total_burn_time && get_altitude(new_true_state.x, new_true_state.y, new_true_state.z) < 1e6){
+            // Get the acceleration command
+            cart_vector a_command = prop_nav(run_params, &new_est_state);
+            
+            // Update the lift acceleration components
+            update_lift(&new_true_state, &a_command, &true_atm_cond, vehicle, run_params->time_step);
+            update_lift(&new_est_state, &a_command, &est_atm_cond, vehicle, run_params->time_step);
+        }
 
         // Perform a Runge-Kutta step
         rk4step(&new_true_state, time_step);
