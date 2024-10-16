@@ -61,7 +61,6 @@ def test_mc_run():
     assert np.allclose(impact_data[0,:], impact_data[1,:], atol=1e-6)
 
     # Turn on random errors and verify that the first two runs are different
-    run_params.initial_x_error = c_double(1.0)
     run_params.initial_pos_error = c_double(1.0)
 
     impact_data_pointer = pytraj.mc_run(run_params)

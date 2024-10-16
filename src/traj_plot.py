@@ -89,7 +89,6 @@ def traj_plot(run_path):
     plt.savefig(run_path + "position_error.pdf")
     plt.close()
 
-
     # orbit plot
     earth_radius = 6371e3
     plt.figure(figsize=(10,10))
@@ -228,6 +227,19 @@ def traj_plot(run_path):
     plt.savefig(run_path + "drag_acceleration_error.pdf")
     plt.close()
 
+    # lift acceleration
+    plt.figure(figsize=(10,10))
+    plt.plot(true_t, true_ax_lift, label="ax")
+    plt.plot(true_t, true_ay_lift, label="ay")
+    plt.plot(true_t, true_az_lift, label="az")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Lift Acceleration (m/s^2)")
+    plt.title("Lift Acceleration")
+    plt.legend()
+    plt.grid()
+    plt.savefig(run_path + "lift_acceleration.pdf")
+    plt.close()
+    
     # lift acceleration error
     plt.figure(figsize=(10,10))
     plt.plot(true_t, true_ax_lift - est_ax_lift, label="ax")

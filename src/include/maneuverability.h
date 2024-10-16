@@ -126,6 +126,19 @@ void update_lift(state *state, cart_vector *a_command, atm_cond *atm_cond, vehic
     state->ay_lift = state->ay_lift + (a_command->y - state->ay_lift) * time_step / time_constant;
     state->az_lift = state->az_lift + (a_command->z - state->az_lift) * time_step / time_constant;
 
+    double velocity = sqrt(state->vx*state->vx + state->vy*state->vy + state->vz*state->vz);
+    double a_exec_mag = sqrt(state->ax_lift*state->ax_lift + state->ay_lift*state->ay_lift + state->az_lift*state->az_lift);
+    double angle_of_attack = vehicle->current_mass * a_exec_mag / (0.5 * atm_cond->density * velocity * velocity * vehicle->rv.c_l_alpha);
+
+    if (angle_of_attack > 10 * M_PI / 180 || angle_of_attack < -10 * M_PI / 180){
+        double new_a_exec_mag = 0.5 * atm_cond->density * velocity * velocity * vehicle->rv.c_l_alpha * 10 * M_PI / 180 / vehicle->current_mass;
+        state->ax_lift = new_a_exec_mag * state->ax_lift / a_exec_mag;
+        state->ay_lift = new_a_exec_mag * state->ay_lift / a_exec_mag;
+        state->az_lift = new_a_exec_mag * state->az_lift / a_exec_mag;
+    }
+
+    
+
 }
 
 #endif

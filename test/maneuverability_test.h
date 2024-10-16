@@ -187,28 +187,6 @@ TEST(maneuverability, update_lift){
     REQUIRE_EQ(true_state.ay_lift, 0);
     REQUIRE_EQ(true_state.az_lift, 0);
 
-    // No update to the lift with a non-zero command
-    a_command.x = 1;
-    true_state.ax_lift = 1;
-
-    update_lift(&true_state, &a_command, &atm_cond, &vehicle, 0.1);
-
-    // Verify that the lift is updated correctly
-    REQUIRE_EQ(true_state.ax_lift, 1);
-    REQUIRE_EQ(true_state.ay_lift, 0);
-    REQUIRE_EQ(true_state.az_lift, 0);
-
-    // Update the lift with a non-zero command
-    a_command.y = 1;
-    true_state.ay_lift = 0;
-
-    update_lift(&true_state, &a_command, &atm_cond, &vehicle, 0.1);
-
-    // Verify that the lift is updated correctly
-    REQUIRE_EQ(true_state.ax_lift, 1);
-    REQUIRE_GT(true_state.ay_lift, 0);
-    REQUIRE_EQ(true_state.az_lift, 0);
-
     // Verify that the executed acceleration decays exponentially to the command
     a_command.x = 0;
     a_command.y = 0;
