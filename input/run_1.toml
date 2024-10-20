@@ -1,11 +1,12 @@
 [RUN]
 run_name = run_1
 output_path = ./output
-num_runs = 2
-time_step = 0.1
-traj_output = 1
-x_aim = 2154991.342954
-y_aim = 5995469.398617
+num_runs = 250
+time_step_main = 1.0
+time_step_reentry = 0.01
+traj_output = 0
+x_aim = 2202707.027579
+y_aim = 5978103.608191
 z_aim = 0.0
 theta_long = 0.785398163397
 theta_lat = 0.0
@@ -22,7 +23,7 @@ ins_nav = 1
 # If set to 1, enables idealized boost phase guidance
 boost_guidance = 1
 # If set to 1, enables RV proportional navigation w/ realistic maneuverability, if set to 2, idealized maneuverability
-rv_maneuv = 1
+rv_maneuv = 0
 # Filters are currently not enabled
 filter_type = 0
 

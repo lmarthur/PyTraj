@@ -10,7 +10,8 @@ typedef struct runparams{
     char *impact_data_path; // path to the impact data file
     char *trajectory_path; // path to the trajectory data file
     int num_runs; // number of Monte Carlo runs
-    double time_step; // time step in seconds
+    double time_step_main; // time step in seconds during boost and outside the atmosphere
+    double time_step_reentry; // time step in seconds during reentry
     int traj_output; // flag to output trajectory data
     double x_aim; // target x-coordinate in meters
     double y_aim; // target y-coordinate in meters
@@ -149,7 +150,8 @@ void print_config(runparams *run_params){
     printf("Impact data path: %s\n", run_params->impact_data_path);
     printf("Trajectory path: %s\n", run_params->trajectory_path);
     printf("Number of Monte Carlo runs: %d\n", run_params->num_runs);
-    printf("Time step: %f\n", run_params->time_step);
+    printf("Time step: %f\n", run_params->time_step_main);
+    printf("Reentry time step: %f\n", run_params->time_step_reentry);
     printf("Trajectory output: %d\n", run_params->traj_output);
     printf("Target x-coordinate: %f\n", run_params->x_aim);
     printf("Target y-coordinate: %f\n", run_params->y_aim);

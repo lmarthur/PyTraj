@@ -85,7 +85,7 @@ TEST(sensors, imu_update){
 
     // Initialize the run parameters
     runparams run_params;
-    run_params.time_step = 1;
+    double time_step = 1;
     run_params.acc_scale_stability = 0;
 
     // Initialize the imu
@@ -105,7 +105,7 @@ TEST(sensors, imu_update){
 
     imu = imu_init(&run_params, rng);
     imu_measurement(&imu, &true_state, &est_state_0, rng);
-    update_imu(&imu, &run_params, rng);
+    update_imu(&imu, time_step, rng);
     imu_measurement(&imu, &true_state, &est_state_1, rng);
 
     REQUIRE_EQ(est_state_0.theta_long, est_state_1.theta_long);
@@ -117,7 +117,7 @@ TEST(sensors, imu_update){
     imu = imu_init(&run_params, rng);
     imu_measurement(&imu, &true_state, &est_state_0, rng);
     for (int i = 0; i < 10; i++){
-        update_imu(&imu, &run_params, rng);
+        update_imu(&imu, time_step, rng);
     }
     imu_measurement(&imu, &true_state, &est_state_1, rng);
     
@@ -131,7 +131,7 @@ TEST(sensors, imu_update){
     imu = imu_init(&run_params, rng);
     imu_measurement(&imu, &true_state, &est_state_0, rng);
     for (int i = 0; i < 10; i++){
-        update_imu(&imu, &run_params, rng);
+        update_imu(&imu, time_step, rng);
     }
     imu_measurement(&imu, &true_state, &est_state_1, rng);
 

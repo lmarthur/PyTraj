@@ -14,7 +14,8 @@ class runparams(Structure):
         ("impact_data_path", c_char_p),
         ("trajectory_path", c_char_p),
         ("num_runs", c_int),
-        ("time_step", c_double),
+        ("time_step_main", c_double),
+        ("time_step_reentry", c_double),
         ("traj_output", c_int),
         ("x_aim", c_double),
         ("y_aim", c_double),
@@ -74,7 +75,8 @@ def read_config(run_name):
     run_params.trajectory_path = run_params.output_path + b"/" + run_params.run_name + b"/trajectory.txt"
 
     run_params.num_runs = c_int(int(config['RUN']['num_runs']))
-    run_params.time_step = c_double(float(config['RUN']['time_step']))
+    run_params.time_step_main = c_double(float(config['RUN']['time_step_main']))
+    run_params.time_step_reentry = c_double(float(config['RUN']['time_step_reentry']))
     run_params.traj_output = c_int(int(config['RUN']['traj_output']))
     run_params.x_aim = c_double(float(config['RUN']['x_aim']))
     run_params.y_aim = c_double(float(config['RUN']['y_aim']))

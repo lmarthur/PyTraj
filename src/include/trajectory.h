@@ -213,8 +213,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
     state new_des_state = init_est_state(run_params);
 
     int traj_output = run_params->traj_output;
-    double time_step = run_params->time_step;
-
+    double time_step;
     // Initialize the IMU
     imu imu = imu_init(run_params, rng);
     // Initialize the GNSS
@@ -237,7 +236,13 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
 
         atm_cond true_atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
         atm_cond est_atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
-
+        // if during boost or outside atmosphere, dt = main time step, else dt = reentry time step
+        if (old_true_state.t < vehicle->booster.total_burn_time || old_altitude > 1e6){
+            time_step = run_params->time_step_main;
+        }
+        else{
+            time_step = run_params->time_step_reentry;
+        }
         // Update the thrust of the vehicle
         update_thrust(vehicle, &new_true_state);
         update_thrust(vehicle, &new_est_state);
@@ -257,8 +262,8 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             cart_vector a_command = prop_nav(run_params, &new_est_state);
             
             // Update the lift acceleration components
-            update_lift(&new_true_state, &a_command, &true_atm_cond, vehicle, run_params->time_step);
-            update_lift(&new_est_state, &a_command, &est_atm_cond, vehicle, run_params->time_step);
+            update_lift(&new_true_state, &a_command, &true_atm_cond, vehicle, time_step);
+            update_lift(&new_est_state, &a_command, &est_atm_cond, vehicle, time_step);
         }
 
         // Calculate the total acceleration components
@@ -276,7 +281,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             // INS Measurement
             imu_measurement(&imu, &new_true_state, &new_est_state, rng);
 
-            update_imu(&imu, run_params, rng);
+            update_imu(&imu, time_step, rng);
         }
 
         if (run_params->gnss_nav == 1){
@@ -435,8 +440,8 @@ void mc_run(runparams run_params){
     impact_data impact_data;
     
     // Print an updated aimpoint
-    // cart_vector aimpoint = update_aimpoint(&run_params, 0.785398163397);
-    // printf("Updated aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
+    cart_vector aimpoint = update_aimpoint(&run_params, 0.785398163397);
+    printf("Updated aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
 
     // Create a .txt file to store the impact data
     FILE *impact_file;

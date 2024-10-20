@@ -55,7 +55,8 @@ TEST(trajectory, fly){
     runparams run_params;
     // Set the run parameters
     run_params.traj_output = 0;
-    run_params.time_step = 1;
+    run_params.time_step_main = 1;
+    run_params.time_step_reentry = 1;
     run_params.x_aim = 6371e3;
     run_params.y_aim = 0;
     run_params.z_aim = 0;
@@ -118,7 +119,8 @@ TEST(trajectory, update_aimpoint){
     // Set the run parameters
     runparams run_params;
     run_params.traj_output = 0;
-    run_params.time_step = 1;
+    run_params.time_step_main = 1;
+    run_params.time_step_reentry = 1;
     run_params.x_aim = 6371e3;
     run_params.y_aim = 0;
     run_params.z_aim = 0;

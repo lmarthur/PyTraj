@@ -96,7 +96,7 @@ void imu_measurement(imu *imu, state *true_state, state *est_state, gsl_rng *rng
 
 }
 
-void update_imu(imu *imu, runparams *run_params, gsl_rng *rng){
+void update_imu(imu *imu, double time_step, gsl_rng *rng){
     /*
     Updates the accelerometer parameters
 
@@ -111,8 +111,8 @@ void update_imu(imu *imu, runparams *run_params, gsl_rng *rng){
     */
 
     // Update the gyro error by recursively adding noise and bias drift
-    imu->gyro_error_long = imu->gyro_error_long + (imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_long) * run_params->time_step;
-    imu->gyro_error_lat = imu->gyro_error_lat + (imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_lat) * run_params->time_step;
+    imu->gyro_error_long = imu->gyro_error_long + (imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_long) * time_step;
+    imu->gyro_error_lat = imu->gyro_error_lat + (imu->gyro_noise * gsl_ran_gaussian(rng, 1) + imu->gyro_bias_lat) * time_step;
 
 }
 
