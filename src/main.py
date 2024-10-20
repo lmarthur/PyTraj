@@ -18,8 +18,7 @@ if not os.path.isdir(f"./output/{config_file}"):
     os.makedirs(f"./output/{config_file}")
     sys.exit()
 
-# Copy the input file to the output directory
-os.system(f"cp {config_path} ./output/{config_file}")
+
 
 # Import the necessary functions from the Python library
 sys.path.append('.')
@@ -34,9 +33,27 @@ if __name__ == "__main__":
     run_params = read_config(config_file)
     print("Configuration file read.")
 
+    # Set the output of update_aimpoint to be a cart_vector struct
+    pytraj.update_aimpoint.restype = cart_vector
+
+    aimpoint = pytraj.update_aimpoint(run_params, c_double(run_params.theta_long))
+    run_params.x_aim = aimpoint.x
+    run_params.y_aim = aimpoint.y
+    run_params.z_aim = aimpoint.z
+    # Set the configuration file aimpoint to the updated aimpoint
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    config['RUN']['x_aim'] = str(aimpoint.x)
+    config['RUN']['y_aim'] = str(aimpoint.y)
+    config['RUN']['z_aim'] = str(aimpoint.z)
+    print(f"Aimpoint: ({aimpoint.x}, {aimpoint.y}, {aimpoint.z})")
+
     impact_data_pointer = pytraj.mc_run(run_params)
     print("Monte Carlo simulation complete.")
 
+    # Copy the input file to the output directory
+    os.system(f"cp {config_path} ./output/{config_file}")
+    
     # Plot the trajectory
     if run_params.traj_output:
         print("Plotting trajectory...")

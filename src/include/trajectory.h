@@ -343,14 +343,14 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
     return new_true_state;
 }
 
-cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
+cart_vector update_aimpoint(runparams run_params, double thrust_angle_long){
     /*
     Updates the aimpoint based on the thrust angle and other run parameters
 
     INPUTS:
     ----------
-        run_params: runparams *
-            pointer to the run parameters struct
+        run_params: runparams
+            run parameters struct
         thrust_angle_long: double
             thrust angle in the longitudinal direction
     OUTPUTS:
@@ -361,7 +361,7 @@ cart_vector update_aimpoint(runparams *run_params, double thrust_angle_long){
 
     cart_vector aimpoint;
     
-    runparams run_params_temp = *run_params;
+    runparams run_params_temp = run_params;
     // Set output to zero
     run_params_temp.traj_output = 0;
     run_params_temp.boost_guidance = 0;
@@ -440,8 +440,8 @@ void mc_run(runparams run_params){
     impact_data impact_data;
     
     // Print an updated aimpoint
-    cart_vector aimpoint = update_aimpoint(&run_params, 0.785398163397);
-    printf("Updated aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
+    // cart_vector aimpoint = update_aimpoint(run_params, 0.785398163397);
+    // printf("Updated aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
 
     // Create a .txt file to store the impact data
     FILE *impact_file;

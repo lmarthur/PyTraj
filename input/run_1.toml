@@ -1,13 +1,14 @@
 [RUN]
 run_name = run_1
 output_path = ./output
-num_runs = 250
+num_runs = 10
 time_step_main = 1.0
 time_step_reentry = 0.01
-traj_output = 0
-x_aim = 2202707.027579
-y_aim = 5978103.608191
-z_aim = 0.0
+traj_output = 1
+# Note that the aimpoint coords are currently superseded by the thrust angle
+x_aim = 0
+y_aim = 0
+z_aim = 0
 theta_long = 0.785398163397
 theta_lat = 0.0
 

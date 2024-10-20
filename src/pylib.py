@@ -43,6 +43,13 @@ class runparams(Structure):
         ("gnss_noise", c_double),
     ]
 
+class cart_vector(Structure):
+    _fields_ = [
+        ("x", c_double),
+        ("y", c_double),
+        ("z", c_double),
+    ]
+    
 def read_config(run_name):
     """
     Function to read the .toml configuration file and return the run parameters.
