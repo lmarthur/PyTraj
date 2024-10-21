@@ -29,7 +29,6 @@ class runparams(Structure):
         ("ins_nav", c_int),
         ("boost_guidance", c_int),
         ("rv_maneuv", c_int),
-        ("filter_type", c_int), # filter type (0: None, 1: KF)
 
         ("rv_type", c_int), # 0 for ballistic, 1 for maneuverable
 
@@ -98,7 +97,6 @@ def read_config(run_name):
     run_params.ins_nav = c_int(int(config['FLIGHT']['ins_nav']))
     run_params.boost_guidance = c_int(int(config['FLIGHT']['boost_guidance']))
     run_params.rv_maneuv = c_int(int(config['FLIGHT']['rv_maneuv']))
-    run_params.filter_type = c_int(int(config['FLIGHT']['filter_type']))
 
     # set the vehicle parameters
     run_params.rv_type = c_int(int(config['VEHICLE']['rv_type']))

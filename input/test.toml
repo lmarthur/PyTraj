@@ -24,8 +24,6 @@ ins_nav = 0
 boost_guidance = 1
 # If set to 1, enables RV proportional navigation w/ realistic maneuverability, if set to 2, idealized maneuverability
 rv_maneuv = 1
-# Filters are currently not enabled
-filter_type = 0
 
 [VEHICLE]
 rv_type = 0

@@ -25,7 +25,6 @@ typedef struct runparams{
     int ins_nav; // flag to include INS navigation
     int boost_guidance; // flag to include guidance during the boost phase
     int rv_maneuv; // flag to include guidance during the reentry phase
-    int filter_type; // filter type (0: None, 1: KF)
 
     int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
 
@@ -165,7 +164,6 @@ void print_config(runparams *run_params){
     printf("INS navigation: %d\n", run_params->ins_nav);
     printf("Boost phase guidance: %d\n", run_params->boost_guidance);
     printf("Reentry phase guidance: %d\n", run_params->rv_maneuv);
-    printf("Filter type: %d\n", run_params->filter_type);
 
     printf("Reentry vehicle type: %d\n", run_params->rv_type);
 

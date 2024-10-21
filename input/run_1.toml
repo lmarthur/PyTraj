@@ -18,15 +18,13 @@ grav_error = 1
 # Atmospheric perturbations
 atm_error = 1
 # Positioning updates during exoatmospheric flight (1 is on, 0 is off)
-gnss_nav = 0
+gnss_nav = 1
 # If set to 0, indicates perfect state measurements
 ins_nav = 1
 # If set to 1, enables idealized boost phase guidance
 boost_guidance = 1
 # If set to 1, enables RV proportional navigation w/ realistic maneuverability, if set to 2, idealized maneuverability
-rv_maneuv = 0
-# Filters are currently not enabled
-filter_type = 0
+rv_maneuv = 1
 
 [VEHICLE]
 rv_type = 1
@@ -34,9 +32,9 @@ rv_type = 1
 [ERRORPARAMS]
 initial_x_error = 0.0
 initial_pos_error = 0.1
-initial_vel_error = 0
-initial_angle_error = 0
-acc_scale_stability = 0
-gyro_bias_stability = 0
-gyro_noise = 0
-gnss_noise = 0
+initial_vel_error = 1e-4
+initial_angle_error = 1e-6
+acc_scale_stability = 1e-6
+gyro_bias_stability = 1e-8
+gyro_noise = 1e-8
+gnss_noise = 1e-1
