@@ -283,7 +283,7 @@ rv init_mock_rv(){
 
     rv rv;
     // Define parameters for a ballistic reentry vehicle
-    strcpy(rv.name, "Ball");
+    strcpy(rv.name, "Mock");
     rv.maneuverability_flag = 0;
     rv.rv_mass = 100;
     rv.rv_length = 1;

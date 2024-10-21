@@ -74,22 +74,22 @@ atm_model init_atm(runparams *run_params, gsl_rng *rng){
     }
     else{
         // Density standard deviations
-        atm_model.std_densities[0] = 0.005; // 0.5% error for h<50km
-        atm_model.std_densities[1] = 0.05; // 5% error for 50km<h<100
-        atm_model.std_densities[2] = 0.1; // 10% error for 100km<h<250
-        atm_model.std_densities[3] = 0.03; // 3% error for h>250km
+        atm_model.std_densities[0] = 0.00005;
+        atm_model.std_densities[1] = 0.00006;
+        atm_model.std_densities[2] = 0.0018;
+        atm_model.std_densities[3] = 0.0001;
 
         // Wind standard deviations
-        atm_model.std_winds[0] = 2; // 2 m/s error for h<5km
-        atm_model.std_winds[1] = 8; // 8 m/s error for 5km<h<50km
-        atm_model.std_winds[2] = 50; // 50 m/s error for 50km<h<200km
-        atm_model.std_winds[3] = 100; // 100 m/s error for h>200km
+        atm_model.std_winds[0] = 0.05;
+        atm_model.std_winds[1] = 0.12;
+        atm_model.std_winds[2] = 0.75;
+        atm_model.std_winds[3] = 1.5;
 
         // Vertical wind standard deviations
-        atm_model.std_vert_winds[0] = 0.1; // 0.1 m/s error for h<5km
-        atm_model.std_vert_winds[1] = 0.5; // 0.5 m/s error for 5km<h<50km
-        atm_model.std_vert_winds[2] = 2; // 2 m/s error for 50km<h<150km
-        atm_model.std_vert_winds[3] = 10; // 5 m/s error for h>150km
+        atm_model.std_vert_winds[0] = 0.05;
+        atm_model.std_vert_winds[1] = 0.015;
+        atm_model.std_vert_winds[2] = 0.075;
+        atm_model.std_vert_winds[3] = 0.3;
 
         for (int i = 0; i < 4; i++){
             // Generate perturbations, which are then used by the get_atm_cond function to generate the true conditions
@@ -100,7 +100,7 @@ atm_model init_atm(runparams *run_params, gsl_rng *rng){
         }
 
     }
-
+    
     return atm_model;
 }
 
@@ -160,15 +160,15 @@ atm_cond get_pert_atm_cond(double altitude, atm_model *atm_model){
     // Use if statements to determine the standard deviations to use
     
     // Density
-    if (altitude < 50000 && altitude >= 0){
+    if (altitude < 5000 && altitude >= 0){
         atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
         atm_conditions.density += atm_model->pert_densities[0] * atm_conditions.density;
     }
-    else if (altitude < 100000){
+    else if (altitude < 50000){
         atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
         atm_conditions.density += atm_model->pert_densities[1] * atm_conditions.density;
     }
-    else if (altitude < 250000){
+    else if (altitude < 100000){
         atm_conditions.density = atm_model->sea_level_density * exp(-altitude/atm_model->scale_height);
         atm_conditions.density += atm_model->pert_densities[2] * atm_conditions.density;
     }
@@ -188,7 +188,7 @@ atm_cond get_pert_atm_cond(double altitude, atm_model *atm_model){
         atm_conditions.zonal_wind = atm_model->pert_zonal_winds[1];
         atm_conditions.vertical_wind = atm_model->pert_vert_winds[1];
     }
-    else if (altitude < 200000){
+    else if (altitude < 100000){
         atm_conditions.meridional_wind = atm_model->pert_meridional_winds[2];
         atm_conditions.zonal_wind = atm_model->pert_zonal_winds[2];
         atm_conditions.vertical_wind = atm_model->pert_vert_winds[2];
