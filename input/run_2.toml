@@ -1,5 +1,5 @@
 [RUN]
-run_name = run_1
+run_name = run_2
 output_path = ./output
 num_runs = 1000
 time_step_main = 1.0
@@ -24,7 +24,7 @@ ins_nav = 1
 # If set to 1, enables idealized boost phase guidance
 boost_guidance = 1
 # If set to 1, enables RV proportional navigation w/ realistic maneuverability, if set to 2, idealized maneuverability
-rv_maneuv = 1
+rv_maneuv = 2
 
 [VEHICLE]
 rv_type = 1

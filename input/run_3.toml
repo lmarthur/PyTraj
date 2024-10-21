@@ -1,5 +1,5 @@
 [RUN]
-run_name = run_1
+run_name = run_3
 output_path = ./output
 num_runs = 1000
 time_step_main = 1.0
@@ -18,7 +18,7 @@ grav_error = 1
 # Atmospheric perturbations
 atm_error = 1
 # Positioning updates during exoatmospheric flight (1 is on, 0 is off)
-gnss_nav = 0
+gnss_nav = 1
 # If set to 0, indicates perfect state measurements
 ins_nav = 1
 # If set to 1, enables idealized boost phase guidance

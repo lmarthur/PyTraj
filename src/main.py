@@ -4,7 +4,7 @@ from ctypes import *
 from traj_plot import *
 from impact_plot import *
 # Specify the input file name (without the extension)
-config_file = "run_1"
+config_file = "run_3"
 
 # Check for the existence of the input file
 config_path = f"./input/{config_file}.toml"
@@ -16,9 +16,6 @@ if not os.path.isfile(config_path):
 if not os.path.isdir(f"./output/{config_file}"):
     # Create the output directory if it does not exist
     os.makedirs(f"./output/{config_file}")
-    sys.exit()
-
-
 
 # Import the necessary functions from the Python library
 sys.path.append('.')
@@ -29,7 +26,7 @@ pytraj = CDLL(so_file)
 # Code block to run the Monte Carlo simulation
 if __name__ == "__main__":
     # Read the configuration file
-    print("Reading configuration file...")
+    print("Reading configuration file " + config_file + ".toml...")
     run_params = read_config(config_file)
     print("Configuration file read.")
 
