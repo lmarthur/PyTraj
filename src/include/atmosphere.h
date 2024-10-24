@@ -17,6 +17,15 @@ typedef struct atm_cond{
     // General atmospheric parameters
 } atm_cond;
 
+// Define an atmprofile struct to store the atmospheric profile
+typedef struct atmprofile{
+    double alt_array[100]; // altitude array
+    double density_array[100]; // density array
+    double meridional_wind_array[100]; // meridional wind array
+    double zonal_wind_array[100]; // zonal wind array
+    double vertical_wind_array[100]; // vertical wind array
+} atmprofile;
+
 // Define an atm_model struct to store the atmospheric model
 typedef struct atm_model{
     // Constants
@@ -35,6 +44,32 @@ typedef struct atm_model{
     double pert_vert_winds[4];
 
 } atm_model;
+
+typedef struct atmdata{
+    int n_profiles;
+    int n_altitudes;
+    double atm_array[100000][10];
+
+} atmdata;
+
+void print_atm_data(atmdata *atm_data){
+    /*
+    Prints portions of the atmospheric data to the console--useful for debugging purposes
+
+    INPUTS:
+    ----------
+        atm_data: atmdata *
+            pointer to the atmospheric data struct
+    */
+
+    printf("Number of profiles: %d\n", atm_data->n_profiles);
+    printf("Number of altitudes: %d\n", atm_data->n_altitudes);
+    printf("First 10 altitudes: ");
+    for (int i = 0; i < 10; i++){
+        printf("%f ", atm_data->atm_array[i][1]);
+    }
+    printf("\n");
+}
 
 atm_model init_atm(runparams *run_params, gsl_rng *rng){
     /*
@@ -104,6 +139,95 @@ atm_model init_atm(runparams *run_params, gsl_rng *rng){
     return atm_model;
 }
 
+atmprofile init_atm_profile(atmdata *atm_data, int pert_flag, int profile){
+    /*
+    Initializes the atmospheric model by reading in the atmospheric data to an atmprofile struct
+    
+    INPUTS:
+    ----------
+        atm_data: atmdata *
+            pointer to the atmospheric data struct
+        pert_flag: int
+            flag to include atmospheric perturbations (0: no, 1: yes)
+        profile: int
+            profile number to use
+    OUTPUT:
+    ----------
+        atm_profile: atmprofile
+            local atmospheric profile
+    */
+
+    atmprofile atm_profile;
+    // Get starting index for the profile
+    int start_index = profile * 100;
+
+    // Branch for no perturbations
+    if (pert_flag == 0){
+        for (int i = 0; i < 100; i++){
+            atm_profile.alt_array[i] = atm_data->atm_array[start_index + i][1];
+            atm_profile.density_array[i] = atm_data->atm_array[start_index + i][2];
+            atm_profile.meridional_wind_array[i] = atm_data->atm_array[start_index + i][4];
+            atm_profile.zonal_wind_array[i] = atm_data->atm_array[start_index + i][6];
+            atm_profile.vertical_wind_array[i] = atm_data->atm_array[start_index + i][8];
+        }
+    }
+    // Branch for perturbations
+    else{
+        for (int i = 0; i < 100; i++){
+            atm_profile.alt_array[i] = atm_data->atm_array[start_index + i][1];
+            atm_profile.density_array[i] = atm_data->atm_array[start_index + i][3];
+            atm_profile.meridional_wind_array[i] = atm_data->atm_array[start_index + i][5];
+            atm_profile.zonal_wind_array[i] = atm_data->atm_array[start_index + i][7];
+            atm_profile.vertical_wind_array[i] = atm_data->atm_array[start_index + i][9];
+        }
+    }
+    
+    return atm_profile;
+}
+
+atm_cond get_atm_cond_profile(double altitude, atmprofile *atm_profile){
+    /*
+    Calculates the atmospheric conditions at a given altitude using a model based on EarthGRAM 2016 results
+
+    INPUTS:
+    ----------
+        altitude: double
+            altitude in meters
+        atm_profile: atmprofile *
+            pointer to the atmospheric profile
+    OUTPUT:
+    ----------
+        atm_conditions: atm_cond
+            local atmospheric conditions
+    */
+
+    atm_cond atm_conditions;
+    if (altitude >= 99000){
+        atm_conditions.altitude = altitude;
+        atm_conditions.density = 0;
+        atm_conditions.meridional_wind = 0;
+        atm_conditions.zonal_wind = 0;
+        atm_conditions.vertical_wind = 0;
+        return atm_conditions;
+
+    }
+
+    if (altitude < 0){
+        altitude = 0;
+    }
+
+    atm_conditions.altitude = altitude;
+
+    // Interpolate the density
+    atm_conditions.density = array_linterp(atm_profile->alt_array, atm_profile->density_array, 100, altitude);
+
+    // Interpolate the wind components
+    atm_conditions.meridional_wind = array_linterp(atm_profile->alt_array, atm_profile->meridional_wind_array, 100, altitude);
+    atm_conditions.zonal_wind = array_linterp(atm_profile->alt_array, atm_profile->zonal_wind_array, 100, altitude);
+    atm_conditions.vertical_wind = array_linterp(atm_profile->alt_array, atm_profile->vertical_wind_array, 100, altitude);
+
+    return atm_conditions;
+}
 
 atm_cond get_exp_atm_cond(double altitude, atm_model *atm_model){
     /*

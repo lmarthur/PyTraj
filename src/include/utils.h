@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct runparams{
     char *run_name; // name of the run
@@ -133,6 +134,90 @@ void sphervec_to_cartvec(double *sphervec, double *cartvec, double *spher_coords
     // Get the z-component of the spherical vector
     cartvec[2] = sphervec[0] * sin(spher_coords[2]);
     
+}
+
+int binary_search(double *arr, int n, double x){
+    /*
+    Performs a binary search on a sorted array to find the index of the nearest value less than or equal to x
+
+    INPUTS:
+    ----------
+        arr: double *
+            pointer to the sorted array
+        n: int
+            number of elements in the array
+        x: double
+            value to search for
+    OUTPUTS:
+    ----------
+        index: int
+            index of the nearest value less than or equal to x
+    */
+
+    // Initialize the indices   
+    int l = 0;
+    int r = n - 1;
+
+    if (x < arr[0]){
+        printf("Binary search error: x is less than the minimum value in the array\n");
+        exit(1);
+    }
+    if (x > arr[n-1]){
+        printf("Binary search error: x is greater than the maximum value in the array\n");
+        exit(1);
+    }
+
+    // Perform the binary search
+    while (l <= r){
+        int m = l + (r - l) / 2;
+
+        // Check if x is present at mid
+        if (arr[m] == x){
+            return m;
+        }
+
+        // If x greater, ignore left half
+        if (arr[m] < x){
+            l = m + 1;
+        }
+
+        // If x is smaller, ignore right half
+        else{
+            r = m - 1;
+        }
+    }
+
+    // Return the index of the nearest value less than or equal to x
+    return r;
+}
+
+double array_linterp(double *x, double *y, int n, double x_val){
+    /*
+    Performs a linear interpolation on an array of values
+
+    INPUTS:
+    ----------
+        x: double *
+            pointer to the x-values
+        y: double *
+            pointer to the y-values
+        n: int
+            number of elements in the array
+        x_val: double
+            value to interpolate
+    OUTPUTS:
+    ----------
+        y_val: double
+            interpolated value
+    */
+
+    // Find the index of the nearest value less than or equal to x_val
+    int i = binary_search(x, n, x_val);
+
+    // Perform the linear interpolation
+    double y_val = y[i] + (y[i+1] - y[i]) / (x[i+1] - x[i]) * (x_val - x[i]);
+
+    return y_val;
 }
 
 void print_config(runparams *run_params){

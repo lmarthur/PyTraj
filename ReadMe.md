@@ -68,6 +68,7 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Implement lift function in C
 - [X] Integrate proportional navigation for MaRV
 - [X] Generate plots
+- [ ] Verify gyro error propagation
 - [ ] Write integration tests
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning

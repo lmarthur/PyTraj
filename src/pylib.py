@@ -48,7 +48,42 @@ class cart_vector(Structure):
         ("y", c_double),
         ("z", c_double),
     ]
-    
+
+class atmdata(Structure):
+    _fields_ = [
+        ("n_profiles", c_int),
+        ("n_altitudes", c_int),
+        ("atm_array", (c_double*10)*100000),
+    ]
+        
+def read_atm_data():
+    """
+    Function to read the atmosphere data from the .txt file using numpy and return the atmosphere data.
+
+    OUTPUTS:
+    ----------
+        atm_data: atm_data
+            The atmosphere data.
+    """
+    # read the atmosphere file
+    atm_file = "./input/atm.txt"
+    atm_data = atmdata()
+
+    # read the atmosphere data
+    npdata = np.loadtxt(atm_file, delimiter = " ", skiprows=1)
+
+    # set the atmosphere data
+    atm_data.n_profiles = c_int(np.unique(npdata[:,0]).shape[0])
+    atm_data.n_altitudes = c_int(np.unique(npdata[:,1]).shape[0])
+
+    # set the atmosphere array by iterating over the numpy array
+    for i in range(npdata.shape[0]):
+        for j in range(npdata.shape[1]):
+            atm_data.atm_array[i][j] = c_double(npdata[i,j])
+
+    return atm_data
+
+
 def read_config(run_name):
     """
     Function to read the .toml configuration file and return the run parameters.
