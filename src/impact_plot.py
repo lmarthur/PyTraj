@@ -74,7 +74,7 @@ def impact_plot(run_path, run_params):
 
     a0.plot(x, y, c='r', label='CEP', linestyle='--', linewidth=1.5)
     a0.scatter(impact_x_local, impact_y_local, c='k', marker='x', label='Impact Points', s=20, alpha=0.5, linewidths=1)
-    a0.legend(['CEP: '+str(cep)+'m', 'Impact Points'], frameon=False, framealpha=0)
+    a0.legend(['CEP', 'Impact Points'], frameon=False, framealpha=0)
 
     # center the plot on (0,0)
     a0.set_xlim(-plotrange, plotrange)
@@ -93,6 +93,8 @@ def impact_plot(run_path, run_params):
 
     a0.set_title('Minuteman III: Unguided Reentry')
     # plot the histogram of the miss distances
+
+    cep = round(np.percentile(miss_distance, 50), 2)
 
     # Fit a Nakagami distribution to the data
     x = np.linspace(0, 5*cep, 100)

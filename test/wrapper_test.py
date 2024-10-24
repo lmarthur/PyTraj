@@ -41,24 +41,6 @@ def test_read_config():
     assert run_params.gyro_noise == 0.0
     assert run_params.gnss_noise == 0.0
 
-def test_read_atm_data():
-    """
-    Test suite for the read_atm_data function
-    """
-    atm_data = read_atm_data()
-    assert atm_data.n_profiles == 1000
-    assert atm_data.n_altitudes == 100
-
-    assert atm_data.atm_array[0][0] == 0
-    assert atm_data.atm_array[0][1] == 0
-
-    assert atm_data.atm_array[100][0] == 1
-
-    assert atm_data.atm_array[99999][0] == 999
-
-    assert abs(atm_data.atm_array[0][9]) < 10 # Check that the values are not too large
-
-
 
 def test_mc_run():
     """
@@ -67,8 +49,7 @@ def test_mc_run():
     
     # Turn off all random errors and verify that the first two runs are identical
     run_params = read_config("test")
-    atm_data = read_atm_data()
-    impact_data_pointer = pytraj.mc_run(run_params, byref(atm_data))
+    impact_data_pointer = pytraj.mc_run(run_params)
 
     # Get the impact data from the pointer
     assert impact_data_pointer != None
@@ -82,7 +63,7 @@ def test_mc_run():
     # Turn on random errors and verify that the first two runs are different
     run_params.initial_pos_error = c_double(1.0)
 
-    impact_data_pointer = pytraj.mc_run(run_params, byref(atm_data))
+    impact_data_pointer = pytraj.mc_run(run_params)
 
     # Get the impact data from the pointer
     assert impact_data_pointer != None

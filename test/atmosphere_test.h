@@ -359,5 +359,6 @@ TEST(atmosphere, get_atm_cond){
     REQUIRE_NE(atm_conditions.meridional_wind, 0);
     REQUIRE_NE(atm_conditions.zonal_wind, 0);
     REQUIRE_NE(atm_conditions.vertical_wind, 0);
-     
+    
+        
 }

@@ -30,16 +30,10 @@ if __name__ == "__main__":
     run_params = read_config(config_file)
     print("Configuration file read.")
 
-    # Read the atmosphere data
-    print("Reading atmosphere data...")
-    atm_data = read_atm_data()
-    print("Atmosphere data read.")
-    pytraj.print_atm_data(byref(atm_data))
-
     # Set the output of update_aimpoint to be a cart_vector struct
     pytraj.update_aimpoint.restype = cart_vector
 
-    aimpoint = pytraj.update_aimpoint(run_params, c_double(run_params.theta_long), byref(atm_data))
+    aimpoint = pytraj.update_aimpoint(run_params, c_double(run_params.theta_long))
     run_params.x_aim = aimpoint.x
     run_params.y_aim = aimpoint.y
     run_params.z_aim = aimpoint.z
@@ -51,7 +45,7 @@ if __name__ == "__main__":
     config['RUN']['z_aim'] = str(aimpoint.z)
     print(f"Aimpoint: ({aimpoint.x}, {aimpoint.y}, {aimpoint.z})")
 
-    impact_data_pointer = pytraj.mc_run(run_params, byref(atm_data))
+    impact_data_pointer = pytraj.mc_run(run_params)
     print("Monte Carlo simulation complete.")
 
     # Copy the input file to the output directory

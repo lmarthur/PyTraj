@@ -55,16 +55,6 @@ def traj_plot(run_path):
     est_ay_total = traj_data[:,42]
     est_az_total = traj_data[:,43]
 
-    atm_data = np.loadtxt(run_path + "atm_data.txt", delimiter = ",", skiprows=1)
-    atm_alt = atm_data[:,1]
-    true_density = atm_data[:,3]
-    est_density = atm_data[:,4]
-    true_merid_wind = atm_data[:,5]
-    est_merid_wind = atm_data[:,6]
-    true_zonal_wind = atm_data[:,7]
-    est_zonal_wind = atm_data[:,8]
-    true_vert_wind = atm_data[:,9]
-    est_vert_wind = atm_data[:,10]
 
     true_altitude = np.sqrt(np.square(true_x) + np.square(true_y) + np.square(true_z)) - 6371e3
     est_altitude = np.sqrt(np.square(est_x) + np.square(est_y) + np.square(est_z)) - 6371e3
@@ -276,50 +266,3 @@ def traj_plot(run_path):
     plt.savefig(run_path + "thrust_acceleration_error.pdf")
     plt.close()
 
-    # density vs. altitude
-    plt.figure(figsize=(10,10))
-    plt.plot(atm_alt, true_density, label="True Density")
-    plt.plot(atm_alt, est_density, label="Estimated Density")
-    plt.xlabel("Altitude (m)")
-    plt.ylabel("Density (kg/m^3)")
-    plt.title("Density")
-    plt.legend()
-    plt.grid()
-    plt.savefig(run_path + "density.pdf")
-    plt.close()
-
-    # density error
-    plt.figure(figsize=(10,10))
-    plt.plot(atm_alt, true_density - est_density)
-    plt.xlabel("Altitude (m)")
-    plt.ylabel("Density Error (kg/m^3)")
-    plt.title("Density Error")
-    plt.grid()
-    plt.savefig(run_path + "density_error.pdf")
-    plt.close()
-
-    # wind vs. altitude
-    plt.figure(figsize=(10,10))
-    plt.plot(atm_alt, true_merid_wind, label="True Meridional Wind")
-    plt.plot(atm_alt, est_merid_wind, label="Estimated Meridional Wind")
-    plt.plot(atm_alt, true_zonal_wind, label="True Zonal Wind")
-    plt.plot(atm_alt, est_zonal_wind, label="Estimated Zonal Wind")
-    plt.xlabel("Altitude (m)")
-    plt.ylabel("Meridional Wind (m/s)")
-    plt.title("Meridional Wind")
-    plt.legend()
-    plt.grid()
-    plt.savefig(run_path + "merid_wind.pdf")
-    plt.close()
-
-    # vertical wind vs. altitude
-    plt.figure(figsize=(10,10))
-    plt.plot(atm_alt, true_vert_wind, label="True Vertical Wind")
-    plt.plot(atm_alt, est_vert_wind, label="Estimated Vertical Wind")
-    plt.xlabel("Altitude (m)")
-    plt.ylabel("Vertical Wind (m/s)")
-    plt.title("Vertical Wind")
-    plt.legend()
-    plt.grid()
-    plt.savefig(run_path + "vert_wind.pdf")
-    plt.close()

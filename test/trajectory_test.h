@@ -41,111 +41,110 @@ TEST(trajectory, impact_linterp){
     REQUIRE_EQ(impact_state.vz, 0);
 
 }
-// TODO: Move these tests to the python test suite
 
-// TEST(trajectory, fly){
-//     // Initialize the random number generator
-//     const gsl_rng_type *T;
-//     gsl_rng *rng;
-//     gsl_rng_env_setup();
-//     T = gsl_rng_default;
-//     rng = gsl_rng_alloc(T);
-// 
-//     // TODO: clean up this test to amend deprecated vehicle initialization
-//     vehicle vehicle = init_mock_vehicle();
-//     runparams run_params;
-//     // Set the run parameters
-//     run_params.traj_output = 0;
-//     run_params.time_step_main = 1;
-//     run_params.time_step_reentry = 1;
-//     run_params.x_aim = 6371e3;
-//     run_params.y_aim = 0;
-//     run_params.z_aim = 0;
-// 
-//     run_params.rv_type = 0;
-//     run_params.grav_error = 0;
-//     run_params.initial_x_error = 0;
-//     run_params.initial_pos_error = 0;
-//     run_params.initial_vel_error = 0;
-//     run_params.initial_angle_error = 0;
-//     // Mock vehicle with no thrust dropped from 10m above the surface
-//     state initial_state = init_true_state(&run_params, rng);
-//     initial_state.theta_long = 0;
-//     initial_state.x += 10;
-//     
-//     state final_state = fly(&run_params, &initial_state, &vehicle, rng);
-// 
-//     REQUIRE_LT(fabs(final_state.t - 1), 1);
-//     REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
-//     REQUIRE_EQ(final_state.ax_thrust, 0);
-//     REQUIRE_EQ(final_state.ay_thrust, 0);
-//     REQUIRE_EQ(final_state.az_thrust, 0);
-//     
-//     // Mock vehicle with no thrust launched from the surface
-//     initial_state = init_true_state(&run_params, rng);
-//     initial_state.theta_long = 0;
-//     initial_state.vx = 10;
-//     initial_state.vy = 10;
-//     initial_state.vz = 10;
-//     final_state = fly(&run_params, &initial_state, &vehicle, rng);
-// 
-//     REQUIRE_LT(fabs(final_state.t - 2), 1);
-// 
-//     // MMIII ballistic vehicle launched vertically from the surface
-//     vehicle = init_mmiii_ballistic();
-//     initial_state = init_true_state(&run_params, rng);
-//     initial_state.theta_long = 0;
-//     final_state = fly(&run_params, &initial_state, &vehicle, rng);
-// 
-//     REQUIRE_GT(final_state.t, 0);
-//     REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
-//     REQUIRE_LT(fabs(final_state.y), 1);
-//     REQUIRE_LT(fabs(final_state.z), 1);
-// 
-//     // MMIII ballistic vehicle launched along the equator
-//     initial_state = init_true_state(&run_params, rng);
-//     initial_state.theta_long = M_PI/4;
-//     run_params.traj_output = 0;
-// 
-//     final_state = fly(&run_params, &initial_state, &vehicle, rng);
-// 
-//     REQUIRE_GT(final_state.t, 0);
-//     REQUIRE_LT(fabs(sqrt(final_state.x*final_state.x + final_state.y*final_state.y) - 6371e3), 1);
-//     REQUIRE_NE(final_state.ax_total, 0);
-//     REQUIRE_NE(final_state.ay_total, 0);
-// 
-// }
+TEST(trajectory, fly){
+    // Initialize the random number generator
+    const gsl_rng_type *T;
+    gsl_rng *rng;
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    rng = gsl_rng_alloc(T);
 
-// TEST(trajectory, update_aimpoint){
-//     // Set the run parameters
-//     runparams run_params;
-//     run_params.traj_output = 0;
-//     run_params.time_step_main = 1;
-//     run_params.time_step_reentry = 1;
-//     run_params.x_aim = 6371e3;
-//     run_params.y_aim = 0;
-//     run_params.z_aim = 0;
-//     run_params.theta_long = 0;
-//     run_params.theta_lat = 0;
-// 
-//     run_params.grav_error = 0;
-//     run_params.atm_error = 0;
-//     run_params.gnss_nav = 0;
-//     run_params.ins_nav = 0;
-// 
-//     run_params.rv_type = 0;
-// 
-//     run_params.initial_x_error = 0;
-//     run_params.initial_pos_error = 1;
-//     run_params.initial_vel_error = 0;
-//     run_params.initial_angle_error = 0;
-//     run_params.acc_scale_stability = 0;
-//     run_params.gyro_bias_stability = 0;
-//     run_params.gyro_noise = 0;
-//     run_params.gnss_noise = 0;
-// 
-//     cart_vector aimpoint = update_aimpoint(run_params, M_PI/4, atm_data);
-//     // printf("Aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
-//     REQUIRE_LT(fabs(get_altitude(aimpoint.x, aimpoint.y, aimpoint.z)), 1);
-//     REQUIRE_EQ(run_params.initial_pos_error, 1);
-// }
+    // TODO: clean up this test to amend deprecated vehicle initialization
+    vehicle vehicle = init_mock_vehicle();
+    runparams run_params;
+    // Set the run parameters
+    run_params.traj_output = 0;
+    run_params.time_step_main = 1;
+    run_params.time_step_reentry = 1;
+    run_params.x_aim = 6371e3;
+    run_params.y_aim = 0;
+    run_params.z_aim = 0;
+
+    run_params.rv_type = 0;
+    run_params.grav_error = 0;
+    run_params.initial_x_error = 0;
+    run_params.initial_pos_error = 0;
+    run_params.initial_vel_error = 0;
+    run_params.initial_angle_error = 0;
+    // Mock vehicle with no thrust dropped from 10m above the surface
+    state initial_state = init_true_state(&run_params, rng);
+    initial_state.theta_long = 0;
+    initial_state.x += 10;
+    
+    state final_state = fly(&run_params, &initial_state, &vehicle, rng);
+
+    REQUIRE_LT(fabs(final_state.t - 1), 1);
+    REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
+    REQUIRE_EQ(final_state.ax_thrust, 0);
+    REQUIRE_EQ(final_state.ay_thrust, 0);
+    REQUIRE_EQ(final_state.az_thrust, 0);
+    
+    // Mock vehicle with no thrust launched from the surface
+    initial_state = init_true_state(&run_params, rng);
+    initial_state.theta_long = 0;
+    initial_state.vx = 10;
+    initial_state.vy = 10;
+    initial_state.vz = 10;
+    final_state = fly(&run_params, &initial_state, &vehicle, rng);
+
+    REQUIRE_LT(fabs(final_state.t - 2), 1);
+
+    // MMIII ballistic vehicle launched vertically from the surface
+    vehicle = init_mmiii_ballistic();
+    initial_state = init_true_state(&run_params, rng);
+    initial_state.theta_long = 0;
+    final_state = fly(&run_params, &initial_state, &vehicle, rng);
+
+    REQUIRE_GT(final_state.t, 0);
+    REQUIRE_LT(fabs(final_state.x - 6371e3), 1e-6);
+    REQUIRE_LT(fabs(final_state.y), 1);
+    REQUIRE_LT(fabs(final_state.z), 1);
+
+    // MMIII ballistic vehicle launched along the equator
+    initial_state = init_true_state(&run_params, rng);
+    initial_state.theta_long = M_PI/4;
+    run_params.traj_output = 0;
+
+    final_state = fly(&run_params, &initial_state, &vehicle, rng);
+
+    REQUIRE_GT(final_state.t, 0);
+    REQUIRE_LT(fabs(sqrt(final_state.x*final_state.x + final_state.y*final_state.y) - 6371e3), 1);
+    REQUIRE_NE(final_state.ax_total, 0);
+    REQUIRE_NE(final_state.ay_total, 0);
+
+}
+
+TEST(trajectory, update_aimpoint){
+    // Set the run parameters
+    runparams run_params;
+    run_params.traj_output = 0;
+    run_params.time_step_main = 1;
+    run_params.time_step_reentry = 1;
+    run_params.x_aim = 6371e3;
+    run_params.y_aim = 0;
+    run_params.z_aim = 0;
+    run_params.theta_long = 0;
+    run_params.theta_lat = 0;
+
+    run_params.grav_error = 0;
+    run_params.atm_error = 0;
+    run_params.gnss_nav = 0;
+    run_params.ins_nav = 0;
+
+    run_params.rv_type = 0;
+
+    run_params.initial_x_error = 0;
+    run_params.initial_pos_error = 1;
+    run_params.initial_vel_error = 0;
+    run_params.initial_angle_error = 0;
+    run_params.acc_scale_stability = 0;
+    run_params.gyro_bias_stability = 0;
+    run_params.gyro_noise = 0;
+    run_params.gnss_noise = 0;
+
+    cart_vector aimpoint = update_aimpoint(run_params, M_PI/4);
+    // printf("Aimpoint: %f, %f, %f\n", aimpoint.x, aimpoint.y, aimpoint.z);
+    REQUIRE_LT(fabs(get_altitude(aimpoint.x, aimpoint.y, aimpoint.z)), 1);
+    REQUIRE_EQ(run_params.initial_pos_error, 1);
+}

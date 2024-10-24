@@ -178,27 +178,3 @@ TEST(utils, get_altitude){
     REQUIRE_EQ(get_altitude(0, 1, 1), sqrt(2) - 6371e3);
     REQUIRE_EQ(get_altitude(1, 1, 1), sqrt(3) - 6371e3);
 }
-
-TEST(utils, binary_search){
-    double arr[8] = {0, 1, 2, 4, 5, 6, 8, 9};
-
-    REQUIRE_EQ(binary_search(arr, 8, 0), 0);
-    REQUIRE_EQ(binary_search(arr, 8, 1), 1);
-    REQUIRE_EQ(binary_search(arr, 8, 2), 2);
-    REQUIRE_EQ(binary_search(arr, 8, 3), 2);
-    REQUIRE_EQ(binary_search(arr, 8, 4), 3);
-    REQUIRE_EQ(binary_search(arr, 8, 9), 7);
-    
-}
-
-TEST(utils, array_linterp){
-    double x[8] = {0, 1, 2, 4, 5, 6, 8, 9};
-    double y[8] = {0, 1, 2, 4, 5, 6, 8, 9};
-
-    REQUIRE_EQ(array_linterp(x, y, 8, 0), 0);
-    REQUIRE_EQ(array_linterp(x, y, 8, 1), 1);
-    REQUIRE_EQ(array_linterp(x, y, 8, 2), 2);
-    REQUIRE_EQ(array_linterp(x, y, 8, 3), 3);
-    REQUIRE_EQ(array_linterp(x, y, 8, 4), 4);
-
-}

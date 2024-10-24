@@ -176,7 +176,7 @@ void output_impact(FILE *impact_file, impact_data *impact_data, int num_runs){
     
 }
 
-state fly(runparams *run_params, state *initial_state, vehicle *vehicle, atmdata *atm_data, gsl_rng *rng, int run_num){
+state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng *rng){
     /*
     Function that simulates the flight of a vehicle, updating the state of the vehicle at each time step
     
@@ -202,15 +202,8 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, atmdata
     grav est_grav = init_grav(run_params, rng);
     est_grav.perturb_flag = 0;
 
-    atmprofile true_atm_profile = init_atm_profile(atm_data, run_params->atm_error, run_num);
-    atmprofile est_atm_profile = init_atm_profile(atm_data, 0, 0);
-    printf("Atm Error: %d\n", run_params->atm_error);
-    // print the atmospheric profiles
-    for (int i = 0; i < atm_data->n_altitudes; i++){
-        printf("True Altitude: %f, Density: %f, Zonal Wind: %f, Meridional Wind: %f, Vertical Wind: %f\n", true_atm_profile.alt_array[i], true_atm_profile.density_array[i], true_atm_profile.zonal_wind_array[i], true_atm_profile.meridional_wind_array[i], true_atm_profile.vertical_wind_array[i]);
-        printf("Est Altitude: %f, Density: %f, Zonal Wind: %f, Meridional Wind: %f, Vertical Wind: %f\n", est_atm_profile.alt_array[i], est_atm_profile.density_array[i], est_atm_profile.zonal_wind_array[i], est_atm_profile.meridional_wind_array[i], est_atm_profile.vertical_wind_array[i]);
-    }
-
+    atm_model atm_model = init_atm(run_params, rng);
+    
     state old_true_state = *initial_state;
     state new_true_state = *initial_state;
 
@@ -228,26 +221,21 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, atmdata
 
     // Create a .txt file to store the trajectory data
     FILE *traj_file;
-    FILE *atm_file;
     if (traj_output == 1){
         traj_file = fopen(run_params->trajectory_path, "w");
-        atm_file = fopen("/Users/lmarthur/Documents/Research/PyTraj/output/run_0/atm_data.txt", "w");
-
         fprintf(traj_file, "t, current_mass, x, y, z, vx, vy, vz, ax_grav, ay_grav, az_grav, ax_drag, ay_drag, az_drag, ax_lift, ay_lift, az_lift, ax_thrust, ay_thrust, az_thrust, ax_total, ay_total, az_total, est_x, est_y, est_z, est_vx, est_vy, est_vz, est_ax_grav, est_ay_grav, est_az_grav, est_ax_drag, est_ay_drag, est_az_drag, est_ax_lift, est_ay_lift, est_az_lift, est_ax_thrust, est_ay_thrust, est_az_thrust, est_ax_total, est_ay_total, est_az_total \n");
-        fprintf(atm_file, "t, true_altitude, est_altitude, true_density, est_density, true_meridional_wind, est_meridional_wind, true_zonal_wind, est_zonal_wind, true_vertical_wind, est_vertical_wind\n");
         // Write the initial state to the trajectory file
         fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", old_true_state.t, vehicle->current_mass, old_true_state.x, old_true_state.y, old_true_state.z, old_true_state.vx, old_true_state.vy, old_true_state.vz, old_true_state.ax_grav, old_true_state.ay_grav, old_true_state.az_grav, old_true_state.ax_drag, old_true_state.ay_drag, old_true_state.az_drag, old_true_state.ax_lift, old_true_state.ay_lift, old_true_state.az_lift, old_true_state.ax_thrust, old_true_state.ay_thrust, old_true_state.az_thrust, old_true_state.ax_total, old_true_state.ay_total, old_true_state.az_total, old_est_state.x, old_est_state.y, old_est_state.z, old_est_state.vx, old_est_state.vy, old_est_state.vz, old_est_state.ax_grav, old_est_state.ay_grav, old_est_state.az_grav, old_est_state.ax_drag, old_est_state.ay_drag, old_est_state.az_drag, old_est_state.ax_lift, old_est_state.ay_lift, old_est_state.az_lift, old_est_state.ax_thrust, old_est_state.ay_thrust, old_est_state.az_thrust, old_est_state.ax_total, old_est_state.ay_total, old_est_state.az_total);
-
     }
+
 
     // Begin the integration loop
     for (int i = 0; i < max_steps; i++){
         // Get the atmospheric conditions
         double old_altitude = get_altitude(old_true_state.x, old_true_state.y, old_true_state.z);
 
-        atm_cond true_atm_cond = get_atm_cond_profile(old_altitude, &true_atm_profile);
-        atm_cond est_atm_cond = get_atm_cond_profile(old_altitude, &est_atm_profile);
-
+        atm_cond true_atm_cond = get_atm_cond(old_altitude, &atm_model, run_params);
+        atm_cond est_atm_cond = get_exp_atm_cond(old_altitude, &atm_model);
         // if during boost or outside atmosphere, dt = main time step, else dt = reentry time step
         if (old_true_state.t < vehicle->booster.total_burn_time || old_altitude > 1e6){
             time_step = run_params->time_step_main;
@@ -328,9 +316,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, atmdata
             if (traj_output == 1){
                 // Write the final state to the trajectory file
                 fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", true_final_state.t, vehicle->current_mass, true_final_state.x, true_final_state.y, true_final_state.z, true_final_state.vx, true_final_state.vy, true_final_state.vz, true_final_state.ax_grav, true_final_state.ay_grav, true_final_state.az_grav, true_final_state.ax_drag, true_final_state.ay_drag, true_final_state.az_drag, true_final_state.ax_lift, true_final_state.ay_lift, true_final_state.az_lift, true_final_state.ax_thrust, true_final_state.ay_thrust, true_final_state.az_thrust, true_final_state.ax_total, true_final_state.ay_total, true_final_state.az_total, est_final_state.x, est_final_state.y, est_final_state.z, est_final_state.vx, est_final_state.vy, est_final_state.vz, est_final_state.ax_grav, est_final_state.ay_grav, est_final_state.az_grav, est_final_state.ax_drag, est_final_state.ay_drag, est_final_state.az_drag, est_final_state.ax_lift, est_final_state.ay_lift, est_final_state.az_lift, est_final_state.ax_thrust, est_final_state.ay_thrust, est_final_state.az_thrust, est_final_state.ax_total, est_final_state.ay_total, est_final_state.az_total);
-                fprintf(atm_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", true_final_state.t, new_altitude, new_altitude, true_atm_cond.density, est_atm_cond.density, true_atm_cond.meridional_wind, est_atm_cond.meridional_wind, true_atm_cond.zonal_wind, est_atm_cond.zonal_wind, true_atm_cond.vertical_wind, est_atm_cond.vertical_wind);
                 fclose(traj_file);
-                fclose(atm_file);
             }
 
             return true_final_state;
@@ -339,7 +325,6 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, atmdata
         // output the trajectory data
         if (traj_output == 1){
             fprintf(traj_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_true_state.t, vehicle->current_mass, new_true_state.x, new_true_state.y, new_true_state.z, new_true_state.vx, new_true_state.vy, new_true_state.vz, new_true_state.ax_grav, new_true_state.ay_grav, new_true_state.az_grav, new_true_state.ax_drag, new_true_state.ay_drag, new_true_state.az_drag, new_true_state.ax_lift, new_true_state.ay_lift, new_true_state.az_lift, new_true_state.ax_thrust, new_true_state.ay_thrust, new_true_state.az_thrust, new_true_state.ax_total, new_true_state.ay_total, new_true_state.az_total, new_est_state.x, new_est_state.y, new_est_state.z, new_est_state.vx, new_est_state.vy, new_est_state.vz, new_est_state.ax_grav, new_est_state.ay_grav, new_est_state.az_grav, new_est_state.ax_drag, new_est_state.ay_drag, new_est_state.az_drag, new_est_state.ax_lift, new_est_state.ay_lift, new_est_state.az_lift, new_est_state.ax_thrust, new_est_state.ay_thrust, new_est_state.az_thrust, new_est_state.ax_total, new_est_state.ay_total, new_est_state.az_total);
-            fprintf(atm_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f\n", new_true_state.t, new_altitude, new_altitude, true_atm_cond.density, est_atm_cond.density, true_atm_cond.meridional_wind, est_atm_cond.meridional_wind, true_atm_cond.zonal_wind, est_atm_cond.zonal_wind, true_atm_cond.vertical_wind, est_atm_cond.vertical_wind);
         }
 
         // Update the old state
@@ -353,13 +338,12 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, atmdata
     // Close the trajectory file
     if (traj_output == 1){
         fclose(traj_file);
-        fclose(atm_file);
     }
 
     return new_true_state;
 }
 
-cart_vector update_aimpoint(runparams run_params, double thrust_angle_long, atmdata *atm_data){
+cart_vector update_aimpoint(runparams run_params, double thrust_angle_long){
     /*
     Updates the aimpoint based on the thrust angle and other run parameters
 
@@ -395,9 +379,6 @@ cart_vector update_aimpoint(runparams run_params, double thrust_angle_long, atmd
     run_params_temp.gyro_bias_stability = 0;
     run_params_temp.gyro_noise = 0;
     run_params_temp.gnss_noise = 0;
-
-    // Initialize the atmospheric profile
-    // atmprofile atm_profile = init_atm_profile(atm_data, 0, 0);
     
     // Initialize the random number generator (unused in this case, but still required)
     const gsl_rng_type *T;
@@ -423,7 +404,7 @@ cart_vector update_aimpoint(runparams run_params, double thrust_angle_long, atmd
     initial_state.theta_long = thrust_angle_long;
 
     // Call the fly function to get the final state
-    state final_state = fly(&run_params_temp, &initial_state, &vehicle, atm_data, rng, 0);
+    state final_state = fly(&run_params_temp, &initial_state, &vehicle, rng);
 
     // Update the aimpoint based on the final state
     aimpoint.x = final_state.x;
@@ -433,7 +414,7 @@ cart_vector update_aimpoint(runparams run_params, double thrust_angle_long, atmd
     return aimpoint;
 }
 
-void mc_run(runparams run_params, atmdata *atm_data){
+void mc_run(runparams run_params){
     /*
     Function that runs a Monte Carlo simulation of the vehicle flight
     
@@ -441,8 +422,6 @@ void mc_run(runparams run_params, atmdata *atm_data){
     ----------
         run_params: runparams
             run parameters struct
-        atm_data: atmdata
-            atmospheric data struct
     */
 
     // Print the run parameters to the console
@@ -490,13 +469,14 @@ void mc_run(runparams run_params, atmdata *atm_data){
             exit(1);
         }
         state initial_true_state = init_true_state(&run_params, rng);
-
-        impact_data.impact_states[i] = fly(&run_params, &initial_true_state, &vehicle, atm_data, rng, i);
+        
+        impact_data.impact_states[i] = fly(&run_params, &initial_true_state, &vehicle, rng);
 
     }
 
     // Output the impact data
     output_impact(impact_file, &impact_data, num_runs);
+
 
 }
 
