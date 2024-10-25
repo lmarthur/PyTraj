@@ -82,17 +82,15 @@ void imu_measurement(imu *imu, state *true_state, state *est_state, gsl_rng *rng
             pointer to the measured state of the vehicle
     */
 
-    // TODO: Account for the orientation error in the accelerometer measurement
-    // Accelerometer measurements
-    // TODO: Double check this
-    // TODO: Separate out the gravitational acceleration
-    est_state->ax_total = true_state->ax_total * (1 + imu->acc_scale_x);
-    est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y);
-    est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z);
-
     // Gyroscope measurements
-    est_state->theta_long = true_state->theta_long + imu->gyro_error_long;
-    est_state->theta_lat = true_state->theta_lat + imu->gyro_error_lat;
+    est_state->theta_long = true_state->theta_long + imu->gyro_error_long - true_state->initial_theta_long_pert;
+    est_state->theta_lat = true_state->theta_lat + imu->gyro_error_lat - true_state->initial_theta_lat_pert;
+
+    // Accelerometer measurements
+    // TODO: Separate out the gravitational acceleration
+    est_state->ax_total = true_state->ax_total * (1 + imu->acc_scale_x) + true_state->ay_total * imu->gyro_error_long - true_state->az_total * imu->gyro_error_lat;
+    est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y) - true_state->ax_total * imu->gyro_error_long + true_state->az_total * imu->gyro_error_long * imu->gyro_error_lat;
+    est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z) + true_state->ax_total * imu->gyro_error_lat;
 
 }
 

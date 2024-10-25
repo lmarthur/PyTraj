@@ -11,8 +11,6 @@
 typedef struct state{
     // State parameters
     double t; // time in seconds since launch
-    double theta_long; // thrust angle in the longitudinal direction measured from the x-z plane in radians
-    double theta_lat; // thrust angle in the latitudinal direction measured from the x-y plane in radians
     double x; // x-coordinate in meters
     double y; // y-coordinate in meters
     double z; // z-coordinate in meters
@@ -34,6 +32,11 @@ typedef struct state{
     double ax_total; // total x-acceleration in meters per second squared
     double ay_total; // total y-acceleration in meters per second squared
     double az_total; // total z-acceleration in meters per second squared
+    double initial_theta_long_pert; // initial perturbation in the longitudinal thrust angle in radians
+    double initial_theta_lat_pert; // initial perturbation in the latitudinal thrust angle in radians
+    double theta_long; // thrust angle in the longitudinal direction measured from the x-z plane in radians
+    double theta_lat; // thrust angle in the latitudinal direction measured from the x-y plane in radians
+
 
 } state;
 

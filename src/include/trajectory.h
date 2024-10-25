@@ -38,8 +38,10 @@ state init_true_state(runparams *run_params, gsl_rng *rng){
     state.x = 6371e3 + run_params->initial_x_error * gsl_ran_gaussian(rng, 1);
     state.y = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
     state.z = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
-    state.theta_long = run_params->theta_long + run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
-    state.theta_lat = run_params->theta_lat + run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.initial_theta_lat_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.initial_theta_long_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+    state.theta_long = run_params->theta_long + state.initial_theta_long_pert;
+    state.theta_lat = run_params->theta_lat + state.initial_theta_lat_pert;
     state.vx = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.vy = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.vz = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
@@ -289,10 +291,10 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             gnss_measurement(&gnss, &new_true_state, &new_est_state, rng);
         }
 
-        if  (new_true_state.t < vehicle->booster.total_burn_time && (run_params->boost_guidance == 1)){
-            // Perform a perfect maneuver if before burnout
-            new_true_state = perfect_maneuv(&new_true_state, &new_est_state, &new_des_state);
-        }
+        // if  (new_true_state.t < vehicle->booster.total_burn_time && (run_params->boost_guidance == 1)){
+        //     // Perform a perfect maneuver if before burnout
+        //     new_true_state = perfect_maneuv(&new_true_state, &new_est_state, &new_des_state);
+        // }
     
         // Perform a Runge-Kutta step
         rk4step(&new_true_state, time_step);
@@ -308,7 +310,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             state est_final_state = impact_linterp(&old_est_state, &new_est_state);
             state des_final_state = impact_linterp(&old_des_state, &new_des_state);
             if (run_params->rv_maneuv == 2){
-                // If perfect maneuver, update the final position
+                // If perfect rv maneuver, update the final position
                 true_final_state.x = true_final_state.x - est_final_state.x;
                 true_final_state.y = true_final_state.y - est_final_state.y;
                 true_final_state.z = true_final_state.z - est_final_state.z;

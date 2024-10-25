@@ -102,7 +102,9 @@ TEST(sensors, imu_update){
 
     true_state.theta_long = 1;
     true_state.theta_lat = 1;
-
+    true_state.initial_theta_long_pert = 0;
+    true_state.initial_theta_lat_pert = 0;
+    
     imu = imu_init(&run_params, rng);
     imu_measurement(&imu, &true_state, &est_state_0, rng);
     update_imu(&imu, time_step, rng);
