@@ -4,7 +4,7 @@ from ctypes import *
 from traj_plot import *
 from impact_plot import *
 # Specify the input file name (without the extension)
-config_file = "run_0"
+config_file = "run_3"
 
 # Check for the existence of the input file
 config_path = f"./input/{config_file}.toml"
@@ -30,19 +30,7 @@ if __name__ == "__main__":
     run_params = read_config(config_file)
     print("Configuration file read.")
 
-    # Set the output of update_aimpoint to be a cart_vector struct
-    pytraj.update_aimpoint.restype = cart_vector
-
-    aimpoint = pytraj.update_aimpoint(run_params, c_double(run_params.theta_long))
-    run_params.x_aim = aimpoint.x
-    run_params.y_aim = aimpoint.y
-    run_params.z_aim = aimpoint.z
-    # Set the configuration file aimpoint to the updated aimpoint
-    config = configparser.ConfigParser()
-    config.read(config_path)
-    config['RUN']['x_aim'] = str(aimpoint.x)
-    config['RUN']['y_aim'] = str(aimpoint.y)
-    config['RUN']['z_aim'] = str(aimpoint.z)
+    aimpoint = update_aimpoint(run_params, config_path)
     print(f"Aimpoint: ({aimpoint.x}, {aimpoint.y}, {aimpoint.z})")
 
     impact_data_pointer = pytraj.mc_run(run_params)

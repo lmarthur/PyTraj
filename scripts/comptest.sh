@@ -1,4 +1,4 @@
-# This script compiles the program and test scripts, and runs the compile-time tests.
+# This script compiles the program and test scripts, and runs the unit and integration tests.
 #!/bin/bash
 # Compile the program
 echo "Compiling the program..."
@@ -19,5 +19,9 @@ echo "Running the library tests..."
 # Compile the shared library with gsl
 echo "Compiling the shared library..."
 gcc -shared -fPIC -o ./build/libPyTraj.so ./src/main.c -lgsl
+
+# Run integration tests
+echo "Running integration tests..."
+pytest -v -s ./test/
 
 echo "Done."

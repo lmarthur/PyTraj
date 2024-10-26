@@ -112,3 +112,68 @@ def read_config(run_name):
     run_params.gnss_noise = c_double(float(config['ERRORPARAMS']['gnss_noise']))
 
     return run_params
+
+def get_cep(impact_data, run_params):
+    """
+    Function to calculate the circular error probable (CEP) from the impact data.
+
+    INPUTS:
+    ----------
+        impact_data: numpy.ndarray
+            The impact data.
+    OUTPUTS:
+    ----------
+        cep: double
+            The circular error probable.
+    """
+    # get longitude and latitude of aimpoint
+    aimpoint_lon = np.arctan2(run_params.y_aim, run_params.x_aim)
+    aimpoint_lat = np.arctan2(run_params.z_aim, np.sqrt(run_params.x_aim**2 + run_params.y_aim**2))
+
+    impact_x = impact_data[:,1]
+    impact_y = impact_data[:,2]
+    impact_z = impact_data[:,3]
+
+    # get vector relative to aimpoint
+    impact_x = impact_x - run_params.x_aim
+    impact_y = impact_y - run_params.y_aim
+    impact_z = impact_z - run_params.z_aim
+
+    # convert impact data to local tangent plane coordinates
+    impact_x_local = -np.sin(aimpoint_lon)*impact_x + np.cos(aimpoint_lon)*impact_y
+    impact_y_local = -np.sin(aimpoint_lat)*np.cos(aimpoint_lon)*impact_x - np.sin(aimpoint_lat)*np.sin(aimpoint_lon)*impact_y + np.cos(aimpoint_lat)*impact_z
+
+    # get the miss distances
+    miss_distance = np.sqrt(impact_x_local**2 + impact_y_local**2)
+    cep = np.percentile(miss_distance, 50)
+
+    return cep
+
+def update_aimpoint(run_params, config_path):
+    """
+    Function to update the aimpoint based on the current run parameters.
+
+    INPUTS:
+    ----------
+        run_params: runparams
+            The run parameters.
+    OUTPUTS:
+    ----------
+        aimpoint: cart_vector
+            The updated aimpoint.
+    """
+    # Set the output of update_aimpoint to be a cart_vector struct
+    pytraj.update_aimpoint.restype = cart_vector
+
+    aimpoint = pytraj.update_aimpoint(run_params, c_double(run_params.theta_long))
+    run_params.x_aim = aimpoint.x
+    run_params.y_aim = aimpoint.y
+    run_params.z_aim = aimpoint.z
+
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    config['RUN']['x_aim'] = str(aimpoint.x)
+    config['RUN']['y_aim'] = str(aimpoint.y)
+    config['RUN']['z_aim'] = str(aimpoint.z)
+
+    return aimpoint

@@ -19,11 +19,6 @@ def impact_plot(run_path, run_params):
     print("Reading impact data...")
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
-    impact_t = impact_data[:,0]
-    impact_x = impact_data[:,1]
-    impact_y = impact_data[:,2]
-    impact_z = impact_data[:,3]
-
     # get longitude and latitude of aimpoint
     aimpoint_lon = np.arctan2(run_params.y_aim, run_params.x_aim)
     aimpoint_lat = np.arctan2(run_params.z_aim, np.sqrt(run_params.x_aim**2 + run_params.y_aim**2))

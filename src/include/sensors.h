@@ -27,7 +27,7 @@ typedef struct imu{
 
 } imu;
 
-imu imu_init(runparams *run_params, gsl_rng *rng){
+imu imu_init(runparams *run_params, state *initial_state, gsl_rng *rng){
     /*
     Initializes an accelerometer struct
 
@@ -49,21 +49,21 @@ imu imu_init(runparams *run_params, gsl_rng *rng){
     imu.acc_scale_x = imu.acc_scale_stability * gsl_ran_gaussian(rng, 1); // ppm
     imu.acc_scale_y = imu.acc_scale_stability * gsl_ran_gaussian(rng, 1); // ppm
     imu.acc_scale_z = imu.acc_scale_stability * gsl_ran_gaussian(rng, 1); // ppm
-
+    
     imu.gyro_bias_stability = run_params->gyro_bias_stability;
     imu.gyro_noise = run_params->gyro_noise;
 
     imu.gyro_bias_lat = imu.gyro_bias_stability * gsl_ran_gaussian(rng, 1); // rad/s
     imu.gyro_bias_long = imu.gyro_bias_stability * gsl_ran_gaussian(rng, 1); // rad/s
 
-    imu.gyro_error_lat = 0;
-    imu.gyro_error_long = 0;
+    imu.gyro_error_lat = initial_state->initial_theta_lat_pert;
+    imu.gyro_error_long = initial_state->initial_theta_long_pert;
 
     return imu;
 
 }
 
-void imu_measurement(imu *imu, state *true_state, state *est_state, gsl_rng *rng){
+void imu_measurement(imu *imu, state *true_state, state *est_state, vehicle *vehicle, gsl_rng *rng){
     /*
     Simulates an accelerometer measurement
 
@@ -92,6 +92,20 @@ void imu_measurement(imu *imu, state *true_state, state *est_state, gsl_rng *rng
     est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y) - true_state->ax_total * imu->gyro_error_long + true_state->az_total * imu->gyro_error_long * imu->gyro_error_lat;
     est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z) + true_state->ax_total * imu->gyro_error_lat;
 
+    // est_state->ax_total = true_state->ax_total + imu->acc_scale_x * (est_state->ax_total - true_state->ax_total) + (est_state->ay_total - true_state->ay_total) * imu->gyro_error_long - (est_state->az_total - true_state->az_total)* imu->gyro_error_lat;
+    // est_state->ay_total = true_state->ay_total + imu->acc_scale_y * (est_state->ay_total - true_state->ay_total) - (est_state->ax_total - true_state->ax_total) * imu->gyro_error_long + (est_state->az_total - true_state->az_total) * imu->gyro_error_long * imu->gyro_error_lat;
+    // est_state->az_total = true_state->az_total + imu->acc_scale_z * (est_state->az_total - true_state->az_total) + (est_state->ax_total - true_state->ax_total) * imu->gyro_error_lat;
+
+    // if (true_state->t > vehicle->booster.total_burn_time){
+    //     est_state->ax_total = true_state->ax_total + imu->acc_scale_x * (est_state->ax_total - true_state->ax_total) + (est_state->ay_total - true_state->ay_total) * imu->gyro_error_long - (est_state->az_total - true_state->az_total)* imu->gyro_error_lat;
+    //     est_state->ay_total = true_state->ay_total + imu->acc_scale_y * (est_state->ay_total - true_state->ay_total) - (est_state->ax_total - true_state->ax_total) * imu->gyro_error_long + (est_state->az_total - true_state->az_total) * imu->gyro_error_long * imu->gyro_error_lat;
+    //     est_state->az_total = true_state->az_total + imu->acc_scale_z * (est_state->az_total - true_state->az_total) + (est_state->ax_total - true_state->ax_total) * imu->gyro_error_lat;
+    // }
+    // else{
+    //     est_state->ax_total = true_state->ax_total * (1 + imu->acc_scale_x) + true_state->ay_total * imu->gyro_error_long - true_state->az_total * imu->gyro_error_lat;
+    //     est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y) - true_state->ax_total * imu->gyro_error_long + true_state->az_total * imu->gyro_error_long * imu->gyro_error_lat;
+    //     est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z) + true_state->ax_total * imu->gyro_error_lat;
+    // }
 }
 
 void update_imu(imu *imu, double time_step, gsl_rng *rng){
