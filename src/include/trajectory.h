@@ -38,10 +38,14 @@ state init_true_state(runparams *run_params, gsl_rng *rng){
     state.x = 6371e3 + run_params->initial_x_error * gsl_ran_gaussian(rng, 1);
     state.y = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
     state.z = run_params->initial_pos_error * gsl_ran_gaussian(rng, 1);
-    state.initial_theta_lat_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
-    state.initial_theta_long_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+
+    double initial_rot_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
+
+    state.initial_theta_lat_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1) + run_params->theta_long * initial_rot_pert + run_params->theta_lat * initial_rot_pert;
+    state.initial_theta_long_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1) + run_params->theta_lat * initial_rot_pert + run_params->theta_long * initial_rot_pert;
     state.theta_long = run_params->theta_long + state.initial_theta_long_pert;
     state.theta_lat = run_params->theta_lat + state.initial_theta_lat_pert;
+
     state.vx = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.vy = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
     state.vz = run_params->initial_vel_error * gsl_ran_gaussian(rng, 1);
