@@ -85,27 +85,15 @@ void imu_measurement(imu *imu, state *true_state, state *est_state, vehicle *veh
     // Gyroscope measurements
     est_state->theta_long = true_state->theta_long + imu->gyro_error_long - true_state->initial_theta_long_pert;
     est_state->theta_lat = true_state->theta_lat + imu->gyro_error_lat - true_state->initial_theta_lat_pert;
+    double a_measurable_x = true_state->ax_total - true_state->ax_grav;
+    double a_measurable_y = true_state->ay_total - true_state->ay_grav;
+    double a_measurable_z = true_state->az_total - true_state->az_grav;
 
     // Accelerometer measurements
-    // TODO: Separate out the gravitational acceleration
-    est_state->ax_total = true_state->ax_total * (1 + imu->acc_scale_x) + true_state->ay_total * imu->gyro_error_long - true_state->az_total * imu->gyro_error_lat;
-    est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y) - true_state->ax_total * imu->gyro_error_long + true_state->az_total * imu->gyro_error_long * imu->gyro_error_lat;
-    est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z) + true_state->ax_total * imu->gyro_error_lat;
+    est_state->ax_total = a_measurable_x* (1 + imu->acc_scale_x) + a_measurable_y * imu->gyro_error_long - a_measurable_z * imu->gyro_error_lat + est_state->ax_grav;
+    est_state->ay_total = a_measurable_y * (1 + imu->acc_scale_y) - a_measurable_x * imu->gyro_error_long + a_measurable_z * imu->gyro_error_long * imu->gyro_error_lat + est_state->ay_grav;
+    est_state->az_total = a_measurable_z * (1 + imu->acc_scale_z) + a_measurable_x * imu->gyro_error_lat + est_state->az_grav;
 
-    // est_state->ax_total = true_state->ax_total + imu->acc_scale_x * (est_state->ax_total - true_state->ax_total) + (est_state->ay_total - true_state->ay_total) * imu->gyro_error_long - (est_state->az_total - true_state->az_total)* imu->gyro_error_lat;
-    // est_state->ay_total = true_state->ay_total + imu->acc_scale_y * (est_state->ay_total - true_state->ay_total) - (est_state->ax_total - true_state->ax_total) * imu->gyro_error_long + (est_state->az_total - true_state->az_total) * imu->gyro_error_long * imu->gyro_error_lat;
-    // est_state->az_total = true_state->az_total + imu->acc_scale_z * (est_state->az_total - true_state->az_total) + (est_state->ax_total - true_state->ax_total) * imu->gyro_error_lat;
-
-    // if (true_state->t > vehicle->booster.total_burn_time){
-    //     est_state->ax_total = true_state->ax_total + imu->acc_scale_x * (est_state->ax_total - true_state->ax_total) + (est_state->ay_total - true_state->ay_total) * imu->gyro_error_long - (est_state->az_total - true_state->az_total)* imu->gyro_error_lat;
-    //     est_state->ay_total = true_state->ay_total + imu->acc_scale_y * (est_state->ay_total - true_state->ay_total) - (est_state->ax_total - true_state->ax_total) * imu->gyro_error_long + (est_state->az_total - true_state->az_total) * imu->gyro_error_long * imu->gyro_error_lat;
-    //     est_state->az_total = true_state->az_total + imu->acc_scale_z * (est_state->az_total - true_state->az_total) + (est_state->ax_total - true_state->ax_total) * imu->gyro_error_lat;
-    // }
-    // else{
-    //     est_state->ax_total = true_state->ax_total * (1 + imu->acc_scale_x) + true_state->ay_total * imu->gyro_error_long - true_state->az_total * imu->gyro_error_lat;
-    //     est_state->ay_total = true_state->ay_total * (1 + imu->acc_scale_y) - true_state->ax_total * imu->gyro_error_long + true_state->az_total * imu->gyro_error_long * imu->gyro_error_lat;
-    //     est_state->az_total = true_state->az_total * (1 + imu->acc_scale_z) + true_state->ax_total * imu->gyro_error_lat;
-    // }
 }
 
 void update_imu(imu *imu, double time_step, gsl_rng *rng){

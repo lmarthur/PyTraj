@@ -71,7 +71,7 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Reentry update
 - [X] Write integration tests
 - [X] Add initial rotational perturbation
-- [ ] Exclude gravity from imu measurements
+- [X] Exclude gravity from imu measurements
 - [ ] Update drag model
 - [ ] Set up documentation
 - [ ] Write function for parameter scanning
