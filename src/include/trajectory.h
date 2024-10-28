@@ -224,12 +224,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
     double time_step;
     // Initialize the IMU
     imu imu = imu_init(run_params, initial_state, rng);
-    // if (run_params->rv_maneuv != 0){
-    //     imu.gyro_bias_lat = 0;
-    //     imu.gyro_bias_long = 0;
-    //     imu.acc_scale_stability = 0;
-    //     imu.gyro_noise = 0;
-    // }
+
     // Initialize the GNSS
     gnss gnss = gnss_init(run_params);
 
@@ -294,25 +289,6 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
         new_des_state.az_total = new_des_state.az_grav + new_des_state.az_drag + new_des_state.az_lift + new_des_state.az_thrust;
 
         double a_mag = sqrt(new_true_state.ax_total*new_true_state.ax_total + new_true_state.ay_total*new_true_state.ay_total + new_true_state.az_total*new_true_state.az_total);
-        // Perform gyro filter update during reentry
-        if (reentry_filter_flag == 0 && old_true_state.t > vehicle->booster.total_burn_time && get_altitude(new_true_state.x, new_true_state.y, new_true_state.z) < 1e6){
-            // Update the new imu error characteristics
-            reentry_filter_flag = 1;
-            // imu = imu_init(run_params, &new_est_state, rng);
-            // imu.gyro_error_lat = 0;
-            // imu.gyro_error_long = 0;
-            // imu.gyro_bias_lat = imu.gyro_bias_stability * gsl_ran_gaussian(rng, 1);
-            // imu.gyro_bias_long = imu.gyro_bias_stability * gsl_ran_gaussian(rng, 1);
-            // imu.gyro_noise = run_params->gyro_noise * gsl_ran_gaussian(rng, 1);
-            // imu.gyro_bias_lat = 0;
-            // imu.gyro_bias_long = 0;
-            // imu.acc_scale_x = 0;
-            // imu.acc_scale_y = 0;
-            // imu.acc_scale_z = 0;
-            
-            // Remove the components of the error that are due to orientation error during exoatmsopheric flight
-
-        }
 
         if (run_params->ins_nav == 1){
             // INS Measurement

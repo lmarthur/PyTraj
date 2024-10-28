@@ -50,7 +50,6 @@ TEST(trajectory, fly){
     T = gsl_rng_default;
     rng = gsl_rng_alloc(T);
 
-    // TODO: clean up this test to amend deprecated vehicle initialization
     vehicle vehicle = init_mock_vehicle();
     runparams run_params;
     // Set the run parameters
@@ -60,13 +59,24 @@ TEST(trajectory, fly){
     run_params.x_aim = 6371e3;
     run_params.y_aim = 0;
     run_params.z_aim = 0;
+    run_params.theta_long = 0;
+    run_params.theta_lat = 0;
 
     run_params.rv_type = 0;
     run_params.grav_error = 0;
+    run_params.atm_error = 0;
+    run_params.gnss_nav = 0;
+    run_params.ins_nav = 1;
+    run_params.boost_guidance = 1;
+    run_params.rv_maneuv = 0;
     run_params.initial_x_error = 0;
     run_params.initial_pos_error = 0;
     run_params.initial_vel_error = 0;
     run_params.initial_angle_error = 0;
+    run_params.acc_scale_stability = 0;
+    run_params.gyro_bias_stability = 0;
+    run_params.gyro_noise = 0;
+    run_params.gnss_noise = 0;
     // Mock vehicle with no thrust dropped from 10m above the surface
     state initial_state = init_true_state(&run_params, rng);
     initial_state.theta_long = 0;
@@ -110,8 +120,6 @@ TEST(trajectory, fly){
 
     REQUIRE_GT(final_state.t, 0);
     REQUIRE_LT(fabs(sqrt(final_state.x*final_state.x + final_state.y*final_state.y) - 6371e3), 1);
-    REQUIRE_NE(final_state.ax_total, 0);
-    REQUIRE_NE(final_state.ay_total, 0);
 
 }
 

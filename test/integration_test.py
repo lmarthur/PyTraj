@@ -445,7 +445,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -462,7 +461,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -472,7 +470,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -489,7 +486,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -499,7 +495,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -516,7 +511,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -526,7 +520,6 @@ def test_integration_8():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -561,7 +554,6 @@ def test_integration_9():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -577,7 +569,6 @@ def test_integration_9():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -587,7 +578,6 @@ def test_integration_9():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -604,7 +594,6 @@ def test_integration_9():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -614,7 +603,6 @@ def test_integration_9():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -649,7 +637,6 @@ def test_integration_10():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -669,7 +656,6 @@ def test_integration_10():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -679,7 +665,6 @@ def test_integration_10():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)
@@ -695,7 +680,6 @@ def test_integration_10():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep1 = get_cep(impact_data, run_params)
@@ -705,7 +689,6 @@ def test_integration_10():
     impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
-    run_path = "./output/test/"
     impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
     cep2 = get_cep(impact_data, run_params)

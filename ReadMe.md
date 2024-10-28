@@ -72,10 +72,9 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Write integration tests
 - [X] Add initial rotational perturbation
 - [X] Exclude gravity from imu measurements
-- [ ] Update drag model
+- [X] Write function for parameter scanning
+- [X] Write function to generate sensitivity plots
 - [ ] Set up documentation
-- [ ] Write function for parameter scanning
-- [ ] Write function to generate sensitivity plots
 
 ## BUG REPORTS: 
 None
