@@ -3,7 +3,7 @@ import os
 from ctypes import *
 from traj_plot import *
 from impact_plot import *
-from stab_plot import *
+from sens_plot import *
 import pandas as pd
 
 # Specify the input file name (without the extension)
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     aimpoint = update_aimpoint(run_params, config_path)
     print(f"Aimpoint: ({aimpoint.x}, {aimpoint.y}, {aimpoint.z})")
 
-    # initialize the stability data structure with pandas
-    stability_data = pd.DataFrame(columns=["initial_pos_error", "initial_vel_error", "initial_angle_error", "acc_scale_stability", "gyro_bias_stability", "gyro_noise", "gnss_noise", "cep"])
+    # initialize the sensitivity data structure with pandas
+    sensitivity_data = pd.DataFrame(columns=["initial_pos_error", "initial_vel_error", "initial_angle_error", "acc_scale_stability", "gyro_bias_stability", "gyro_noise", "gnss_noise", "cep"])
 
     config = configparser.ConfigParser()
     config.read(config_path)
@@ -70,8 +70,8 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
 
     for i in [0.1, 1, 10]:
         # initial_vel_error
@@ -91,8 +91,8 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
     for i in [0.1, 1, 10]:
         # initial_angle_error
@@ -113,8 +113,8 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]    
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]    
     
     for i in [0.1, 1, 10]:
         # acc_scale_stability
@@ -134,8 +134,8 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
     for i in [0.1, 1, 10]:
         # gyro_bias_stability
@@ -155,8 +155,8 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
     for i in [0.1, 1, 10]:
         # gyro_noise
@@ -176,8 +176,8 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
 
     if run_params.gnss_nav:
         for i in [0.1, 1, 10]:
@@ -198,8 +198,8 @@ if __name__ == "__main__":
             # get the cep
             cep = get_cep(impact_data, run_params)
 
-            # add the cep to the stability data
-            stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+            # add the cep to the sensitivity data
+            sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
     # Combined
     for i in [0.1, 1, 10]:
@@ -220,11 +220,11 @@ if __name__ == "__main__":
         # get the cep
         cep = get_cep(impact_data, run_params)
 
-        # add the cep to the stability data
-        stability_data.loc[len(stability_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
+        # add the cep to the sensitivity data
+        sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
-    # print the stability data
-    print(stability_data)
+    # print the sensitivity data
+    print(sensitivity_data)
 
     # Plot the stability data
-    stab_plot(stability_data)
+    sens_plot(sensitivity_data)

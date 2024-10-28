@@ -5,26 +5,26 @@ import scienceplots
 
 plt.style.use(['science'])
 
-def stab_plot(stab_data):
+def sens_plot(sens_data):
     """
-    Function to plot the stability data.
+    Function to plot the sensitivity data.
 
     INPUTS:
     ----------
-        stab_data: pandas.DataFrame
-            The stability data.
+        sens_data: pandas.DataFrame
+            The sensitivity data.
     """
     x = np.array([-1, 0, 1])
 
     # get the values into numpy arrays
     
-    cep_pos = stab_data['cep'][0:3].values
-    cep_vel = stab_data['cep'][3:6].values
-    cep_ang = stab_data['cep'][6:9].values
-    cep_acc = stab_data['cep'][9:12].values
-    cep_gyrob = stab_data['cep'][12:15].values
-    cep_gyron = stab_data['cep'][15:18].values
-    cep_total = stab_data['cep'][18:21].values
+    cep_pos = sens_data['cep'][0:3].values
+    cep_vel = sens_data['cep'][3:6].values
+    cep_ang = sens_data['cep'][6:9].values
+    cep_acc = sens_data['cep'][9:12].values
+    cep_gyrob = sens_data['cep'][12:15].values
+    cep_gyron = sens_data['cep'][15:18].values
+    cep_total = sens_data['cep'][18:21].values
 
     
     plt.figure(figsize=(5,5))
