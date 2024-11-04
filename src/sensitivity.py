@@ -223,6 +223,9 @@ if __name__ == "__main__":
         # add the cep to the sensitivity data
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
+    # save the sensitivity data to a csv file
+    sensitivity_data.to_csv(f"./output/{config_file}/sensitivity_data.csv", index=False)
+
     # print the sensitivity data
     print(sensitivity_data)
 

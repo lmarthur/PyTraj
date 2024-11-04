@@ -58,8 +58,8 @@ def sens_plot(sens_data):
     plt.xticks(x, ['$ E/10 $ ', 'E', '$10 E$'])
 
     plt.xlabel('Estimated Parameter (E)')
-    plt.ylabel('Mean Miss Distance (m)')
-    plt.title('Mean Miss Contribution From Error Parameters Without GNSS')
+    plt.ylabel('CEP (m)')
+    plt.title('CEP Contribution From Error Parameters')
 
     # legend with shadow and no frame
     plt.legend()
