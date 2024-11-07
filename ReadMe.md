@@ -74,6 +74,8 @@ To generate a new ```trajectory.txt``` file, run the simulation with ```traj_out
 - [X] Exclude gravity from imu measurements
 - [X] Write function for parameter scanning
 - [X] Write function to generate sensitivity plots
+- [ ] Organize runs
+- [ ] Remove boost maneuv
 - [ ] Set up documentation
 
 ## BUG REPORTS: 

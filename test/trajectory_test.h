@@ -67,7 +67,6 @@ TEST(trajectory, fly){
     run_params.atm_error = 0;
     run_params.gnss_nav = 0;
     run_params.ins_nav = 1;
-    run_params.boost_guidance = 1;
     run_params.rv_maneuv = 0;
     run_params.initial_x_error = 0;
     run_params.initial_pos_error = 0;

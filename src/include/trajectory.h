@@ -41,8 +41,8 @@ state init_true_state(runparams *run_params, gsl_rng *rng){
 
     double initial_rot_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1);
 
-    state.initial_theta_lat_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1) + run_params->theta_long * initial_rot_pert + run_params->theta_lat * initial_rot_pert;
-    state.initial_theta_long_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1) + run_params->theta_lat * initial_rot_pert + run_params->theta_long * initial_rot_pert;
+    state.initial_theta_lat_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1) + run_params->theta_long * initial_rot_pert - fabs(run_params->theta_lat * initial_rot_pert);
+    state.initial_theta_long_pert = run_params->initial_angle_error * gsl_ran_gaussian(rng, 1) - run_params->theta_lat * initial_rot_pert - fabs(run_params->theta_long * initial_rot_pert);
     state.theta_long = run_params->theta_long + state.initial_theta_long_pert;
     state.theta_lat = run_params->theta_lat + state.initial_theta_lat_pert;
 
@@ -302,7 +302,7 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             gnss_measurement(&gnss, &new_true_state, &new_est_state, rng);
         }
 
-        if  (new_true_state.t == (vehicle->booster.total_burn_time) && (run_params->boost_guidance == 1) ){
+        if  (new_true_state.t == (vehicle->booster.total_burn_time) ){
             // Perform a perfect maneuver if before burnout
 
             new_true_state = perfect_maneuv(&new_true_state, &new_est_state, &new_des_state);
@@ -390,7 +390,6 @@ cart_vector update_aimpoint(runparams run_params, double thrust_angle_long){
     runparams run_params_temp = run_params;
     // Set output to zero
     run_params_temp.traj_output = 0;
-    run_params_temp.boost_guidance = 0;
     run_params_temp.rv_maneuv = 0;
     run_params_temp.gnss_nav = 0;
     run_params_temp.ins_nav = 0;

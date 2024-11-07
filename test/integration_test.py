@@ -35,7 +35,6 @@ def test_read_config():
     assert run_params.atm_error == 0
     assert run_params.gnss_nav == 0
     assert run_params.ins_nav == 1
-    assert run_params.boost_guidance == 1
     assert run_params.rv_maneuv == 1
 
     assert run_params.rv_type == 1
@@ -110,14 +109,13 @@ def test_integration_2():
 
 def test_integration_3():
     """
-    Verify that turning on atmospheric error increases miss distance (maneuverability turned off)
+    Verify that turning on atmospheric error increases miss distance
     """
 
     # Turn on atmospheric error and verify that the miss distance increases
     run_params = read_config("test")
     run_params.atm_error = 1
     run_params.num_runs = 10
-    run_params.boost_guidance = 0
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -142,7 +140,6 @@ def test_integration_4():
     run_params = read_config("test")
     run_params.atm_error = 1
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -160,14 +157,13 @@ def test_integration_4():
 
 def test_integration_5():
     """
-    Verify that turning on gravitational error increases miss distance (maneuverability turned off)
+    Verify that turning on gravitational error increases miss distance
     """
 
     # Turn on gravitational error and verify that the miss distance increases
     run_params = read_config("test")
     run_params.grav_error = 1
     run_params.num_runs = 10
-    run_params.boost_guidance = 0
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -191,39 +187,13 @@ def test_integration_6():
     # First, no guidance
     # Turn on initial position error and verify that the miss distance increases
     run_params = read_config("test")
-    run_params.initial_pos_error = c_double(1.0)
-    run_params.num_runs = 10
-    run_params.boost_guidance = 0
-    run_params.rv_maneuv = 0
-
     aimpoint = update_aimpoint(run_params, config_path)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep1 = get_cep(impact_data, run_params)
-
-    run_params.initial_pos_error = c_double(10.0)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep2 = get_cep(impact_data, run_params)
-
-    assert cep1 > 1e-3 and cep1 < 1e2
-
-    # Second, boost guidance only
+    # Boost guidance only
     # Turn on initial position error and verify that the miss distance increases
     run_params.initial_pos_error = c_double(1.0)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
+    
 
     impact_data_pointer = pytraj.mc_run(run_params)
 
@@ -245,11 +215,10 @@ def test_integration_6():
 
     assert cep1 > 1e-3 and cep1 < 1e2
 
-    # Third, boost guidance and realistic rv maneuver
+    # Boost guidance and realistic rv maneuver
     # Turn on initial position error and verify that the miss distance increases
     run_params.initial_pos_error = c_double(1.0)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -272,11 +241,10 @@ def test_integration_6():
 
     assert cep1 > 1e-3 and cep1 < 1e2
 
-    # Fourth, boost guidance and idealized rv maneuver
+    # Boost guidance and idealized rv maneuver
     # Turn on initial position error and verify that the miss distance increases
     run_params.initial_pos_error = c_double(1.0)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -302,44 +270,17 @@ def test_integration_6():
 
 def test_integration_7():
     """
-    Verify that turning on/increasing initial velocity error increases miss distance (all guidance combinations)
+    Verify that turning on/increasing initial velocity error increases miss distance
     """
 
-    # First, no guidance
     # Turn on initial velocity error and verify that the miss distance increases
     run_params = read_config("test")
-    run_params.initial_vel_error = c_double(0.1)
-    run_params.num_runs = 10
-    run_params.boost_guidance = 0
-    run_params.rv_maneuv = 0
-
     aimpoint = update_aimpoint(run_params, config_path)
 
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep1 = get_cep(impact_data, run_params)
-
-    run_params.initial_vel_error = c_double(1.0)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep2 = get_cep(impact_data, run_params)
-
-    assert cep1 > 1e-3 and cep1 < cep2
-
-    # Second, boost guidance only
+    # Boost guidance only
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.initial_vel_error = c_double(0.1)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -362,11 +303,10 @@ def test_integration_7():
 
     assert cep1 > 1e-3 and cep1 < cep2
 
-    # Third, boost guidance and realistic rv maneuver
+    # Boost guidance and realistic rv maneuver
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.initial_vel_error = c_double(0.1)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -389,11 +329,10 @@ def test_integration_7():
 
     assert cep1 > 1e-3 and cep1 < cep2
 
-    # Fourth, boost guidance and idealized rv maneuver
+    # Boost guidance and idealized rv maneuver
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.initial_vel_error = c_double(0.1)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -419,43 +358,20 @@ def test_integration_7():
 
 def test_integration_8():
     """
-    Verify that turning on/increasing initial angle error increases miss distance (all guidance combinations)
+    Verify that turning on/increasing initial angle error increases miss distance
     """
 
-    # First, no guidance
     # Turn on initial velocity error and verify that the miss distance increases
     run_params = read_config("test")
-    run_params.initial_angle_error = c_double(1e-6)
-    run_params.num_runs = 10
-    run_params.boost_guidance = 0
-    run_params.rv_maneuv = 0
-
     aimpoint = update_aimpoint(run_params, config_path)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
 
     # Read the impact data
     run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
 
-    cep1 = get_cep(impact_data, run_params)
-
-    run_params.initial_angle_error = c_double(1e-4)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep2 = get_cep(impact_data, run_params)
-
-    assert cep1 > 1e-3 and cep1 < cep2
-
-    # Second, boost guidance only
+    # Boost guidance only
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.initial_angle_error = c_double(1e-6)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -476,11 +392,10 @@ def test_integration_8():
 
     assert cep1 > 1e-3 and cep1 < cep2
 
-    # Third, boost guidance and realistic rv maneuver
+    # Boost guidance and realistic rv maneuver
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.initial_angle_error = c_double(1e-6)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -501,11 +416,10 @@ def test_integration_8():
 
     assert cep1 > 1e-3 and cep1 < cep2
 
-    # Fourth, boost guidance and idealized rv maneuver
+    # Boost guidance and idealized rv maneuver
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.initial_angle_error = c_double(1e-6)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -529,14 +443,13 @@ def test_integration_8():
 
 def test_integration_9():
     """
-    Verify that turning on/increasing acc scale stability increases miss distance (boost guidance turned on)
+    Verify that turning on/increasing acc scale stability increases miss distance
     """
 
     # Boost guidance only
     run_params = read_config("test")
     run_params.acc_scale_stability = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -563,7 +476,6 @@ def test_integration_9():
     # Second, boost guidance and realistic rv maneuver
     run_params.acc_scale_stability = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -588,7 +500,6 @@ def test_integration_9():
     # Turn on initial velocity error and verify that the miss distance increases
     run_params.acc_scale_stability = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -612,14 +523,13 @@ def test_integration_9():
 
 def test_integration_10():
     """
-    Verify that turning on/increasing gyro bias stability increases miss distance (boost guidance turned on)
+    Verify that turning on/increasing gyro bias stability increases miss distance
     """
 
     # Boost guidance only
     run_params = read_config("test")
     run_params.gyro_bias_stability = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -644,11 +554,9 @@ def test_integration_10():
     assert cep1 > 1e-3 and cep1 < cep2
 
     # Second, boost guidance and realistic rv maneuver
-
     run_params = read_config("test")
     run_params.gyro_bias_stability = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -674,7 +582,6 @@ def test_integration_10():
     # Third, boost guidance and idealized rv maneuver
     run_params.gyro_bias_stability = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -698,14 +605,13 @@ def test_integration_10():
 
 def test_integration_11():
     """
-    Verify that turning on/increasing gyro noiseincreases miss distance (boost guidance turned on)
+    Verify that turning on/increasing gyro noiseincreases miss distance
     """
 
     # Boost guidance only
     run_params = read_config("test")
     run_params.gyro_noise = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -735,7 +641,6 @@ def test_integration_11():
     run_params = read_config("test")
     run_params.gyro_noise = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
 
     aimpoint = update_aimpoint(run_params, config_path)
@@ -763,7 +668,6 @@ def test_integration_11():
     # Third, boost guidance and idealized rv maneuver
     run_params.gyro_noise = c_double(1e-8)
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 2
 
     impact_data_pointer = pytraj.mc_run(run_params)
@@ -786,111 +690,15 @@ def test_integration_11():
 
     assert cep1 > 1e-3 and cep1 < cep2
 
+
 def test_integration_12():
     """
-    Verify that turning on/increasing sensor errors makes no difference with no guidance
-    """
-
-    run_params = read_config("test")
-    run_params.num_runs = 10
-    run_params.boost_guidance = 0
-    run_params.rv_maneuv = 0
-    run_params.acc_scale_stability = c_double(1e-6)
-    run_params.gyro_bias_stability = c_double(1e-8)
-    run_params.gyro_noise = c_double(1e-8)
-
-    aimpoint = update_aimpoint(run_params, config_path)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep = get_cep(impact_data, run_params)
-
-    assert cep < 1e-3
-
-
-def test_integration_13():
-    """
-    Verify that turning on boost guidance decreases miss distance (rv maneuver turned off and atmosphere turned on, sensor errors turned on and off)
+    Verify that turning on rv maneuver decreases miss distance
     """
 
     # First, no sensor errors
     run_params = read_config("test")
     run_params.num_runs = 10
-    run_params.atm_error = 1
-    run_params.boost_guidance = 0
-    run_params.rv_maneuv = 0
-    run_params.acc_scale_stability = c_double(0.0)
-    run_params.gyro_bias_stability = c_double(0.0)
-    run_params.gyro_noise = c_double(0.0)
-
-    aimpoint = update_aimpoint(run_params, config_path)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep1 = get_cep(impact_data, run_params)
-
-    run_params.boost_guidance = 1
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep2 = get_cep(impact_data, run_params)
-
-    assert cep1 > cep2
-
-    # Second, with sensor errors
-    run_params = read_config("test")
-    run_params.num_runs = 50
-    run_params.atm_error = 1
-    run_params.boost_guidance = 0
-    run_params.rv_maneuv = 0
-    run_params.acc_scale_stability = c_double(1e-6)
-    run_params.gyro_bias_stability = c_double(1e-8)
-    run_params.gyro_noise = c_double(1e-8)
-
-    aimpoint = update_aimpoint(run_params, config_path)
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep1 = get_cep(impact_data, run_params)
-
-    run_params.boost_guidance = 1
-
-    impact_data_pointer = pytraj.mc_run(run_params)
-
-    # Read the impact data
-    run_path = "./output/test/"
-    impact_data = np.loadtxt(run_path + "impact_data.txt", delimiter = ",", skiprows=1)
-
-    cep2 = get_cep(impact_data, run_params)
-
-    assert cep1 > cep2
-
-
-def test_integration_14():
-    """
-    Verify that turning on rv maneuver decreases miss distance (boost guidance turned on)
-    """
-
-    # First, no sensor errors
-    run_params = read_config("test")
-    run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
     run_params.atm_error = 1
     run_params.grav_error = 1
@@ -920,7 +728,6 @@ def test_integration_14():
     # Second, with sensor errors
     run_params = read_config("test")
     run_params.num_runs = 50
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
     run_params.grav_error = 1
     run_params.atm_error = 1
@@ -954,15 +761,13 @@ def test_integration_14():
     assert cep1 > cep2
 
 
-def test_integration_15():
+def test_integration_13():
     """
-    Verify that turning on perfect rv maneuv decreases miss distance compared to realistic rv maneuv (boost guidance turned on)
+    Verify that turning on perfect rv maneuv decreases miss distance compared to realistic rv maneuv
     """
 
-    # First, no sensor errors
     run_params = read_config("test")
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
     run_params.atm_error = 1
 
@@ -990,12 +795,11 @@ def test_integration_15():
 
     # Second, with sensor errors
     run_params = read_config("test")
-    run_params.num_runs = 10
-    run_params.boost_guidance = 1
+    run_params.num_runs = 50
     run_params.rv_maneuv = 1
     run_params.atm_error = 1
-    run_params.initial_pos_error = c_double(1.0)
-    run_params.initial_vel_error = c_double(1e-4)
+    run_params.initial_pos_error = c_double(0.0)
+    run_params.initial_vel_error = c_double(1e-3)
     run_params.initial_angle_error = c_double(1e-5)
     run_params.acc_scale_stability = c_double(1e-6)
     run_params.gyro_bias_stability = c_double(1e-8)
@@ -1024,15 +828,14 @@ def test_integration_15():
     assert cep1 > cep2
 
 
-def test_integration_16():
+def test_integration_14():
     """
-    Verify that turning on GNSS navigation decreases miss distance (boost guidance turned on)
+    Verify that turning on GNSS navigation decreases miss distance
     """
 
     # First, with rv maneuver
     run_params = read_config("test")
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
     run_params.atm_error = 1
     run_params.acc_scale_stability = c_double(1e-6)
@@ -1066,7 +869,6 @@ def test_integration_16():
     # Second, with no rv maneuver
     run_params = read_config("test")
     run_params.num_runs = 50
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 0
     run_params.atm_error = 1
     run_params.acc_scale_stability = c_double(1e-6)
@@ -1098,14 +900,13 @@ def test_integration_16():
     assert cep1 > cep2
 
 
-def test_integration_17():
+def test_integration_15():
     """
-    Verify that turning on/increasing GNSS noise increases miss distance (boost guidance and rv maneuver turned on)
+    Verify that turning on/increasing GNSS noise increases miss distance
     """
 
     run_params = read_config("test")
     run_params.num_runs = 10
-    run_params.boost_guidance = 1
     run_params.rv_maneuv = 1
     run_params.atm_error = 1
     run_params.acc_scale_stability = c_double(1e-6)

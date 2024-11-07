@@ -23,6 +23,12 @@ def impact_plot(run_path, run_params):
     aimpoint_lon = np.arctan2(run_params.y_aim, run_params.x_aim)
     aimpoint_lat = np.arctan2(run_params.z_aim, np.sqrt(run_params.x_aim**2 + run_params.y_aim**2))
 
+    # Calculate the range to the aimpoint over the surface of the Earth
+    # This is the great circle distance between the aimpoint and the origin
+    range_to_aimpoint = np.arccos(np.sin(aimpoint_lat)*np.sin(0) + np.cos(aimpoint_lat)*np.cos(0)*np.cos(aimpoint_lon))
+    range_to_aimpoint = range_to_aimpoint * 6371e3
+    print('Range to aimpoint: ', range_to_aimpoint)
+
     impact_t = impact_data[:,0]
     impact_x = impact_data[:,1]
     impact_y = impact_data[:,2]
@@ -77,7 +83,7 @@ def impact_plot(run_path, run_params):
     a0.set_aspect('equal')
 
     # add N=len(guided_r) to the top left of the plot
-    a0.text(-0.8*plotrange, 0.8*plotrange, 'N=' + str(len(miss_distance)), fontsize=10, verticalalignment='top', horizontalalignment='left')
+    a0.text(-0.6*plotrange, 0.8*plotrange, 'N = ' + str(len(miss_distance)) + '\nCEP = ' + str(cep) + 'm', fontsize=10, verticalalignment='top', horizontalalignment='center')
 
     # add label to a0
     a0.set_xlabel('Downrange (m)', labelpad=-1)
@@ -86,7 +92,16 @@ def impact_plot(run_path, run_params):
     a0.tick_params(axis='x', which='major', pad=1)  # Adjust pad for x-axis ticks
     a0.tick_params(axis='y', which='major', pad=1)  # Adjust pad for y-axis ticks
 
-    a0.set_title('Minuteman III: Unguided Reentry')
+    if str(run_params.run_name, 'utf-8') == 'run_0':
+        a0.set_title('Minuteman III: ICBM')
+    elif str(run_params.run_name, 'utf-8') == 'run_2':
+        a0.set_title('Minuteman III: Perfectly Maneuverable RV, INS-Only')
+    elif str(run_params.run_name, 'utf-8') == 'run_3':
+        a0.set_title('Minuteman III: Perfectly Maneuverable RV, INS+GNSS')
+    else:
+        print('Warning: run_name ' + run_params.run_name + ' not recognized')
+
+        a0.set_title('Trajectory Impact Points')
     # plot the histogram of the miss distances
 
     cep = round(np.percentile(miss_distance, 50), 2)
@@ -95,8 +110,9 @@ def impact_plot(run_path, run_params):
     x = np.linspace(0, 5*cep, 100)
     shape, loc, scale = stats.nakagami.fit(miss_distance, floc=0)
     nakagamipdf = stats.nakagami.pdf(x, shape, loc, scale)
+    print('Nakagami fit: shape =', shape, 'loc =', loc, 'scale =', scale)
     
-
+    # Compute number of bins for the histogram
     bins = 50
     # plot histogram up to 5 times the CEP, with no y axis
     a1.hist(miss_distance, bins=bins, range=(0, 5*cep), color='grey', edgecolor='black', alpha=0.7, histtype='stepfilled')
@@ -117,7 +133,7 @@ def impact_plot(run_path, run_params):
     a1.spines['bottom'].set_visible(False)
 
     a1.yaxis.set_visible(False)
-    # Legend with no border or box around it
+    # Legend with no border or box around it, and with the nakagami fit parameters
     a1.legend(frameon=False, framealpha=0)
     a1.tick_params(axis='x', which='major', pad=1)  # Adjust pad for x-axis ticks
     a1.tick_params(axis='y', which='major', pad=1)  # Adjust pad for y-axis ticks (if y-axis is used)

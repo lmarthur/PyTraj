@@ -23,7 +23,6 @@ typedef struct runparams{
     int atm_error; // flag to include atmospheric perturbations
     int gnss_nav; // flag to include GNSS navigation
     int ins_nav; // flag to include INS navigation
-    int boost_guidance; // flag to include guidance during the boost phase
     int rv_maneuv; // flag to include guidance during the reentry phase
 
     int rv_type; // reentry vehicle type (0: ballistic, 1: maneuverable)
@@ -162,7 +161,6 @@ void print_config(runparams *run_params){
     printf("Atmospheric perturbations: %d\n", run_params->atm_error);
     printf("GNSS navigation: %d\n", run_params->gnss_nav);
     printf("INS navigation: %d\n", run_params->ins_nav);
-    printf("Boost phase guidance: %d\n", run_params->boost_guidance);
     printf("Reentry phase guidance: %d\n", run_params->rv_maneuv);
 
     printf("Reentry vehicle type: %d\n", run_params->rv_type);

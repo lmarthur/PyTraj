@@ -27,7 +27,6 @@ class runparams(Structure):
         ("atm_error", c_int),
         ("gnss_nav", c_int),
         ("ins_nav", c_int),
-        ("boost_guidance", c_int),
         ("rv_maneuv", c_int),
 
         ("rv_type", c_int), # 0 for ballistic, 1 for maneuverable
@@ -95,7 +94,6 @@ def read_config(run_name):
     run_params.atm_error = c_int(int(config['FLIGHT']['atm_error']))
     run_params.gnss_nav = c_int(int(config['FLIGHT']['gnss_nav']))
     run_params.ins_nav = c_int(int(config['FLIGHT']['ins_nav']))
-    run_params.boost_guidance = c_int(int(config['FLIGHT']['boost_guidance']))
     run_params.rv_maneuv = c_int(int(config['FLIGHT']['rv_maneuv']))
 
     # set the vehicle parameters
