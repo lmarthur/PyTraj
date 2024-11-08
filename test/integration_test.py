@@ -795,7 +795,7 @@ def test_integration_13():
 
     # Second, with sensor errors
     run_params = read_config("test")
-    run_params.num_runs = 50
+    run_params.num_runs = 100
     run_params.rv_maneuv = 1
     run_params.atm_error = 1
     run_params.initial_pos_error = c_double(0.0)

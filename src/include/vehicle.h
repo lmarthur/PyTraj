@@ -141,7 +141,7 @@ booster init_mmiii_booster(){
     booster.maxdiam = 1.7;
     booster.area = 2.2698;
     booster.c_d_0 = 0.15;
-    booster.bus_mass = 500; // mass of the bus/payload carrier in kg
+    booster.bus_mass = 100; // mass of the bus/payload carrier in kg
 
     // Define stage parameters for a MMIII booster
     booster.wet_mass[0] = 23230;

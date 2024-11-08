@@ -228,8 +228,6 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
     // Initialize the GNSS
     gnss gnss = gnss_init(run_params);
 
-    int reentry_filter_flag = 0;
-
     // Create a .txt file to store the trajectory data
     FILE *traj_file;
     if (traj_output == 1){
@@ -288,13 +286,17 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
         new_des_state.ay_total = new_des_state.ay_grav + new_des_state.ay_drag + new_des_state.ay_lift + new_des_state.ay_thrust;
         new_des_state.az_total = new_des_state.az_grav + new_des_state.az_drag + new_des_state.az_lift + new_des_state.az_thrust;
 
-        double a_mag = sqrt(new_true_state.ax_total*new_true_state.ax_total + new_true_state.ay_total*new_true_state.ay_total + new_true_state.az_total*new_true_state.az_total);
-
+        double a_drag = sqrt(new_true_state.ax_drag*new_true_state.ax_drag + new_true_state.ay_drag*new_true_state.ay_drag + new_true_state.az_drag*new_true_state.az_drag);
         if (run_params->ins_nav == 1){
             // INS Measurement
             imu_measurement(&imu, &new_true_state, &new_est_state, vehicle, rng);
 
-            update_imu(&imu, time_step, rng);
+            if (run_params->rv_maneuv == 0 ){ 
+                update_imu(&imu, time_step, rng);
+            }
+            else if (a_drag > 1e-3 || old_true_state.t < vehicle->booster.total_burn_time){
+                update_imu(&imu, time_step, rng);
+            }
         }
 
         if (run_params->gnss_nav == 1){
@@ -306,17 +308,8 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             // Perform a perfect maneuver if before burnout
 
             new_true_state = perfect_maneuv(&new_true_state, &new_est_state, &new_des_state);
-            new_est_state.vx = new_true_state.vx;
-            new_est_state.vy = new_true_state.vy;
-            new_est_state.vz = new_true_state.vz;
-            imu.gyro_bias_lat = 0;
-            imu.gyro_bias_long = 0;
-            imu.acc_scale_x = 0;
-            imu.acc_scale_y = 0;
-            imu.acc_scale_z = 0;
             imu.gyro_error_lat = 0;
             imu.gyro_error_long = 0;
-            imu.gyro_noise = 0;
 
         }
     
