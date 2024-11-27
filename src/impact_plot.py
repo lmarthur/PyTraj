@@ -73,8 +73,9 @@ def impact_plot(run_path, run_params):
     a0 = fig.add_subplot(gs[0, 0])
     a1 = fig.add_subplot(gs[1, 0])
 
-    a0.plot(x, y, c='r', label='CEP', linestyle='--', linewidth=1.5)
-    a0.scatter(impact_x_local, impact_y_local, c='k', marker='x', label='Impact Points', s=20, alpha=0.5, linewidths=1)
+    
+    a0.scatter(impact_x_local, impact_y_local, c='grey', marker='x', label='Impact Points', s=20, alpha=0.5, linewidths=1)
+    a0.plot(x, y, c='k', label='CEP', linestyle='--', linewidth=1.5)
     a0.legend(['CEP', 'Impact Points'], frameon=False, framealpha=0)
 
     # center the plot on (0,0)
@@ -93,11 +94,13 @@ def impact_plot(run_path, run_params):
     a0.tick_params(axis='y', which='major', pad=1)  # Adjust pad for y-axis ticks
 
     if str(run_params.run_name, 'utf-8') == 'run_0':
-        a0.set_title('Minuteman III: ICBM')
+        a0.set_title('Minuteman III: Ballistic RV, INS-Only')
     elif str(run_params.run_name, 'utf-8') == 'run_2':
         a0.set_title('Minuteman III: Perfectly Maneuverable RV, INS-Only')
     elif str(run_params.run_name, 'utf-8') == 'run_3':
         a0.set_title('Minuteman III: Perfectly Maneuverable RV, INS+GNSS')
+    elif str(run_params.run_name, 'utf-8') == 'run_4':
+        a0.set_title('Minuteman III: Ballistic RV, INS+GNSS')
     elif str(run_params.run_name, 'utf-8') != 'test':
         print('Warning: run_name ' + str(run_params.run_name, 'utf-8') + ' not recognized')
 
@@ -122,9 +125,9 @@ def impact_plot(run_path, run_params):
     pdf_cep = nakagamipdf[np.argmin(np.abs(x - cep))]
     # Add a vertical line at the CEP, to the top of the histogram at that point
     plotmax = a1.get_ylim()[1]
-    a1.axvline(x=cep, ymax=pdf_cep/plotmax, color='r', linestyle='--', linewidth=1.5, label='CEP')
+    a1.axvline(x=cep, ymax=pdf_cep/plotmax, color='k', linestyle='--', linewidth=1.5, label='CEP')
 
-    a1.plot(x, nakagamipdf, 'k', linewidth=1.5, label = 'Nakagami')
+    a1.plot(x, nakagamipdf, 'k', linewidth=1.5, label = 'Nakagami(' + str(round(shape, 2)) + ', ' + str(round(scale, 2)) + ')')
     
     # omit the frame
     a1.spines['top'].set_visible(False)
@@ -138,5 +141,5 @@ def impact_plot(run_path, run_params):
     a1.tick_params(axis='x', which='major', pad=1)  # Adjust pad for x-axis ticks
     a1.tick_params(axis='y', which='major', pad=1)  # Adjust pad for y-axis ticks (if y-axis is used)
     a1.set_xlabel('Miss Distance Histogram (m)', labelpad=1)  # Adjust labelpad for x-axis label
-    plt.savefig(run_path + "impact_plot.pdf")
+    plt.savefig(run_path + "impact_plot.jpg", dpi=1000)
     plt.close()

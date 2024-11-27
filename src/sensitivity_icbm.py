@@ -26,6 +26,9 @@ from src.pylib import *
 so_file = "./build/libPyTraj.so"
 pytraj = CDLL(so_file)
 
+grid_points = np.logspace(-1, 1, num=7)
+print('Grid points: ', grid_points)
+
 # Code block to run the Monte Carlo simulation
 if __name__ == "__main__":
     # Read the configuration file
@@ -52,7 +55,7 @@ if __name__ == "__main__":
 
     # Manually iterate through the stability parameters
 
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # initial_pos_error
         run_params.initial_pos_error = c_double(expected_pos_error * i)
         run_params.initial_vel_error = c_double(0.0)
@@ -73,7 +76,7 @@ if __name__ == "__main__":
         # add the cep to the sensitivity data
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
 
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # initial_vel_error
         run_params.initial_pos_error = c_double(0.0)
         run_params.initial_vel_error = c_double(expected_vel_error * i)
@@ -94,7 +97,7 @@ if __name__ == "__main__":
         # add the cep to the sensitivity data
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # initial_angle_error
         run_params.initial_pos_error = c_double(0.0)
         run_params.initial_vel_error = c_double(0.0)
@@ -116,7 +119,7 @@ if __name__ == "__main__":
         # add the cep to the sensitivity data
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]    
     
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # acc_scale_stability
         run_params.initial_pos_error = c_double(0.0)
         run_params.initial_vel_error = c_double(0.0)
@@ -137,7 +140,7 @@ if __name__ == "__main__":
         # add the cep to the sensitivity data
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # gyro_bias_stability
         run_params.initial_pos_error = c_double(0.0)
         run_params.initial_vel_error = c_double(0.0)
@@ -158,7 +161,7 @@ if __name__ == "__main__":
         # add the cep to the sensitivity data
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # gyro_noise
         run_params.initial_pos_error = c_double(0.0)
         run_params.initial_vel_error = c_double(0.0)
@@ -180,7 +183,7 @@ if __name__ == "__main__":
         sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
 
     if run_params.gnss_nav:
-        for i in [0.1, 0.5, 1, 5, 10]:
+        for i in grid_points:
             # gnss_noise
             run_params.initial_pos_error = c_double(0.0)
             run_params.initial_vel_error = c_double(0.0)
@@ -202,7 +205,7 @@ if __name__ == "__main__":
             sensitivity_data.loc[len(sensitivity_data)] = [run_params.initial_pos_error, run_params.initial_vel_error, run_params.initial_angle_error, run_params.acc_scale_stability, run_params.gyro_bias_stability, run_params.gyro_noise, run_params.gnss_noise, cep]
     
     # Combined
-    for i in [0.1, 0.5, 1, 5, 10]:
+    for i in grid_points:
         # gnss_noise
         run_params.initial_pos_error = c_double(expected_pos_error * i)
         run_params.initial_vel_error = c_double(expected_vel_error * i)
@@ -230,4 +233,4 @@ if __name__ == "__main__":
     print(sensitivity_data)
 
     # Plot the stability data
-    sens_plot(sensitivity_data, run_params)
+    sens_plot(grid_points, sensitivity_data, run_params)

@@ -5,7 +5,7 @@ import scienceplots
 
 plt.style.use(['science'])
 
-def sens_plot(sens_data, run_params):
+def sens_plot(x, sens_data, run_params):
     """
     Function to plot the sensitivity data.
 
@@ -18,10 +18,9 @@ def sens_plot(sens_data, run_params):
     print('Plotting sensitivity data for ' + name + '...')
     num_runs = run_params.num_runs
 
-    x = np.array([-1, -0.5, 0, 0.5, 1])
-
     # get the values into numpy arrays
-    length = 5
+    length = len(x)
+
     cep_pos = sens_data['cep'][0:length].values
     cep_vel = sens_data['cep'][length:2*length].values
     cep_ang = sens_data['cep'][2*length:3*length].values
@@ -64,7 +63,8 @@ def sens_plot(sens_data, run_params):
 
     plt.yscale('log')
     # Add categorical xticks
-    plt.xticks(x, ['$ E/10 $ ', ' ', 'E', ' ', '$10 E$'])
+    plt.xscale('log')
+    # plt.xticks(x, ['0.1', '1', '10'])
 
     plt.xlabel('Estimated Parameter (E)')
     plt.ylabel('CEP (m)')
