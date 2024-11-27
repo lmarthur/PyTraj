@@ -74,22 +74,22 @@ atm_model init_atm(runparams *run_params, gsl_rng *rng){
     }
     else{
         // Density standard deviations
-        atm_model.std_densities[0] = 0.00005;
-        atm_model.std_densities[1] = 0.00006;
-        atm_model.std_densities[2] = 0.0018;
-        atm_model.std_densities[3] = 0.0001;
+        atm_model.std_densities[0] = 0.00009;
+        atm_model.std_densities[1] = 0.00001;
+        atm_model.std_densities[2] = 0.00262;
+        atm_model.std_densities[3] = 0.00662;
 
         // Wind standard deviations
-        atm_model.std_winds[0] = 0.05;
-        atm_model.std_winds[1] = 0.12;
-        atm_model.std_winds[2] = 0.75;
-        atm_model.std_winds[3] = 1.5;
+        atm_model.std_winds[0] = 0.223;
+        atm_model.std_winds[1] = 0.098;
+        atm_model.std_winds[2] = 1.13;
+        atm_model.std_winds[3] = 2.23;
 
         // Vertical wind standard deviations
-        atm_model.std_vert_winds[0] = 0.05;
-        atm_model.std_vert_winds[1] = 0.015;
-        atm_model.std_vert_winds[2] = 0.075;
-        atm_model.std_vert_winds[3] = 0.3;
+        atm_model.std_vert_winds[0] = 0.058;
+        atm_model.std_vert_winds[1] = 0.016;
+        atm_model.std_vert_winds[2] = 0.070;
+        atm_model.std_vert_winds[3] = 0.244;
 
         for (int i = 0; i < 4; i++){
             // Generate perturbations, which are then used by the get_atm_cond function to generate the true conditions
