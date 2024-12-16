@@ -27,6 +27,13 @@ state init_true_state(runparams *run_params, gsl_rng *rng){
     /*
     Initializes a true state struct at the launch site with zero velocity and acceleration
 
+    INPUTS:
+    ----------
+        run_params: runparams *
+            pointer to the run parameters struct
+        rng: gsl_rng *
+            pointer to the random number generator
+
     OUTPUTS:
     ----------
         state: state
@@ -72,6 +79,10 @@ state init_est_state(runparams *run_params){
     /*
     Initializes an estimated state struct at the launch site with zero velocity and acceleration
 
+    INPUTS:
+    ----------
+        run_params: runparams *
+            pointer to the run parameters struct
     OUTPUTS:
     ----------
         state: state
@@ -172,7 +183,6 @@ void output_impact(FILE *impact_file, impact_data *impact_data, int num_runs){
         num_runs: int
             Number of Monte Carlo runs
     */
-    // printf("Outputting the impact data...\n");
 
     // Iterate through the number of runs and output the impact data
     for (int i = 0; i < num_runs; i++){
@@ -196,6 +206,8 @@ state fly(runparams *run_params, state *initial_state, vehicle *vehicle, gsl_rng
             pointer to the initial state of the vehicle
         vehicle: vehicle *
             pointer to the vehicle struct
+        rng: gsl_rng *
+            pointer to the random number generator
 
     OUTPUTS:
     ----------

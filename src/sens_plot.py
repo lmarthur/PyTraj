@@ -11,8 +11,12 @@ def sens_plot(x, sens_data, run_params):
 
     INPUTS:
     ----------
+        x: numpy.ndarray
+            The x-axis data.
         sens_data: pandas.DataFrame
             The sensitivity data.
+        run_params: runparams
+            The run parameters.
     """
     name = str(run_params.run_name, 'utf-8')
     print('Plotting sensitivity data for ' + name + '...')

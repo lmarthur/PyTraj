@@ -35,6 +35,8 @@ imu imu_init(runparams *run_params, state *initial_state, gsl_rng *rng){
     ----------
         run_params: runparams *
             pointer to the run parameters struct
+        initial_state: state *
+            pointer to the initial state of the vehicle
         rng: gsl_rng *
             pointer to the random number generator
 
@@ -73,13 +75,12 @@ void imu_measurement(imu *imu, state *true_state, state *est_state, vehicle *veh
             pointer to the inertial measurement unit struct
         true_state: state *
             pointer to the true state of the vehicle
+        est_state: state *
+            pointer to the estimated state of the vehicle
+        vehicle: vehicle *
+            pointer to the vehicle struct
         rng: gsl_rng *
             pointer to the random number generator
-
-    OUTPUTS:
-    ----------
-        meas_state: state
-            pointer to the measured state of the vehicle
     */
 
     // Gyroscope measurements
@@ -104,8 +105,8 @@ void update_imu(imu *imu, double time_step, gsl_rng *rng){
     ----------
         imu: imu *
             pointer to the accelerometer struct
-        run_params: runparams *
-            pointer to the run parameters struct
+        time_step: double
+            time step for the simulation
         rng: gsl_rng *
             pointer to the random number generator
     */
@@ -153,6 +154,8 @@ void gnss_measurement(gnss *gnss, state *true_state, state *est_state, gsl_rng *
             pointer to the gnss struct
         true_state: state *
             pointer to the true state of the vehicle
+        est_state: state *
+            pointer to the estimated state of the vehicle
         rng: gsl_rng *
             pointer to the random number generator
 

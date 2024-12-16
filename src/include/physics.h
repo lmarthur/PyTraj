@@ -81,6 +81,8 @@ void update_drag(vehicle *vehicle, atm_cond *atm_cond, state *state){
     ----------
         vehicle: vehicle *
             pointer to the vehicle struct
+        atm_cond: atm_cond *
+            pointer to the atmospheric conditions
         state: state *
             pointer to the state struct
     */

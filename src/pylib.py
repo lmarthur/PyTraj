@@ -119,6 +119,8 @@ def get_cep(impact_data, run_params):
     ----------
         impact_data: numpy.ndarray
             The impact data.
+        run_params: runparams
+            The run parameters.
     OUTPUTS:
     ----------
         cep: double
@@ -155,6 +157,8 @@ def update_aimpoint(run_params, config_path):
     ----------
         run_params: runparams
             The run parameters.
+        config_path: str
+            The path to the configuration file.
     OUTPUTS:
     ----------
         aimpoint: cart_vector

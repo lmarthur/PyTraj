@@ -329,7 +329,7 @@ void update_mass(vehicle *vehicle, double t){
     ----------
         vehicle: vehicle *
             pointer to the vehicle struct
-        state: double
+        t: double
             current time in seconds
     */
 

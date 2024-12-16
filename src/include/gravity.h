@@ -28,6 +28,8 @@ grav init_grav(runparams *run_params, gsl_rng *rng){
     ----------
         run_params: *runparams
             Pointer to the runparams struct
+        rng: *gsl_rng
+            Pointer to the GSL random number generator
     OUTPUTS:
     ----------
         grav: grav
